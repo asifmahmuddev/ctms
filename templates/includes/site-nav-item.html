@@ -1,0 +1,5 @@
+{# One link in the site navigation, marked current when its own page is showing. #}
+<li class="nav-item">
+    <a class="nav-link" href="{% url url_name %}"
+        {% if request.resolver_match.url_name == url_name %}aria-current="page"{% endif %}>{{ label }}</a>
+</li>

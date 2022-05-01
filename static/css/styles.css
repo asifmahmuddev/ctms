@@ -1,0 +1,738 @@
+/* ----------------------------------------------------------------------------------------------
+CTMS stylesheet: design tokens and the site's own components.
+
+Layered on top of Bootstrap 5, which supplies the grid, buttons and navbar. Bootstrap's own classes
+are never redefined here; anything needing different behaviour carries a class of its own.
+
+Breakpoints follow Bootstrap: sm 576, md 768, lg 992, xl 1200. Rules are mobile-first, so a plain
+declaration applies to the smallest screen and min-width queries build upward.
+---------------------------------------------------------------------------------------------- */
+
+/* --- Design tokens ------------------------------------------------------------------------- */
+
+:root {
+    /* Brand */
+    --ctms-primary: #0b4fd8;
+    --ctms-primary-dark: #06308a;
+    --ctms-primary-darker: #041a4d;
+    --ctms-accent: #ff9800;
+    --ctms-accent-hover: #ffb547;
+
+    /* Status. Each clears WCAG AA both on its pill's tint and as a filled control in white. */
+    --ctms-success: #0d7b48;
+    --ctms-warning: #995400;
+    --ctms-danger: #cc2535;
+
+    /* Text */
+    --ctms-text: #313437;
+    /* Dark enough to clear WCAG AA against the tinted surfaces below, not only against white. */
+    --ctms-text-muted: #656e76;
+    --ctms-text-inverse: #ffffff;
+    --ctms-text-inverse-muted: rgba(255, 255, 255, 0.72);
+
+    /* Surfaces */
+    --ctms-surface: #ffffff;
+    --ctms-surface-alt: #eef4f7;
+    --ctms-surface-muted: #f5f7fa;
+    --ctms-surface-dark: #22272e;
+
+    /* Provider branding, whose values belong to the provider rather than to this palette */
+    --ctms-google-text: #3c4043;
+    --ctms-google-border: #dadce0;
+
+    /* Lines and shadows */
+    --ctms-border: #e3e8ee;
+    --ctms-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.10);
+    --ctms-shadow-md: 0 4px 8px -2px rgba(16, 24, 40, 0.10), 0 2px 4px -2px rgba(16, 24, 40, 0.06);
+    --ctms-shadow-lg: 0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.03);
+
+    /* Layout */
+    --ctms-header-height: 4rem;
+    --ctms-section-gap: 3.5rem;
+    --ctms-radius: 0.5rem;
+    --ctms-radius-lg: 0.875rem;
+
+    /* Motion */
+    --ctms-transition: 0.2s ease-in-out;
+}
+
+@media (min-width: 992px) {
+    :root {
+        --ctms-header-height: 4.75rem;
+        --ctms-section-gap: 5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* --- Base ---------------------------------------------------------------------------------- */
+
+/* The padding clears the fixed header; scroll-padding keeps anchor jumps clear of it as well. */
+body {
+    color: var(--ctms-text);
+    background-color: var(--ctms-surface);
+    padding-top: var(--ctms-header-height);
+    scroll-padding-top: var(--ctms-header-height);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* The landing hero sits behind the translucent header, so it supplies its own offset. */
+body.has-hero {
+    padding-top: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    overflow-wrap: break-word;
+}
+
+a {
+    transition: color var(--ctms-transition);
+}
+
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible {
+    outline: 3px solid var(--ctms-accent);
+    outline-offset: 2px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ----------------------------------------------------------------------------------------------
+Section rhythm
+
+Shared vertical spacing and heading treatment for the content sections, so no section restates
+its own padding.
+---------------------------------------------------------------------------------------------- */
+
+.section {
+    padding-top: var(--ctms-section-gap);
+    padding-bottom: var(--ctms-section-gap);
+}
+
+.section-light {
+    background-color: var(--ctms-surface);
+}
+
+.section-alt {
+    background-color: var(--ctms-surface-alt);
+}
+
+.section-muted {
+    background-color: var(--ctms-surface-muted);
+}
+
+.section-intro {
+    max-width: 40rem;
+    margin: 0 auto 3rem;
+    text-align: center;
+}
+
+.section-intro h2 {
+    font-weight: 700;
+    font-size: clamp(1.5rem, 1.15rem + 1.6vw, 2.25rem);
+    margin-bottom: 0.75rem;
+    color: inherit;
+}
+
+.section-intro p {
+    color: var(--ctms-text-muted);
+    margin-bottom: 0;
+}
+
+/* --- Buttons ------------------------------------------------------------------------------- */
+
+/* One box for every variant, with a transparent border on the filled ones, so a row stays level. */
+.btn-ctms,
+.btn-ctms-accent,
+.btn-ctms-outline,
+.btn-ctms-danger,
+.btn-google {
+    border: 1px solid transparent;
+    border-radius: var(--ctms-radius);
+    font-weight: 600;
+    padding: 0.6875rem 1.5rem;
+    transition: background-color var(--ctms-transition), transform var(--ctms-transition), box-shadow var(--ctms-transition);
+}
+
+.btn-ctms {
+    color: var(--ctms-text-inverse);
+    background-color: var(--ctms-primary);
+}
+
+.btn-ctms:hover,
+.btn-ctms:focus {
+    color: var(--ctms-text-inverse);
+    background-color: var(--ctms-primary-dark);
+    box-shadow: var(--ctms-shadow-md);
+}
+
+.btn-ctms-accent {
+    color: var(--ctms-primary-darker);
+    background-color: var(--ctms-accent);
+}
+
+.btn-ctms-accent:hover,
+.btn-ctms-accent:focus {
+    color: var(--ctms-primary-darker);
+    background-color: var(--ctms-accent-hover);
+    box-shadow: var(--ctms-shadow-md);
+}
+
+/* Bootstrap's .btn-sm never reaches these on source order, so each variant states its own size. */
+.btn-ctms.btn-sm,
+.btn-ctms-accent.btn-sm,
+.btn-ctms-outline.btn-sm,
+.btn-ctms-danger.btn-sm,
+.btn-google.btn-sm {
+    padding: 0.375rem 0.875rem;
+}
+
+.btn-ctms:active,
+.btn-ctms-accent:active,
+.btn-ctms-outline:active,
+.btn-ctms-danger:active,
+.btn-google:active {
+    transform: translateY(1px);
+}
+
+/* ----------------------------------------------------------------------------------------------
+Header
+
+Translucent and pinned to the top so the landing video shows through, yet dark enough that white
+nav text keeps its contrast over the video and over plain white pages alike.
+---------------------------------------------------------------------------------------------- */
+
+.site-header {
+    min-height: var(--ctms-header-height);
+    padding-top: 0;
+    padding-bottom: 0;
+    background: linear-gradient(180deg, rgba(4, 26, 77, 0.94) 0%, rgba(4, 26, 77, 0.82) 100%);
+    box-shadow: var(--ctms-shadow-md);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .site-header {
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
+}
+
+.site-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    text-decoration: none;
+    /* Leaves room for the toggler on narrow phones. */
+    min-width: 0;
+}
+
+.site-brand-logo {
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+}
+
+.site-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+    min-width: 0;
+}
+
+.site-brand-title,
+.site-brand-subtitle {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.site-brand-title {
+    color: var(--ctms-text-inverse);
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.site-brand-subtitle {
+    color: var(--ctms-text-inverse-muted);
+    font-weight: 400;
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* The narrowest phones cannot fit the full wordmark beside the toggler. */
+@media (max-width: 359px) {
+    .site-brand-subtitle {
+        display: none;
+    }
+
+    .site-brand-title {
+        font-size: 0.9375rem;
+    }
+}
+
+.site-header .navbar-toggler {
+    color: var(--ctms-text-inverse);
+    border-color: rgba(255, 255, 255, 0.4);
+    padding: 0.375rem 0.625rem;
+}
+
+.site-header .navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+}
+
+.site-header .nav-link {
+    color: var(--ctms-text-inverse-muted);
+    font-weight: 500;
+    padding: 0.5rem 0;
+    transition: color var(--ctms-transition);
+}
+
+.site-header .nav-link:hover,
+.site-header .nav-link:focus {
+    color: var(--ctms-accent);
+}
+
+.site-header .nav-link[aria-current="page"] {
+    color: var(--ctms-text-inverse);
+    font-weight: 600;
+}
+
+@media (max-width: 991.98px) {
+    .site-header .navbar-collapse {
+        margin-top: 0.5rem;
+        padding: 0.5rem 0 0.75rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .site-header .nav-link {
+        padding: 0.625rem 0.25rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .site-header .nav-link {
+        position: relative;
+        padding: 0.5rem 0;
+        margin-left: 1.75rem;
+    }
+
+    .site-header .nav-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0.125rem;
+        width: 100%;
+        height: 2px;
+        background-color: var(--ctms-accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform var(--ctms-transition);
+    }
+
+    .site-header .nav-link:hover::after,
+    .site-header .nav-link:focus::after,
+    .site-header .nav-link[aria-current="page"]::after {
+        transform: scaleX(1);
+    }
+}
+
+/* ----------------------------------------------------------------------------------------------
+Hero
+
+Full-bleed video with a headline layered over it. The height is clamped so the video neither fills
+an ultrawide monitor nor collapses to a strip on a phone.
+---------------------------------------------------------------------------------------------- */
+
+.hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 38rem;
+    height: 100vh;
+    max-height: 62rem;
+    overflow: hidden;
+    background-color: var(--ctms-primary-darker);
+}
+
+.hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Darkens the video so the headline keeps contrast wherever the footage is bright. */
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(4, 26, 77, 0.55) 0%, rgba(4, 26, 77, 0.35) 45%, rgba(4, 26, 77, 0.88) 100%);
+}
+
+.hero-content {
+    position: relative;
+    padding-bottom: 3.5rem;
+    color: var(--ctms-text-inverse);
+}
+
+.hero-title {
+    font-weight: 700;
+    font-size: clamp(1.75rem, 1.15rem + 2.8vw, 3.25rem);
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+.hero-text {
+    max-width: 34rem;
+    font-size: clamp(0.9375rem, 0.9rem + 0.25vw, 1.125rem);
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.75rem;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+@media (max-width: 575.98px) {
+    .hero {
+        height: 92vh;
+        min-height: 32rem;
+    }
+
+    .hero-content {
+        padding-bottom: 2.5rem;
+    }
+
+    .hero-actions .btn {
+        flex: 1 1 100%;
+    }
+}
+
+/* --- Feature cards ------------------------------------------------------------------------- */
+
+.feature-card {
+    height: 100%;
+    padding: 1.75rem;
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-sm);
+    transition: transform var(--ctms-transition), box-shadow var(--ctms-transition);
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--ctms-shadow-lg);
+}
+
+.feature-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1.125rem;
+    font-size: 1.375rem;
+    color: var(--ctms-primary);
+    background-color: rgba(11, 79, 216, 0.1);
+    border-radius: var(--ctms-radius);
+}
+
+.feature-card-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.feature-card-text {
+    font-size: 0.9375rem;
+    color: var(--ctms-text-muted);
+    margin-bottom: 0;
+}
+
+/* ----------------------------------------------------------------------------------------------
+Avatars
+
+The user images are line-art icons, so they sit centred inside a tinted circle with padding around
+them rather than cropped to fill it.
+---------------------------------------------------------------------------------------------- */
+
+.avatar {
+    display: block;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: rgba(11, 79, 216, 0.08);
+    padding: 0.25rem;
+    object-fit: contain;
+}
+
+.avatar-sm {
+    width: 3rem;
+    height: 3rem;
+}
+
+.avatar-lg {
+    width: 6rem;
+    height: 6rem;
+    padding: 0.5rem;
+}
+
+/* --- Testimonials -------------------------------------------------------------------------- */
+
+.testimonial {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.75rem;
+    background-color: var(--ctms-surface);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-sm);
+}
+
+.testimonial-quote {
+    flex-grow: 1;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--ctms-text);
+    margin-bottom: 1.25rem;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ctms-border);
+}
+
+.testimonial-name {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+.testimonial-role {
+    font-size: 0.8125rem;
+    color: var(--ctms-text-muted);
+    margin-bottom: 0;
+}
+
+/* --- Team ---------------------------------------------------------------------------------- */
+
+.team-card {
+    height: 100%;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-sm);
+}
+
+.team-card .avatar {
+    margin: 0 auto 1.125rem;
+}
+
+.team-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.team-role {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ctms-primary);
+    margin-bottom: 0.75rem;
+}
+
+.team-bio {
+    font-size: 0.9375rem;
+    color: var(--ctms-text-muted);
+    margin-bottom: 0;
+}
+
+/* --- Partner logos ------------------------------------------------------------------------- */
+
+.partner-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem 2.5rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.partner-strip img {
+    height: 1.5rem;
+    width: auto;
+    opacity: 0.55;
+    filter: grayscale(100%);
+    transition: opacity var(--ctms-transition), filter var(--ctms-transition);
+}
+
+.partner-strip img:hover {
+    opacity: 1;
+    filter: grayscale(0);
+}
+
+/* --- Footer -------------------------------------------------------------------------------- */
+
+.site-footer {
+    padding: 3.5rem 0 1.75rem;
+    color: rgba(240, 249, 255, 0.75);
+    background-color: var(--ctms-surface-dark);
+}
+
+.site-footer h3 {
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ctms-text-inverse);
+    margin-bottom: 1rem;
+}
+
+.site-footer-links {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    line-height: 2;
+    font-size: 0.9375rem;
+}
+
+.site-footer a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.site-footer a:hover,
+.site-footer a:focus {
+    color: var(--ctms-accent);
+}
+
+.site-footer-about {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    margin-bottom: 0;
+}
+
+.site-footer-social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0;
+    margin: 2rem 0 0;
+    list-style: none;
+}
+
+.site-footer-social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.125rem;
+    color: var(--ctms-text-inverse);
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+    transition: background-color var(--ctms-transition), box-shadow var(--ctms-transition);
+}
+
+.site-footer-social a:hover,
+.site-footer-social a:focus {
+    color: var(--ctms-text-inverse);
+    background-color: var(--ctms-primary);
+    box-shadow: inset 0 0 0 1px var(--ctms-primary);
+}
+
+.site-footer-legal {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 0.8125rem;
+    color: rgba(240, 249, 255, 0.55);
+    text-align: center;
+    margin-bottom: 0;
+}
+
+/* ----------------------------------------------------------------------------------------------
+Scroll-to-top control
+
+Hidden until the page is scrolled; the site script toggles the is-visible class.
+---------------------------------------------------------------------------------------------- */
+
+.scroll-to-top {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 1030;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--ctms-text-inverse);
+    background-color: rgba(11, 79, 216, 0.85);
+    border-radius: 50%;
+    box-shadow: var(--ctms-shadow-md);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--ctms-transition), visibility var(--ctms-transition), background-color var(--ctms-transition);
+}
+
+.scroll-to-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.scroll-to-top:hover,
+.scroll-to-top:focus {
+    color: var(--ctms-text-inverse);
+    background-color: var(--ctms-primary-dark);
+}
+
+/* ----------------------------------------------------------------------------------------------
+Flash messages
+
+Pinned below the fixed header so a message is visible wherever the page is scrolled.
+---------------------------------------------------------------------------------------------- */
+
+.message-stack {
+    position: fixed;
+    top: calc(var(--ctms-header-height) + 0.75rem);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1040;
+    width: min(100% - 1.5rem, 34rem);
+}
+
+.message-stack .alert {
+    box-shadow: var(--ctms-shadow-lg);
+}

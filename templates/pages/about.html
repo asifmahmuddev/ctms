@@ -1,0 +1,79 @@
+{# About page: what the platform does, its reach, and the team behind it. #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About &mdash; CTMS{% endblock %}
+{% block description %}CTMS brings quoting, routing, booking and tracking onto a single freight platform.{% endblock %}
+
+{% block content %}
+    <section class="section section-light">
+        <div class="container">
+            <div class="section-intro">
+                <h2>About CTMS</h2>
+                <p>We build the software that moves freight. CTMS brings quoting, routing, booking and tracking onto a
+                    single platform, so shippers and carriers can plan a shipment end to end without leaving one screen.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <span class="feature-card-icon"><i class="fas fa-compass" aria-hidden="true"></i></span>
+                        <h3 class="feature-card-title">Plan</h3>
+                        <p class="feature-card-text">Quote a consignment across air, sea, road and rail, with the distance
+                            and the journey time worked out before it is booked.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <span class="feature-card-icon"><i class="fas fa-cube" aria-hidden="true"></i></span>
+                        <h3 class="feature-card-title">Book</h3>
+                        <p class="feature-card-text">Turn a planned route into a confirmed order, with cargo weight and
+                            cost captured at the point of booking.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <span class="feature-card-icon"><i class="fas fa-sync-alt" aria-hidden="true"></i></span>
+                        <h3 class="feature-card-title">Track</h3>
+                        <p class="feature-card-text">Follow every shipment from pending through processing to complete,
+                            with status visible to customers and staff alike.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-light">
+        <div class="container">
+            <div class="section-intro">
+                <h2>Leadership</h2>
+                <p>The team responsible for the platform and its operations.</p>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-sm-6 col-lg-4">
+                    <div class="team-card">
+                        <img class="avatar avatar-lg" src="{% static 'images/male-user.png' %}" alt="" loading="lazy">
+                        <h3 class="team-name">Edward Whitfield</h3>
+                        <p class="team-role">Chief Executive Officer</p>
+                        <p class="team-bio">Sets the direction of the platform and its partner network.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <div class="team-card">
+                        <img class="avatar avatar-lg" src="{% static 'images/female-user.png' %}" alt="" loading="lazy">
+                        <h3 class="team-name">Sarah Langley</h3>
+                        <p class="team-role">Head of Operations</p>
+                        <p class="team-bio">Runs day-to-day freight operations and carrier relationships.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <div class="team-card">
+                        <img class="avatar avatar-lg" src="{% static 'images/male-user.png' %}" alt="" loading="lazy">
+                        <h3 class="team-name">Thomas Ashcroft</h3>
+                        <p class="team-role">Head of Engineering</p>
+                        <p class="team-bio">Leads the design and delivery of the platform itself.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
