@@ -1,0 +1,39 @@
+{# Base layout: document shell, shared assets, and the navbar/messages/footer chrome. #}
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{% block description %}Plan, book and track cargo shipments across air, sea, road and rail from a single platform.{% endblock %}">
+    <meta name="theme-color" content="#041a4d">
+    <title>{% block title %}CTMS{% endblock %}</title>
+
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" sizes="any">
+    <link rel="apple-touch-icon" href="{% static 'images/cargo-48px.png' %}">
+
+    <link rel="stylesheet" href="{% static 'lib/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'lib/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    {% block extra_stylesheet %}{% endblock %}
+</head>
+
+<body id="page-top" class="{% block body_class %}{% endblock %}">
+    {% include 'includes/navbar.html' %}
+
+    {% include 'includes/messages.html' %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include 'includes/footer.html' %}
+
+    <a class="scroll-to-top" href="#page-top" aria-label="Back to top"><i class="fas fa-angle-up" aria-hidden="true"></i></a>
+
+    <script src="{% static 'lib/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+
+    {% block extra_script %}{% endblock %}
+</body>
+</html>

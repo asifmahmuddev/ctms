@@ -1,0 +1,54 @@
+# Paths kept out of version control: secrets, build output, uploads and local-only directories.
+
+# --- Secrets -----------------------------------------------------------------------------------
+# .env.* also matches .env.example, so the template is re-included explicitly.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Python ------------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# --- Virtual environments ----------------------------------------------------------------------
+.venv/
+venv/
+env/
+
+# --- Django ------------------------------------------------------------------------------------
+*.log
+*.sqlite3
+
+# Migration files are generated from the models. Only the package marker is kept, because Django
+# refuses to migrate an app that other apps depend on but that has no migrations module at all.
+/apps/*/migrations/*.py
+!/apps/*/migrations/__init__.py
+
+# collectstatic output, regenerated on demand
+/staticfiles/
+
+# Uploaded media. The default profile image is the one tracked file, because it is a model default
+# and must exist wherever the project runs. A negation cannot re-include a file whose parent
+# directory is excluded, so each level is unwound explicitly.
+/media/*
+!/media/profile-images/
+/media/profile-images/*
+!/media/profile-images/default.png
+
+# --- Tooling -----------------------------------------------------------------------------------
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- Editors and IDEs --------------------------------------------------------------------------
+.vscode/
+*.swp
+*~
+
+# --- OS ----------------------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini

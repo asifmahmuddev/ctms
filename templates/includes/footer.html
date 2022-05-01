@@ -1,0 +1,36 @@
+{# Site footer: link columns, company blurb, social links and the copyright line. #}
+<footer class="site-footer">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-6 col-lg-2">
+                <h3>Services</h3>
+                <ul class="site-footer-links">
+                    <li><a href="#">Air freight</a></li>
+                    <li><a href="#">Sea freight</a></li>
+                    <li><a href="#">Road freight</a></li>
+                    <li><a href="#">Rail freight</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-lg-2">
+                <h3>Company</h3>
+                <ul class="site-footer-links">
+                    <li><a href="{% url 'about' %}">About</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-12 col-lg-5 offset-lg-1">
+                <h3>Cargo Transportation Management System</h3>
+                <p class="site-footer-about">For every delivery, there is an opportunity. CTMS matches capacity to demand,
+                    so you never miss a chance to save.</p>
+                <ul class="site-footer-social">
+                    <li><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a></li>
+                    <li><a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a></li>
+                    <li><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a></li>
+                    <li><a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a></li>
+                </ul>
+            </div>
+        </div>
+        <p class="site-footer-legal">&copy; 2022 CTMS. All rights reserved.</p>
+    </div>
+</footer>

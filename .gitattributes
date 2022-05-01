@@ -1,0 +1,29 @@
+# How Git treats each file type: line endings, language-aware diffs and vendored paths.
+#
+# Line endings are normalized to LF in the repository, so a checkout behaves identically whatever
+# platform it is cloned on.
+* text=auto eol=lf
+
+# --- Language-aware diffs ----------------------------------------------------------------------
+# Git ships these drivers, so a hunk header names the function or rule the change sits in.
+*.py                diff=python
+*.html              diff=html
+*.css               diff=css
+
+# --- Binary ------------------------------------------------------------------------------------
+# Declared outright so the text heuristic can never rewrite bytes inside them.
+*.png               binary
+*.jpg               binary
+*.ico               binary
+*.webm              binary
+*.woff              binary
+*.woff2             binary
+*.ttf               binary
+*.eot               binary
+
+# --- Vendored libraries ------------------------------------------------------------------------
+# Third-party assets: excluded from language statistics and collapsed in diffs. Project-authored
+# stylesheets and scripts are deliberately not listed here, so they stay reviewable.
+static/lib/**       linguist-vendored
+*.min.css           linguist-vendored -diff
+*.min.js            linguist-vendored -diff

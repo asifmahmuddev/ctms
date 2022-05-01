@@ -1,0 +1,187 @@
+{# Landing page: hero, platform highlight with a sample route, features, partners and testimonials. #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}CTMS &mdash; Cargo Transportation Management System{% endblock %}
+
+{# Suppresses the header offset so the hero video sits behind the translucent header. #}
+{% block body_class %}has-hero{% endblock %}
+
+{% block content %}
+    <section class="hero">
+        <video class="hero-video" autoplay muted loop playsinline aria-hidden="true" tabindex="-1">
+            <source src="{% static 'videos/CTMS.webm' %}" type="video/webm">
+        </video>
+        <span class="hero-overlay"></span>
+        <div class="container hero-content">
+            <h1 class="hero-title">Move cargo with complete visibility</h1>
+            <p class="hero-text">Plan multi-leg routes across air, sea, road and rail, book them in a few clicks,
+                and follow every shipment through to delivery.</p>
+            <div class="hero-actions">
+                <a class="btn btn-ctms-accent" href="{% url 'about' %}">Explore the platform</a>
+                <a class="btn btn-ctms" href="#features">See what it does</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-alt">
+        <div class="container">
+            {# gy-* adds vertical spacing only; a larger g-* would overflow the container on narrow screens. #}
+            <div class="row align-items-center g-4 gy-5">
+                <div class="col-lg-7 highlight-text">
+                    <h2>One platform for the whole freight desk</h2>
+                    <p>Execute complex logistics transactions and manage freight operations from a single, easy to use
+                        platform. Powered by automation and analytics, CTMS gives you deep visibility and control over
+                        every shipment you move.</p>
+                    <a class="btn btn-ctms" href="{% url 'about' %}">Learn more</a>
+                </div>
+                <div class="col-lg-5">
+                    <div class="route-card">
+                        <div class="route-card-header">
+                            <span class="route-card-title">Sample route</span>
+                            <span class="route-card-badge">4 legs</span>
+                        </div>
+                        <ol class="route-legs">
+                            <li class="route-leg route-leg-origin">
+                                <span class="route-leg-place">Dhaka, BD</span>
+                                <span class="route-leg-role">Origin</span>
+                                <span class="route-leg-transit"><i class="fas fa-plane" aria-hidden="true"></i> 2h 15m</span>
+                            </li>
+                            <li class="route-leg">
+                                <span class="route-leg-place">Dubai, AE</span>
+                                <span class="route-leg-role">Waypoint</span>
+                                <span class="route-leg-transit"><i class="fas fa-plane" aria-hidden="true"></i> 6h 40m</span>
+                            </li>
+                            <li class="route-leg">
+                                <span class="route-leg-place">Hamburg, DE</span>
+                                <span class="route-leg-role">Waypoint</span>
+                                <span class="route-leg-transit"><i class="fas fa-truck" aria-hidden="true"></i> 4h 05m</span>
+                            </li>
+                            <li class="route-leg route-leg-destination">
+                                <span class="route-leg-place">Rotterdam, NL</span>
+                                <span class="route-leg-role">Destination</span>
+                            </li>
+                        </ol>
+                        <div class="route-card-footer">
+                            <span><span class="route-total-value">13h 00m</span> total transit</span>
+                            <span><span class="route-total-value">9,420 km</span> distance</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-light" id="features">
+        <div class="container">
+            <div class="section-intro">
+                <h2>Features</h2>
+                <p>Everything a shipper or carrier needs to quote, book and track freight, in one place.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-sm-6 col-lg-4">
+                    <div class="feature-card">
+                        <span class="feature-card-icon"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></span>
+                        <h3 class="feature-card-title">Works everywhere</h3>
+                        <p class="feature-card-text">Route cargo between any two points worldwide, with waypoints in between.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <div class="feature-card">
+                        <span class="feature-card-icon"><i class="fas fa-clock" aria-hidden="true"></i></span>
+                        <h3 class="feature-card-title">Always available</h3>
+                        <p class="feature-card-text">Track shipments around the clock, from any device, wherever you are.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <div class="feature-card">
+                        <span class="feature-card-icon"><i class="fas fa-sliders-h" aria-hidden="true"></i></span>
+                        <h3 class="feature-card-title">Customizable</h3>
+                        <p class="feature-card-text">Adapts to the way your team already books and settles freight.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <div class="feature-card">
+                        <span class="feature-card-icon"><i class="fas fa-leaf" aria-hidden="true"></i></span>
+                        <h3 class="feature-card-title">Efficient</h3>
+                        <p class="feature-card-text">Consolidate loads and cut empty miles with capacity matched to demand.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <div class="feature-card">
+                        <span class="feature-card-icon"><i class="fas fa-plane" aria-hidden="true"></i></span>
+                        <h3 class="feature-card-title">Multimodal</h3>
+                        <p class="feature-card-text">Compare air, sea, road and rail on the same route before you commit.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-4">
+                    <div class="feature-card">
+                        <span class="feature-card-icon"><i class="fas fa-mobile-alt" aria-hidden="true"></i></span>
+                        <h3 class="feature-card-title">Mobile first</h3>
+                        <p class="feature-card-text">Book a shipment and monitor its status from a phone as easily as a desk.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-muted">
+        <div class="container">
+            <ul class="partner-strip">
+                <li><img src="{% static 'images/instacart.png' %}" alt="Instacart" loading="lazy"></li>
+                <li><img src="{% static 'images/kickstarter.png' %}" alt="Kickstarter" loading="lazy"></li>
+                <li><img src="{% static 'images/lyft.png' %}" alt="Lyft" loading="lazy"></li>
+                <li><img src="{% static 'images/shopify.png' %}" alt="Shopify" loading="lazy"></li>
+                <li><img src="{% static 'images/pinterest.png' %}" alt="Pinterest" loading="lazy"></li>
+                <li><img src="{% static 'images/twitter.png' %}" alt="Twitter" loading="lazy"></li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="section section-alt">
+        <div class="container">
+            <div class="section-intro">
+                <h2>Testimonials</h2>
+                <p>What operators say after moving their freight desk onto CTMS.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <figure class="testimonial">
+                        <blockquote class="testimonial-quote">Booking a multi-leg route now takes minutes instead of an afternoon.</blockquote>
+                        <figcaption class="testimonial-author">
+                            <img class="avatar avatar-sm" src="{% static 'images/male-user.png' %}" alt="" loading="lazy">
+                            <span>
+                                <span class="testimonial-name d-block">Ben Johnson</span>
+                                <span class="testimonial-role d-block">Operations Director</span>
+                            </span>
+                        </figcaption>
+                    </figure>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <figure class="testimonial">
+                        <blockquote class="testimonial-quote">Having every shipment and its status on one screen changed how we plan.</blockquote>
+                        <figcaption class="testimonial-author">
+                            <img class="avatar avatar-sm" src="{% static 'images/female-user.png' %}" alt="" loading="lazy">
+                            <span>
+                                <span class="testimonial-name d-block">Emily Clark</span>
+                                <span class="testimonial-role d-block">Head of Logistics</span>
+                            </span>
+                        </figcaption>
+                    </figure>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <figure class="testimonial">
+                        <blockquote class="testimonial-quote">The route costing paid for itself in the first quarter.</blockquote>
+                        <figcaption class="testimonial-author">
+                            <img class="avatar avatar-sm" src="{% static 'images/male-user.png' %}" alt="" loading="lazy">
+                            <span>
+                                <span class="testimonial-name d-block">Carl Kent</span>
+                                <span class="testimonial-role d-block">Freight Manager</span>
+                            </span>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

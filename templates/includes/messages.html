@@ -1,0 +1,11 @@
+{# Flash message stack. MESSAGE_TAGS maps each level onto its Bootstrap alert class. #}
+{% if messages %}
+    <div class="message-stack">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert" data-auto-dismiss="6000">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

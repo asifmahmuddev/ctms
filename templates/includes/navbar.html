@@ -1,0 +1,31 @@
+{# Site header pinned to the top: brand, and navigation that collapses below the lg breakpoint. #}
+{% load static %}
+<header>
+    <nav class="navbar navbar-expand-lg fixed-top site-header" aria-label="Main navigation">
+        <div class="container">
+            <a class="site-brand" href="{% url 'index' %}">
+                <img class="site-brand-logo" src="{% static 'images/cargo-48px.png' %}" alt="" width="48" height="48">
+                <span class="site-brand-text">
+                    <span class="site-brand-title">Cargo Transportation</span>
+                    <span class="site-brand-subtitle">Management System</span>
+                </span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primary-navigation"
+                    aria-controls="primary-navigation" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars" aria-hidden="true"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="primary-navigation">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}" {% if request.resolver_match.url_name == 'index' %}aria-current="page"{% endif %}>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}" {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}>About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
