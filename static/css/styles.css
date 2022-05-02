@@ -214,6 +214,283 @@ its own padding.
 }
 
 /* ----------------------------------------------------------------------------------------------
+Forms
+
+Field wrappers, help text and validation messages. Bootstrap supplies the controls themselves, so
+nothing here redefines .form-control, .form-label or .form-check.
+---------------------------------------------------------------------------------------------- */
+
+.form-field {
+    margin-bottom: 1.125rem;
+}
+
+/* A shade lighter than the wording, so it identifies the field without competing with it. */
+.form-label-icon {
+    margin-right: 0.375rem;
+    color: var(--ctms-text-muted);
+}
+
+.form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.375rem;
+}
+
+.form-field .form-control {
+    padding: 0.625rem 0.875rem;
+    border-color: var(--ctms-border);
+}
+
+.form-field .form-control:focus {
+    border-color: var(--ctms-primary);
+    box-shadow: 0 0 0 0.2rem rgba(11, 79, 216, 0.15);
+}
+
+.form-field-invalid .form-control,
+.form-field-invalid .form-check-input {
+    border-color: var(--ctms-danger);
+}
+
+.form-help {
+    margin-top: 0.375rem;
+    font-size: 0.8125rem;
+    color: var(--ctms-text-muted);
+}
+
+/* The password validators publish their help as a list, whose bullets sit outside the field. */
+.form-help ul {
+    padding-left: 1.125rem;
+    margin-bottom: 0;
+}
+
+.form-error {
+    margin: 0.375rem 0 0;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ctms-danger);
+}
+
+.form-error-summary {
+    padding: 0.625rem 0.875rem;
+    margin: 0 0 1rem;
+    background-color: rgba(220, 53, 69, 0.08);
+    border-radius: var(--ctms-radius);
+}
+
+.password-toggle {
+    color: var(--ctms-text-muted);
+    border: 1px solid var(--ctms-border);
+    border-left: none;
+}
+
+.password-toggle:hover,
+.password-toggle:focus {
+    color: var(--ctms-primary);
+    background-color: var(--ctms-surface-muted);
+}
+
+/* ----------------------------------------------------------------------------------------------
+Authentication pages
+
+A form card beside a photograph. The photograph is decorative and appears from the lg breakpoint
+only, so a phone never downloads it and the card keeps the full width of the screen.
+---------------------------------------------------------------------------------------------- */
+
+.auth-layout {
+    display: grid;
+    min-height: calc(100vh - var(--ctms-header-height));
+    background: linear-gradient(155deg, var(--ctms-surface-alt) 0%, var(--ctms-surface) 60%);
+}
+
+.auth-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1rem;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 30rem;
+    padding: 1.75rem 1.25rem;
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-lg);
+}
+
+.auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ctms-primary);
+    text-decoration: none;
+}
+
+.auth-brand img {
+    flex-shrink: 0;
+}
+
+.auth-card-header {
+    margin-bottom: 1.5rem;
+}
+
+.auth-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto 1rem;
+    font-size: 1.5rem;
+    border-radius: 50%;
+}
+
+.auth-icon-success {
+    color: var(--ctms-success);
+    background-color: rgba(25, 135, 84, 0.12);
+}
+
+.auth-icon-warning {
+    color: var(--ctms-warning);
+    background-color: rgba(255, 152, 0, 0.16);
+}
+
+.auth-icon-info {
+    color: var(--ctms-primary);
+    background-color: rgba(11, 79, 216, 0.1);
+}
+
+.auth-title {
+    font-weight: 700;
+    font-size: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+    margin-bottom: 0.5rem;
+}
+
+.auth-subtitle,
+.auth-note {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--ctms-text-muted);
+    margin-bottom: 0;
+}
+
+/* A note introducing a form takes the card header's gap; one closing a card does not. */
+.auth-note + .auth-form {
+    margin-top: 1.5rem;
+}
+
+.auth-submit {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.auth-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ctms-border);
+    font-size: 0.875rem;
+}
+
+/* space-between would pin a single link to the left edge, where it reads as a stray fragment. */
+.auth-links a:only-child {
+    margin: 0 auto;
+}
+
+.auth-links a {
+    font-weight: 600;
+    color: var(--ctms-primary);
+    text-decoration: none;
+}
+
+.auth-links a:hover,
+.auth-links a:focus {
+    color: var(--ctms-primary-dark);
+    text-decoration: underline;
+}
+
+.auth-visual {
+    display: none;
+}
+
+@media (min-width: 576px) {
+    .auth-card {
+        padding: 2.5rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .auth-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .auth-panel {
+        padding: 3rem 2rem;
+    }
+
+    .auth-visual {
+        display: block;
+        background-color: var(--ctms-primary-darker);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    /* Brand tint over the photograph, so each page reads as part of the same site. */
+    .auth-visual::after {
+        content: "";
+        display: block;
+        height: 100%;
+        background: linear-gradient(200deg, rgba(4, 26, 77, 0.55) 0%, rgba(4, 26, 77, 0.12) 50%, rgba(11, 79, 216, 0.45) 100%);
+    }
+
+    .auth-visual-signin {
+        background-image: url('../images/signin-bg.jpg');
+    }
+
+    .auth-visual-signup {
+        background-image: url('../images/signup-bg.jpg');
+    }
+
+    .auth-visual-activation-failed {
+        background-image: url('../images/activation-failed-bg.jpg');
+    }
+
+    .auth-visual-password-reset {
+        background-image: url('../images/password-reset-bg.jpg');
+    }
+
+    .auth-visual-password-reset-sent {
+        background-image: url('../images/password-reset-done-bg.jpg');
+    }
+
+    .auth-visual-password-reset-confirm {
+        background-image: url('../images/password-reset-confirm-bg.jpg');
+    }
+
+    .auth-visual-password-reset-complete {
+        background-image: url('../images/password-reset-complete-bg.jpg');
+    }
+
+    .auth-visual-password-change {
+        background-image: url('../images/password-change-bg.jpg');
+    }
+
+    .auth-visual-password-change-done {
+        background-image: url('../images/password-change-done-bg.jpg');
+    }
+}
+
+/* ----------------------------------------------------------------------------------------------
 Header
 
 Translucent and pinned to the top so the landing video shows through, yet dark enough that white
@@ -352,6 +629,67 @@ nav text keeps its contrast over the video and over plain white pages alike.
     .site-header .nav-link:focus::after,
     .site-header .nav-link[aria-current="page"]::after {
         transform: scaleX(1);
+    }
+}
+
+/* --- Account menu -------------------------------------------------------------------------- */
+
+.site-account-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0;
+    font-weight: 500;
+    color: var(--ctms-text-inverse);
+    background: none;
+    border: none;
+}
+
+.site-account-toggle:hover,
+.site-account-toggle:focus {
+    color: var(--ctms-accent);
+}
+
+.site-account-avatar {
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.15);
+    object-fit: cover;
+}
+
+/* Wide enough that an ordinary address fits on one line, since addresses have no natural break. */
+.site-account-menu .dropdown-menu {
+    min-width: 15rem;
+}
+
+.site-account-summary {
+    display: flex;
+    flex-direction: column;
+    padding: 0.25rem 1rem 0.5rem;
+}
+
+.site-account-summary-name {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.site-account-summary-email {
+    font-size: 0.8125rem;
+    color: var(--ctms-text-muted);
+    overflow-wrap: anywhere;
+}
+
+.site-nav-action {
+    margin-top: 0.75rem;
+}
+
+@media (min-width: 992px) {
+    .site-account-menu {
+        margin-left: 1.75rem;
+    }
+
+    .site-nav-action {
+        margin-top: 0;
+        margin-left: 1.5rem;
     }
 }
 

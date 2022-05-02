@@ -1,0 +1,23 @@
+{# Sign-in page: the credentials form, with links to registration and password reset. #}
+{% extends 'accounts/auth-base.html' %}
+
+{% block title %}Sign in &mdash; CTMS{% endblock %}
+{% block description %}Sign in to your CTMS account to plan routes, place orders and track shipments.{% endblock %}
+{% block auth_visual_class %}auth-visual-signin{% endblock %}
+
+{% block auth_title %}Welcome back{% endblock %}
+{% block auth_subtitle %}Sign in to plan routes, place orders and follow every shipment.{% endblock %}
+
+{% block auth_body %}
+    <form class="auth-form" method="post" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {% include 'includes/form-fields.html' %}
+        <button class="btn btn-ctms auth-submit" type="submit">Sign in</button>
+    </form>
+{% endblock %}
+
+{% block auth_links %}
+    <a href="{% url 'password_reset' %}">Forgot your password?</a>
+    <a href="{% url 'signup' %}">Create an account</a>
+{% endblock %}

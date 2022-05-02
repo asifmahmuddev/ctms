@@ -1,0 +1,4 @@
+{# Renders every field of `form`, preceded by the errors that belong to no single field. #}
+{% for error in form.non_field_errors %}<p class="form-error form-error-summary">{{ error }}</p>{% endfor %}
+{% for field in form.hidden_fields %}{{ field }}{% endfor %}
+{% for field in form.visible_fields %}{% include 'includes/form-field.html' %}{% endfor %}

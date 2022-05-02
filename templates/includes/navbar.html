@@ -20,6 +20,38 @@
                 <ul class="navbar-nav ms-auto align-items-lg-center">
                     {% include 'includes/site-nav-item.html' with url_name='index' label='Home' %}
                     {% include 'includes/site-nav-item.html' with url_name='about' label='About' %}
+
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown site-account-menu">
+                            <button class="site-account-toggle dropdown-toggle" type="button" id="account-menu" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="site-account-avatar" src="{{ user.profile_image_url }}" alt="" width="32" height="32">
+                                <span class="site-account-name">{{ user.get_short_name }}</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="account-menu">
+                                <li class="site-account-summary">
+                                    <span class="site-account-summary-name">{{ user.get_full_name }}</span>
+                                    <span class="site-account-summary-email">{{ user.email }}</span>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'password_change' %}"><i class="fas fa-key fa-fw" aria-hidden="true"></i> Change password</a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    {# Signing out changes state, so it posts: a prefetched link is indistinguishable. #}
+                                    <form method="post" action="{% url 'signout' %}">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" type="submit"><i class="fas fa-sign-out-alt fa-fw" aria-hidden="true"></i> Sign out</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        {% include 'includes/site-nav-item.html' with url_name='signin' label='Sign in' %}
+                        <li class="nav-item site-nav-action">
+                            <a class="btn btn-ctms-accent btn-sm" href="{% url 'signup' %}">Create account</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

@@ -24,6 +24,15 @@ TRUTHY_VALUES = {'1', 'true', 'yes', 'on'}
 DEFAULT_ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 DEFAULT_DATABASE_NAME = 'ctmsdb'
 
+SESSION_LIFETIME_SECONDS = 60 * 60 * 24
+ACCOUNT_LINK_LIFETIME_MINUTES = 5
+
+SMTP_EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+CONSOLE_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_EMAIL_HOST = 'localhost'
+DEFAULT_EMAIL_PORT = '587'
+DEFAULT_SENDER_ADDRESS = 'no-reply@ctms-asifmahmuddev.com'
+
 DEFAULT_LOG_LEVEL = 'INFO'
 
 
@@ -142,6 +151,28 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
+
+LOGIN_URL = 'signin'
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'index'
+
+SESSION_COOKIE_AGE = SESSION_LIFETIME_SECONDS
+
+# Verification, reset and address links share this timeout, and the emails quote the same constant.
+PASSWORD_RESET_TIMEOUT = ACCOUNT_LINK_LIFETIME_MINUTES * 60
+
+
+# --- Email -------------------------------------------------------------------------------------
+# Plain SMTP, so any provider serves; with no credentials the console backend prints each message.
+
+EMAIL_HOST = get_env('EMAIL_HOST', DEFAULT_EMAIL_HOST)
+EMAIL_PORT = int(get_env('EMAIL_PORT', DEFAULT_EMAIL_PORT))
+EMAIL_USE_TLS = get_env_bool('EMAIL_USE_TLS', True)
+EMAIL_HOST_USER = get_env('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = get_env('EMAIL_HOST_PASSWORD', '')
+
+EMAIL_BACKEND = SMTP_EMAIL_BACKEND if EMAIL_HOST_USER else CONSOLE_EMAIL_BACKEND
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or DEFAULT_SENDER_ADDRESS
 
 
 # --- Internationalization ----------------------------------------------------------------------

@@ -1,0 +1,28 @@
+{# Shared shell for the account pages: a card on the left, a full-height photograph beside it. #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="auth-layout">
+        <div class="auth-panel">
+            <div class="auth-card">
+                <a class="auth-brand" href="{% url 'index' %}">
+                    <img src="{% static 'images/cargo-48px.png' %}" alt="" width="36" height="36">
+                    <span>Cargo Transportation Management System</span>
+                </a>
+
+                <div class="auth-card-header">
+                    {% block auth_icon %}{% endblock %}
+                    <h1 class="auth-title">{% block auth_title %}{% endblock %}</h1>
+                    <p class="auth-subtitle">{% block auth_subtitle %}{% endblock %}</p>
+                </div>
+
+                {% block auth_body %}{% endblock %}
+
+                <div class="auth-links">{% block auth_links %}{% endblock %}</div>
+            </div>
+        </div>
+
+        <div class="auth-visual {% block auth_visual_class %}{% endblock %}" aria-hidden="true"></div>
+    </div>
+{% endblock %}

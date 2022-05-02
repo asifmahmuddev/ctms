@@ -13,6 +13,7 @@
 # --- Binary ------------------------------------------------------------------------------------
 # Declared outright so the text heuristic can never rewrite bytes inside them.
 *.png               binary
+*.jpg               binary
 *.ico               binary
 *.webm              binary
 *.woff              binary

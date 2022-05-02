@@ -1,0 +1,21 @@
+{# Registration page: the account creation form. #}
+{% extends 'accounts/auth-base.html' %}
+
+{% block title %}Create an account &mdash; CTMS{% endblock %}
+{% block description %}Create a CTMS account to book cargo routes and track every order from one place.{% endblock %}
+{% block auth_visual_class %}auth-visual-signup{% endblock %}
+
+{% block auth_title %}Create your account{% endblock %}
+{% block auth_subtitle %}One account covers quoting, booking and tracking across air, sea, road and rail.{% endblock %}
+
+{% block auth_body %}
+    <form class="auth-form" method="post" novalidate>
+        {% csrf_token %}
+        {% include 'includes/form-fields.html' %}
+        <button class="btn btn-ctms auth-submit" type="submit">Create account</button>
+    </form>
+{% endblock %}
+
+{% block auth_links %}
+    <a href="{% url 'signin' %}">Already have an account? Sign in</a>
+{% endblock %}

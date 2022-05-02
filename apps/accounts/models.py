@@ -50,6 +50,11 @@ class AccountManager(BaseUserManager):
         extra_fields.setdefault('is_verified', True)
         return self.create_user(email, username, password, **extra_fields)
 
+    def email_is_taken(self, email, exclude_pk):
+        """Return whether an account other than the given one already holds this email address."""
+
+        return self.filter(email__iexact=email).exclude(pk=exclude_pk).exists()
+
 
 class Account(AbstractBaseUser):
     """A registered user, identified by email address."""
@@ -106,6 +111,19 @@ class Account(AbstractBaseUser):
 
     def get_short_name(self):
         return self.first_name or self.username
+
+    @property
+    def profile_image_url(self):
+        """Return the picture's address, falling back to the shared default when the file is missing.
+
+        A stored path outlives its file when media is cleared, so the file itself is checked.
+        """
+
+        picture = self.profile_image
+        if picture and picture.storage.exists(picture.name):
+            return picture.url
+
+        return picture.storage.url(DEFAULT_PROFILE_IMAGE)
 
     # Administrators hold every permission; with no per-object rules the arguments are unused.
     def has_perm(self, _perm, _obj=None):

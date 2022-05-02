@@ -1,0 +1,14 @@
+{# Plain-text body of the verification email; escaping is off as nothing here is markup. #}
+{% autoescape off %}Hi {{ user.get_short_name }},
+
+Confirm that {{ user.email }} belongs to you by opening the link below:
+
+{{ protocol }}://{{ domain }}{% url 'activate' uidb64=uidb64 token=token %}
+
+The link will expire in {{ link_lifetime_minutes }} minute{{ link_lifetime_minutes|pluralize }}, and it stops working once your email address is verified.
+If it is not clickable, copy it into your browser's address bar.
+
+If you did not create a CTMS account, ignore this message and nothing further will happen.
+
+Cargo Transportation Management System
+{% endautoescape %}

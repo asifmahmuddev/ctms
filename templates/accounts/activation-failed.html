@@ -1,0 +1,20 @@
+{# Shown when an activation link is expired, malformed, or has already been used. #}
+{% extends 'accounts/auth-base.html' %}
+
+{% block title %}Verification failed &mdash; CTMS{% endblock %}
+{% block auth_visual_class %}auth-visual-activation-failed{% endblock %}
+
+{% block auth_icon %}<span class="auth-icon auth-icon-warning"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></span>{% endblock %}
+{% block auth_title %}This link no longer works{% endblock %}
+{% block auth_subtitle %}
+    Verification links expire {{ link_lifetime_minutes }} minute{{ link_lifetime_minutes|pluralize }} after they are sent, and each one stops working once it has been used.
+{% endblock %}
+
+{% block auth_body %}
+    <p class="auth-note">Sign in with the email address you registered and we will send you a new verification link.</p>
+{% endblock %}
+
+{% block auth_links %}
+    <a href="{% url 'signin' %}">Sign in</a>
+    <a href="{% url 'signup' %}">Create an account</a>
+{% endblock %}

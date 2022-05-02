@@ -1,0 +1,30 @@
+{# One bound field: label with icon, control, help and errors; passwords gain a reveal. #}
+{% with widget_type=field.field.widget.input_type %}
+    {% if widget_type == 'checkbox' %}
+        <div class="form-field form-check{% if field.errors %} form-field-invalid{% endif %}">
+            {{ field }}
+            <label class="form-check-label" for="{{ field.id_for_label }}">
+                {% if field.field.icon %}<i class="{{ field.field.icon }} fa-fw form-label-icon" aria-hidden="true"></i>{% endif %}{{ field.label }}
+            </label>
+            {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+        </div>
+    {% else %}
+        <div class="form-field{% if field.errors %} form-field-invalid{% endif %}">
+            <label class="form-label" for="{{ field.id_for_label }}">
+                {% if field.field.icon %}<i class="{{ field.field.icon }} fa-fw form-label-icon" aria-hidden="true"></i>{% endif %}{{ field.label }}
+            </label>
+            {% if widget_type == 'password' %}
+                <div class="input-group">
+                    {{ field }}
+                    <button class="btn password-toggle" type="button" data-password-target="{{ field.id_for_label }}" aria-label="Show password">
+                        <i class="fas fa-eye" aria-hidden="true"></i>
+                    </button>
+                </div>
+            {% else %}
+                {{ field }}
+            {% endif %}
+            {% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}
+            {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}

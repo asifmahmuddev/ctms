@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------------------------
-CTMS site behaviour: scroll-to-top and flash messages.
+CTMS site behaviour: scroll-to-top, flash messages and password reveal.
 ---------------------------------------------------------------------------------------------- */
 
 (function () {
@@ -10,6 +10,9 @@ CTMS site behaviour: scroll-to-top and flash messages.
 
     const AUTO_DISMISS_ATTRIBUTE = 'data-auto-dismiss';
     const AUTO_DISMISS_MILLISECONDS = 9000;
+    const PASSWORD_TARGET_ATTRIBUTE = 'data-password-target';
+    const PASSWORD_HIDDEN_ICON = 'fa-eye';
+    const PASSWORD_VISIBLE_ICON = 'fa-eye-slash';
 
     function initScrollToTop() {
         const control = document.querySelector('.scroll-to-top');
@@ -45,8 +48,30 @@ CTMS site behaviour: scroll-to-top and flash messages.
         Array.prototype.forEach.call(document.querySelectorAll('[' + AUTO_DISMISS_ATTRIBUTE + ']'), armAutoDismiss);
     }
 
+    function initPasswordToggles() {
+        const toggles = document.querySelectorAll('[' + PASSWORD_TARGET_ATTRIBUTE + ']');
+
+        Array.prototype.forEach.call(toggles, function (toggle) {
+            const field = document.getElementById(toggle.getAttribute(PASSWORD_TARGET_ATTRIBUTE));
+            const icon = toggle.querySelector('i');
+            if (!field || !icon) {
+                return;
+            }
+
+            toggle.addEventListener('click', function () {
+                const wasRevealed = field.type === 'text';
+
+                field.type = wasRevealed ? 'password' : 'text';
+                toggle.setAttribute('aria-label', wasRevealed ? 'Show password' : 'Hide password');
+                icon.classList.toggle(PASSWORD_HIDDEN_ICON, wasRevealed);
+                icon.classList.toggle(PASSWORD_VISIBLE_ICON, !wasRevealed);
+            });
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         initScrollToTop();
         initMessageAutoDismiss();
+        initPasswordToggles();
     });
 }());
