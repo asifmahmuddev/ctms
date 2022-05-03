@@ -10,13 +10,22 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
-from .tokens import account_activation_token
+from .tokens import account_activation_token, email_change_token
 
 ACTIVATION_SUBJECT = 'Verify your CTMS email address'
 ACTIVATION_TEMPLATE = 'accounts/activation-email.html'
 
 PASSWORD_CHANGED_SUBJECT = 'Your CTMS password was changed'
 PASSWORD_CHANGED_TEMPLATE = 'accounts/password-changed-email.html'
+
+PENDING_EMAIL_SUBJECT = 'Confirm your new CTMS email address'
+PENDING_EMAIL_TEMPLATE = 'accounts/email-change-email.html'
+
+EMAIL_CHANGE_REQUESTED_SUBJECT = 'A new email address was requested for your CTMS account'
+EMAIL_CHANGE_REQUESTED_TEMPLATE = 'accounts/email-change-requested-email.html'
+
+EMAIL_CHANGED_SUBJECT = 'Your CTMS email address was changed'
+EMAIL_CHANGED_TEMPLATE = 'accounts/email-changed-email.html'
 
 logger = logging.getLogger(__name__)
 
@@ -68,3 +77,29 @@ def send_password_changed_email(user, request):
     """Tell the account owner their password was replaced, so a change they did not make is noticed."""
 
     send_account_email(PASSWORD_CHANGED_SUBJECT, PASSWORD_CHANGED_TEMPLATE, user, request)
+
+
+def send_pending_email_confirmation(user, request):
+    """Email the address an account has asked to move to, with the link that completes the move."""
+
+    send_account_email(
+        PENDING_EMAIL_SUBJECT, PENDING_EMAIL_TEMPLATE, user, request,
+        recipient=user.pending_email,
+        uidb64=urlsafe_base64_encode(force_bytes(user.pk)),
+        token=email_change_token.make_token(user),
+    )
+
+
+def send_email_change_requested_email(user, request):
+    """Warn the address an account still signs in with that a move to a different one was asked for."""
+
+    send_account_email(EMAIL_CHANGE_REQUESTED_SUBJECT, EMAIL_CHANGE_REQUESTED_TEMPLATE, user, request)
+
+
+def send_email_changed_email(user, previous_email, request):
+    """Warn the address the account has just left, which is where a hijack would be noticed."""
+
+    send_account_email(
+        EMAIL_CHANGED_SUBJECT, EMAIL_CHANGED_TEMPLATE, user, request,
+        recipient=previous_email, previous_email=previous_email,
+    )

@@ -1,0 +1,24 @@
+{# Email change: the new address, confirmed with the account's current password. #}
+{% extends 'accounts/auth-base.html' %}
+
+{% block title %}Change your email address &mdash; CTMS{% endblock %}
+{% block auth_visual_class %}auth-visual-email-change{% endblock %}
+
+{% block auth_title %}Change your email address{% endblock %}
+{% block auth_subtitle %}This is the address you sign in with. We will email the new address a link that confirms the change.{% endblock %}
+
+{% block auth_body %}
+    {% if user.email_change_is_pending %}
+        <p class="auth-note">A confirmation link was sent to {{ user.pending_email }}. Your account signs in with {{ user.email }} until that link is opened.</p>
+    {% endif %}
+
+    <form class="auth-form" method="post" novalidate>
+        {% csrf_token %}
+        {% include 'includes/form-fields.html' %}
+        <button class="btn btn-ctms auth-submit" type="submit">Send confirmation link</button>
+    </form>
+{% endblock %}
+
+{% block auth_links %}
+    <a href="{% url 'profile_edit' %}">Back to your profile</a>
+{% endblock %}

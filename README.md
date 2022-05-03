@@ -1,13 +1,13 @@
 # CTMS — Cargo Transportation Management System
 
-A freight platform. Visitors register, verify their address and sign in; the public landing and about pages sit in front.
+A freight platform. Visitors register, verify their address and sign in, then keep a profile with a cropped picture of their own.
 
 | Component | Version |
 | --- | --- |
 | Python | 3.10.4 |
 | Django | 4.0.4 |
 | Database | MongoDB |
-| Front end | Bootstrap 5.1.3, Font Awesome 5.15.4 |
+| Front end | Bootstrap 5.1.3, Font Awesome 5.15.4, Cropper.js 1.5.12 |
 
 ---
 
@@ -123,12 +123,13 @@ ctms/
 │   │   ├── admin.py                 Admin registration and fieldset layout
 │   │   ├── apps.py                  Application configuration
 │   │   ├── backends.py              Authentication backend that ignores email letter case
-│   │   ├── emails.py                Verification and password notices, sent off the request thread
-│   │   ├── forms.py                 Registration, sign-in and password forms
+│   │   ├── emails.py                Verification, confirmation and change notices, sent off the request thread
+│   │   ├── forms.py                 Registration, sign-in, password and profile forms
+│   │   ├── images.py                Crops an upload to the square avatar stored on an account
 │   │   ├── models.py                Account model, its manager, and field length limits
-│   │   ├── tokens.py                One-time token generator behind the activation link
-│   │   ├── urls.py                  Routes for registration, sign-in and the password flows
-│   │   └── views.py                 Registration, sign-in, sign-out, activation and passwords
+│   │   ├── tokens.py                One-time token generators behind the activation and confirmation links
+│   │   ├── urls.py                  Routes for the account flows
+│   │   └── views.py                 Registration, sign-in, sign-out, activation, passwords and profile
 │   ├── common/                      Shared helpers, imported by the apps rather than owned by one
 │   │   └── forms.py                 Bootstrap control classes and label icons, applied to every form
 │   └── pages/                       Landing and about pages
@@ -145,12 +146,12 @@ ctms/
 ├── static/                          Source assets (STATICFILES_DIRS)
 │   ├── css/styles.css               Design tokens, and every component the site draws itself with
 │   ├── images/                      Icons, backgrounds, avatars and partner logos
-│   ├── js/script.js                 Scroll-to-top, flash messages and password reveal
-│   ├── lib/                         Bootstrap and Font Awesome
+│   ├── js/script.js                 Scroll-to-top, flash messages, password reveal and picture cropping
+│   ├── lib/                         Bootstrap, Font Awesome and Cropper.js
 │   └── videos/hero.webm             Landing page hero video
 ├── templates/                       HTML templates
 │   ├── accounts/                    Account and profile pages, and the plain-text emails they send
-│   ├── includes/                    Navigation, footer, messages and form fields
+│   ├── includes/                    Navigation, footer, messages, form fields and detail rows
 │   ├── pages/                       Landing and about pages
 │   └── base.html                    Document shell that every page extends
 ├── .env.example                     Environment variable template, copied to .env
@@ -174,6 +175,12 @@ Each package also carries an `__init__.py`.
 
 **Link lifetime.** Verification, reset and confirmation links share `ACCOUNT_LINK_LIFETIME_MINUTES` (five), which `PASSWORD_RESET_TIMEOUT` and the pending-address window derive from. A link also dies once used, once the account signs in, or once its password changes — each is folded into the signature.
 
+**Profile.** Each holder edits their own record only, resolved from the session rather than the URL, and email address, username and password each change on their own page behind the current password. A date of birth must fall between 1900 and one year before today.
+
+**Changing an email address.** The new address is held pending while a one-time link goes to it, and only opening that link moves the account. The address being left is warned both when the change is asked for and when it completes, and changing the password cancels the request outright.
+
+**Profile pictures.** PNG and JPEG only, under 5 MB, with the format read from the file's own bytes rather than its name. Cropped server-side with Pillow to a 512-pixel square; a stored path can outlive its file, so `profile_image_url` falls back to the shared default.
+
 Two flags decide whether an account works at all rather than what it may do: `is_verified` gates signing in and is set by opening the link registration emails, and `is_active` withdraws the account entirely.
 
 **Passwords.** Django's validators apply, and a replacement identical to the current password is refused. Changing one by either route signs out every other device and emails the owner.
@@ -186,7 +193,7 @@ Two flags decide whether an account works at all rather than what it may do: `is
 
 **Front end.** Bootstrap supplies the grid and components, and `styles.css` layers the project's design on top without redefining a Bootstrap class. Rules are mobile-first, every colour, radius and spacing step is a token at the top of the file, and every text colour clears WCAG AA against the surface it sits on rather than merely against white.
 
-**Form fields.** Every label carries an icon mapped from the field's name in `apps/common/forms.py` and attached by the shared Bootstrap mixin, so a field looks the same wherever it is rendered.
+**Form fields.** Every label carries an icon mapped from the field's name in `apps/common/forms.py` and attached by the shared Bootstrap mixin, so a field looks the same wherever it is rendered. The profile groups — personal details, contact, social links — come from one definition that the holder's own editor lays itself out from.
 
 ---
 

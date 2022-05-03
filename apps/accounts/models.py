@@ -1,7 +1,11 @@
 """Account model, its manager, and the upload location for profile images."""
 
+import datetime
+
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
+from django.utils import timezone
 
 MAX_LENGTH_NAME = 32
 MAX_LENGTH_USERNAME = 64
@@ -14,6 +18,10 @@ MAX_LENGTH_IMAGE_PATH = 255
 
 PROFILE_IMAGE_DIR = 'profile-images'
 DEFAULT_PROFILE_IMAGE = f'{PROFILE_IMAGE_DIR}/default.png'
+
+# The two columns describing a requested address change are always written and cleared together.
+PENDING_EMAIL_FIELDS = ('pending_email', 'pending_email_requested_at')
+PENDING_EMAIL_LIFETIME = datetime.timedelta(minutes=settings.ACCOUNT_LINK_LIFETIME_MINUTES)
 
 
 def profile_image_path(instance, _filename):
@@ -71,6 +79,10 @@ class Account(AbstractBaseUser):
     username = models.CharField(max_length=MAX_LENGTH_USERNAME, unique=True)
     email = models.EmailField(max_length=MAX_LENGTH_EMAIL, unique=True)
 
+    # Held until the link sent to it is opened, and not unique: the first to confirm gets it.
+    pending_email = models.EmailField(max_length=MAX_LENGTH_EMAIL, blank=True, null=True)
+    pending_email_requested_at = models.DateTimeField(blank=True, null=True)
+
     profile_image = models.ImageField(
         max_length=MAX_LENGTH_IMAGE_PATH,
         upload_to=profile_image_path,
@@ -111,6 +123,29 @@ class Account(AbstractBaseUser):
 
     def get_short_name(self):
         return self.first_name or self.username
+
+    @property
+    def email_change_is_pending(self):
+        """Return whether a requested address is still waiting for a link that can still be opened.
+
+        Measured over the lifetime the link's token is signed against, so both lapse at one moment.
+        """
+
+        if not self.pending_email or not self.pending_email_requested_at:
+            return False
+
+        return timezone.now() - self.pending_email_requested_at < PENDING_EMAIL_LIFETIME
+
+    def forget_lapsed_email_change(self):
+        """Drop a requested address whose link has lapsed, so no address outlives the request for it.
+
+        A mistyped address belongs to somebody else, and holding an unconfirmable one gains nothing.
+        """
+
+        if self.pending_email and not self.email_change_is_pending:
+            self.pending_email = None
+            self.pending_email_requested_at = None
+            self.save(update_fields=PENDING_EMAIL_FIELDS)
 
     @property
     def profile_image_url(self):

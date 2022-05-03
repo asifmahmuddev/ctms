@@ -196,6 +196,19 @@ its own padding.
     box-shadow: var(--ctms-shadow-md);
 }
 
+.btn-ctms-outline {
+    color: var(--ctms-text);
+    background-color: transparent;
+    border-color: var(--ctms-border);
+}
+
+.btn-ctms-outline:hover,
+.btn-ctms-outline:focus {
+    color: var(--ctms-text);
+    background-color: var(--ctms-surface-muted);
+    border-color: var(--ctms-text-muted);
+}
+
 /* Bootstrap's .btn-sm never reaches these on source order, so each variant states its own size. */
 .btn-ctms.btn-sm,
 .btn-ctms-accent.btn-sm,
@@ -488,6 +501,15 @@ only, so a phone never downloads it and the card keeps the full width of the scr
     .auth-visual-password-change-done {
         background-image: url('../images/password-change-done-bg.jpg');
     }
+
+    .auth-visual-email-change {
+        background-image: url('../images/change-email-bg.jpg');
+    }
+
+    .auth-visual-username-change {
+        background-image: url('../images/change-username-bg.jpg');
+    }
+
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -811,6 +833,286 @@ an ultrawide monitor nor collapses to a strip on a phone.
 }
 
 /* ----------------------------------------------------------------------------------------------
+Profile pages
+
+An identity banner over cards of grouped detail. Each card is a grid row on wide screens and a
+stacked pair on narrow ones, so a long value never squeezes its label into a column of letters.
+---------------------------------------------------------------------------------------------- */
+
+.profile-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.75rem 1.25rem;
+    margin-bottom: 1.75rem;
+    text-align: center;
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-sm);
+}
+
+.profile-avatar {
+    display: block;
+    width: 7rem;
+    height: 7rem;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 50%;
+    background-color: rgba(11, 79, 216, 0.08);
+    box-shadow: 0 0 0 4px var(--ctms-surface), 0 0 0 5px var(--ctms-border);
+}
+
+.profile-identity {
+    min-width: 0;
+}
+
+.profile-name {
+    font-weight: 700;
+    font-size: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+    margin-bottom: 0.25rem;
+    overflow-wrap: anywhere;
+}
+
+.profile-handle {
+    font-size: 0.9375rem;
+    color: var(--ctms-text-muted);
+    margin-bottom: 1rem;
+    overflow-wrap: anywhere;
+}
+
+.profile-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+@media (min-width: 768px) {
+    .profile-banner {
+        flex-direction: row;
+        gap: 1.75rem;
+        padding: 2rem;
+        text-align: left;
+    }
+
+    .profile-actions {
+        justify-content: flex-start;
+    }
+}
+
+.detail-card {
+    height: 100%;
+    padding: 1.5rem;
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-sm);
+}
+
+.detail-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    float: none;
+    width: auto;
+    padding: 0 0 1rem;
+    margin-bottom: 1.25rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-bottom: 1px solid var(--ctms-border);
+}
+
+.detail-card-title i {
+    color: var(--ctms-primary);
+}
+
+.detail-card-text {
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+    margin-bottom: 1.25rem;
+}
+
+.detail-list {
+    margin: 0;
+}
+
+.detail-row {
+    display: grid;
+    gap: 0.125rem;
+    padding-bottom: 0.875rem;
+}
+
+.detail-row:last-child {
+    padding-bottom: 0;
+}
+
+.detail-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ctms-text-muted);
+}
+
+.detail-value {
+    margin-bottom: 0;
+    overflow-wrap: anywhere;
+}
+
+.detail-value-empty {
+    color: var(--ctms-text-muted);
+    font-style: italic;
+}
+
+@media (min-width: 576px) {
+    .detail-row {
+        grid-template-columns: 11rem minmax(0, 1fr);
+        gap: 0.75rem;
+        align-items: baseline;
+    }
+}
+
+/* Neutral by itself, so a badge with no colour of its own still reads as one. */
+.detail-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.1875rem 0.625rem;
+    margin-right: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ctms-text-muted);
+    background-color: var(--ctms-surface-alt);
+    border-radius: 62.5rem;
+}
+
+.detail-badge-verified {
+    color: var(--ctms-success);
+    background-color: rgba(25, 135, 84, 0.12);
+}
+
+/* The colour rises with what the rank may do. */
+.detail-badge-staff {
+    color: var(--ctms-warning);
+    background-color: rgba(255, 152, 0, 0.16);
+}
+
+.detail-badge-administrator {
+    color: var(--ctms-primary);
+    background-color: rgba(11, 79, 216, 0.1);
+}
+
+.detail-badge-superuser {
+    color: var(--ctms-success);
+    background-color: rgba(25, 135, 84, 0.12);
+}
+
+/* ----------------------------------------------------------------------------------------------
+Profile editor
+
+The picture uploader sits inside the banner, and the sign-in details sit beside the editable
+fields so that changing an address or a username starts from the same page.
+---------------------------------------------------------------------------------------------- */
+
+.profile-picture-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.profile-picture-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.875rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ctms-primary);
+    background-color: rgba(11, 79, 216, 0.08);
+    border-radius: 62.5rem;
+    cursor: pointer;
+    transition: background-color var(--ctms-transition);
+}
+
+.profile-picture-label:hover,
+.profile-picture-form input:focus-visible + .profile-picture-label {
+    background-color: rgba(11, 79, 216, 0.16);
+}
+
+.profile-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+}
+
+/* The row shares one height, so each label centres in it rather than in its own padding. */
+.profile-form-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 12rem;
+}
+
+@media (min-width: 576px) {
+    .profile-form-actions .btn {
+        flex: 0 0 auto;
+        min-width: 10rem;
+    }
+}
+
+.credential-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.credential-row {
+    display: grid;
+    gap: 0.25rem 1rem;
+    padding: 0.875rem 0;
+    border-top: 1px solid var(--ctms-border);
+}
+
+.credential-row:first-child {
+    border-top: none;
+    padding-top: 0;
+}
+
+.credential-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ctms-text-muted);
+}
+
+.credential-value {
+    overflow-wrap: anywhere;
+}
+@media (min-width: 576px) {
+    .credential-row {
+        grid-template-columns: 9rem minmax(0, 1fr) auto;
+        align-items: center;
+    }
+}
+
+.crop-hint {
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+}
+
+/* Cropper swaps in a sized canvas, so the stage caps how tall it may grow. */
+.crop-stage {
+    max-height: 60vh;
+    overflow: hidden;
+}
+
+.crop-stage img {
+    display: block;
+    max-width: 100%;
+}
+
+/* ----------------------------------------------------------------------------------------------
 Avatars
 
 The user images are line-art icons, so they sit centred inside a tinted circle with padding around
@@ -1073,4 +1375,35 @@ Pinned below the fixed header so a message is visible wherever the page is scrol
 
 .message-stack .alert {
     box-shadow: var(--ctms-shadow-lg);
+}
+
+/* --- Confirm dialogue ---------------------------------------------------------------------- */
+
+.modal-content {
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-lg);
+}
+
+.modal-header,
+.modal-footer {
+    border-color: var(--ctms-border);
+}
+
+.modal-title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+/* The two ways out are the same size, so neither is the one the pointer lands on by accident. */
+.modal-footer .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+}
+
+@media (min-width: 576px) {
+    .modal-footer .btn {
+        flex: 0 0 auto;
+    }
 }

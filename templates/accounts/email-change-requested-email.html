@@ -1,0 +1,17 @@
+{# Plain-text warning to the address in use, sent when a different one is requested. #}
+{% autoescape off %}Hi {{ user.get_short_name }},
+
+Someone asked to change the email address on your CTMS account from {{ user.email }} to {{ user.pending_email }}.
+A confirmation link was sent to {{ user.pending_email }}, and it will expire in {{ link_lifetime_minutes }} minute{{ link_lifetime_minutes|pluralize }}.
+Your account keeps signing in with {{ user.email }} until that link is opened.
+
+If you made this request, open the link we sent to the new address to finish the change.
+
+If you did not, set a new password immediately using the link below, because this request was made with the password to this account:
+
+{{ protocol }}://{{ domain }}{% url 'password_reset' %}
+
+Changing your password also cancels the request, because it stops the confirmation link from working.
+
+Cargo Transportation Management System
+{% endautoescape %}

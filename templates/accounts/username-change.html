@@ -1,0 +1,20 @@
+{# Username change: the name shown beside the account, which no other account may already hold. #}
+{% extends 'accounts/auth-base.html' %}
+
+{% block title %}Change your username &mdash; CTMS{% endblock %}
+{% block auth_visual_class %}auth-visual-username-change{% endblock %}
+
+{% block auth_title %}Change your username{% endblock %}
+{% block auth_subtitle %}Your username identifies you across the platform. You sign in with your email address, not this.{% endblock %}
+
+{% block auth_body %}
+    <form class="auth-form" method="post" novalidate>
+        {% csrf_token %}
+        {% include 'includes/form-fields.html' %}
+        <button class="btn btn-ctms auth-submit" type="submit">Save username</button>
+    </form>
+{% endblock %}
+
+{% block auth_links %}
+    <a href="{% url 'profile_edit' %}">Back to your profile</a>
+{% endblock %}

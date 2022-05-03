@@ -1,0 +1,109 @@
+{# Profile editor: picture uploader, editable details, then the account links. #}
+{% extends 'accounts/profile-base.html' %}
+{% load static %}
+
+{% block title %}Edit profile &mdash; CTMS{% endblock %}
+
+{% block extra_stylesheet %}
+    <link rel="stylesheet" href="{% static 'lib/cropperjs/cropper.min.css' %}">
+{% endblock %}
+
+{% block profile_avatar %}
+    <form class="profile-picture-form" method="post" action="{% url 'profile_image' %}" enctype="multipart/form-data" novalidate data-picture-form>
+        {% csrf_token %}
+        {% include 'includes/profile-avatar.html' %}
+
+        {{ image_form.image }}
+        <label class="profile-picture-label" for="{{ image_form.image.id_for_label }}">
+            <i class="fas fa-camera" aria-hidden="true"></i> Change picture
+        </label>
+
+        {{ image_form.crop_x }}{{ image_form.crop_y }}{{ image_form.crop_width }}{{ image_form.crop_height }}
+
+        {# A static backdrop, so a stray click cannot discard the picture already chosen. #}
+        <div class="modal fade" tabindex="-1" aria-labelledby="crop-modal-title" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title h5" id="crop-modal-title">Position your picture</h2>
+                        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="crop-hint">Drag to move and pinch or scroll to zoom. The square you leave is what people see.</p>
+                        <div class="crop-stage"><img alt="" data-picture-preview></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-ctms-outline" type="button" data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-ctms" type="submit">Save picture</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block profile_actions %}
+    <a class="btn btn-ctms-outline" href="{% url 'profile' %}">Back to profile</a>
+{% endblock %}
+
+{% block profile_body %}
+    {# The lexer matches a tag without DOTALL, so one split over two lines prints as source. #}
+    {% with unlink='Disconnect this account? You will sign in with your password from then on.' %}
+
+    <form class="profile-form" method="post" novalidate>
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}<p class="form-error form-error-summary">{{ error }}</p>{% endfor %}
+
+        <div class="row g-4">
+            {% for group in form.field_groups %}
+                <div class="col-12 col-lg-6">
+                    <section class="detail-card">
+                        <h2 class="detail-card-title"><i class="fas {{ group.icon }}" aria-hidden="true"></i> {{ group.title }}</h2>
+                        {% for field in group.fields %}{% include 'includes/form-field.html' %}{% endfor %}
+                    </section>
+                </div>
+            {% endfor %}
+
+            <div class="col-12 col-lg-6">
+                <article class="detail-card">
+                    <h2 class="detail-card-title"><i class="fas fa-shield-alt" aria-hidden="true"></i> Sign-in details</h2>
+                    <p class="detail-card-text">These change one at a time, each behind its own confirmation.</p>
+                    <ul class="credential-list">
+                        <li class="credential-row">
+                            <span class="credential-label"><i class="fas fa-at fa-fw" aria-hidden="true"></i> Email address</span>
+                            <span class="credential-value">{{ user.email }}</span>
+                            <a class="btn btn-ctms-outline btn-sm" href="{% url 'email_change' %}">Change</a>
+                        </li>
+                        <li class="credential-row">
+                            <span class="credential-label"><i class="fas fa-signature fa-fw" aria-hidden="true"></i> Username</span>
+                            <span class="credential-value">{{ user.username }}</span>
+                            <a class="btn btn-ctms-outline btn-sm" href="{% url 'username_change' %}">Change</a>
+                        </li>
+                        <li class="credential-row">
+                            <span class="credential-label"><i class="fas fa-key fa-fw" aria-hidden="true"></i> Password</span>
+                            <span class="credential-value">
+                                {% if user.has_usable_password %}&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;{% else %}Not set{% endif %}
+                            </span>
+                            {% if user.has_usable_password %}
+                                <a class="btn btn-ctms-outline btn-sm" href="{% url 'password_change' %}">Change</a>
+                            {% else %}
+                                <a class="btn btn-ctms-outline btn-sm" href="{% url 'password_reset' %}">Set one</a>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </article>
+            </div>
+        </div>
+
+        <div class="profile-form-actions">
+            <button class="btn btn-ctms" type="submit">Save changes</button>
+            <a class="btn btn-ctms-outline" href="{% url 'profile' %}">Cancel</a>
+        </div>
+    </form>
+
+    {% endwith %}
+{% endblock %}
+
+{% block extra_script %}
+    <script src="{% static 'lib/cropperjs/cropper.min.js' %}"></script>
+{% endblock %}

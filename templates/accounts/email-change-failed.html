@@ -1,0 +1,24 @@
+{# Shown when a confirmation link cannot be honoured. `reason` is either 'taken' or 'expired'. #}
+{% extends 'accounts/auth-base.html' %}
+
+{% block title %}Confirmation failed &mdash; CTMS{% endblock %}
+{% block auth_visual_class %}auth-visual-email-change{% endblock %}
+
+{% block auth_icon %}<span class="auth-icon auth-icon-warning"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></span>{% endblock %}
+{% block auth_title %}This link no longer works{% endblock %}
+{% block auth_subtitle %}
+    {% if reason == 'taken' %}
+        Another account has taken that email address since the link was sent.
+    {% else %}
+        Confirmation links expire {{ link_lifetime_minutes }} minute{{ link_lifetime_minutes|pluralize }} after they are sent, and each one stops working once it has been used.
+    {% endif %}
+{% endblock %}
+
+{% block auth_body %}
+    <p class="auth-note">Your account still signs in with the address it used before. Ask for the change again to get a new link.</p>
+{% endblock %}
+
+{% block auth_links %}
+    <a href="{% url 'email_change' %}">Change your email address</a>
+    <a href="{% url 'profile' %}">Back to your profile</a>
+{% endblock %}

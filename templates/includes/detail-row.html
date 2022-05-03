@@ -1,0 +1,7 @@
+{# One label and value in a details list, marked like the field it mirrors in the editor. #}
+<div class="detail-row">
+    <dt class="detail-label">
+        {% if icon %}<i class="{{ icon }} fa-fw form-label-icon" aria-hidden="true"></i>{% endif %}{{ label }}
+    </dt>
+    <dd class="detail-value{% if not value %} detail-value-empty{% endif %}">{{ value|default:'Not set' }}</dd>
+</div>

@@ -1,0 +1,15 @@
+{# Plain-text body of the link confirming a new address; nothing here is markup. #}
+{% autoescape off %}Hi {{ user.get_short_name }},
+
+Confirm that {{ user.pending_email }} belongs to you by opening the link below.
+Your CTMS account signs in with {{ user.email }} until you do.
+
+{{ protocol }}://{{ domain }}{% url 'email_change_confirm' uidb64=uidb64 token=token %}
+
+The link will expire in {{ link_lifetime_minutes }} minute{{ link_lifetime_minutes|pluralize }}, and it works once.
+If it is not clickable, copy it into your browser's address bar.
+
+If you did not ask to change your CTMS email address, ignore this message and nothing will change.
+
+Cargo Transportation Management System
+{% endautoescape %}

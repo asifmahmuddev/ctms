@@ -12,13 +12,14 @@ class AccountAdmin(UserAdmin):
     list_filter = ('is_admin', 'is_staff', 'is_superuser', 'is_verified', 'is_active')
     search_fields = ('email', 'username', 'first_name', 'last_name', 'mobile', 'city', 'country')
     ordering = ('-date_joined',)
-    readonly_fields = ('date_joined', 'last_login')
+    # A pending address is set by the account holder's own confirmation flow, never from here.
+    readonly_fields = ('date_joined', 'last_login', 'pending_email', 'pending_email_requested_at')
 
     # The model has no groups or permissions relations for the default widget to target.
     filter_horizontal = ()
 
     fieldsets = (
-        (None, {'fields': ('email', 'username', 'password')}),
+        (None, {'fields': ('email', 'pending_email', 'pending_email_requested_at', 'username', 'password')}),
         ('Personal', {'fields': ('first_name', 'last_name', 'gender', 'date_of_birth', 'profile_image')}),
         ('Contact', {'fields': ('mobile', 'house_number', 'address_line', 'city', 'postal_code', 'country')}),
         ('Social', {'fields': ('facebook_url', 'instagram_url', 'twitter_url', 'linkedin_url')}),

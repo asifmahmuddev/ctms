@@ -1,0 +1,22 @@
+{# Shared shell for the profile pages: the identity banner, then whatever the page puts below it. #}
+{% extends 'base.html' %}
+
+{% block content %}
+    <section class="section section-muted profile-page">
+        <div class="container">
+            <header class="profile-banner">
+                {% block profile_avatar %}
+                    {% include 'includes/profile-avatar.html' %}
+                {% endblock %}
+
+                <div class="profile-identity">
+                    <h1 class="profile-name">{{ user.get_full_name }}</h1>
+                    <p class="profile-handle">{{ user.username }} &middot; {{ user.email }}</p>
+                    <div class="profile-actions">{% block profile_actions %}{% endblock %}</div>
+                </div>
+            </header>
+
+            {% block profile_body %}{% endblock %}
+        </div>
+    </section>
+{% endblock %}

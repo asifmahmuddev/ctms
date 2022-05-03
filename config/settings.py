@@ -26,6 +26,7 @@ DEFAULT_DATABASE_NAME = 'ctmsdb'
 
 SESSION_LIFETIME_SECONDS = 60 * 60 * 24
 ACCOUNT_LINK_LIFETIME_MINUTES = 5
+MAX_FORM_DATA_BYTES = 5 * 1024 * 1024
 
 SMTP_EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 CONSOLE_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -192,6 +193,9 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Weighs a body without its uploads, so it bounds form fields; a picture is checked as it validates.
+DATA_UPLOAD_MAX_MEMORY_SIZE = MAX_FORM_DATA_BYTES
 
 
 # --- Messages ----------------------------------------------------------------------------------

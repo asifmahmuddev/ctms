@@ -1,0 +1,13 @@
+{# Plain-text body of the address change notice; nothing here is markup. #}
+{% autoescape off %}Hi {{ user.get_short_name }},
+
+The CTMS account that used {{ previous_email }} now signs in with {{ user.email }}.
+This message is the last one this address will receive.
+
+If you made this change, there is nothing further to do.
+
+If you did not, someone else has reached your account.
+Password reset links now go to the new address, so this cannot be undone from here: contact CTMS support straight away.
+
+Cargo Transportation Management System
+{% endautoescape %}

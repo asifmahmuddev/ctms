@@ -17,6 +17,7 @@ FIELD_ICONS = {
     'email': 'fa-at',
     'gender': 'fa-venus-mars',
     'date_of_birth': 'fa-birthday-cake',
+    'image': 'fa-camera',
 
     # Credentials
     'password': 'fa-key',
@@ -25,6 +26,7 @@ FIELD_ICONS = {
     'new_password1': 'fa-key',
     'new_password2': 'fa-key',
     'old_password': 'fa-unlock-alt',
+    'current_password': 'fa-unlock-alt',
     'remember_me': 'fa-clock',
 
     # Contact and address
