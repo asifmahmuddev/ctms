@@ -1,0 +1,24 @@
+{# An account's own order: settling it, its invoice, and the one action its owner may take. #}
+{% extends 'transport/order-detail-base.html' %}
+
+{% block order_back %}
+    <a href="{% url 'order_list' %}"><i class="fas fa-long-arrow-alt-left" aria-hidden="true"></i> All my orders</a>
+{% endblock %}
+
+{% block order_actions %}
+    {% if order.can_be_cancelled %}
+        <footer class="order-detail-actions">
+            {# Cancelling changes state, so it posts: a prefetched link must not call an order off. #}
+            <form method="post" action="{% url 'order_cancel' order.pk %}">
+                {% csrf_token %}
+                <button class="btn btn-ctms-danger" type="submit"
+                        data-confirm="Cancel this order?"
+                        data-confirm-detail="Nothing will be collected, and placing it again means starting a new order."
+                        data-confirm-action="Cancel the order">
+                    <i class="fas fa-times" aria-hidden="true"></i> Cancel this order
+                </button>
+            </form>
+            <p class="order-detail-hint">You can cancel while an order is still pending. Once the freight desk confirms it, contact them instead.</p>
+        </footer>
+    {% endif %}
+{% endblock %}

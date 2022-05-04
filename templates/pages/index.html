@@ -24,6 +24,61 @@
         </div>
     </section>
 
+    <section class="section section-alt">
+        <div class="container">
+            {# gy-* adds vertical spacing only; a larger g-* would overflow the container on narrow screens. #}
+            <div class="row align-items-center g-4 gy-5">
+                <div class="col-lg-7 highlight-text">
+                    <h2>One platform for the whole freight desk</h2>
+                    <p>Execute complex logistics transactions and manage freight operations from a single, easy to use
+                        platform. Powered by automation and analytics, CTMS gives you deep visibility and control over
+                        every shipment you move.</p>
+                    <a class="btn btn-ctms" href="{% url 'about' %}">Learn more</a>
+                </div>
+                <div class="col-lg-5">
+                    {# Every figure below is worked out by the same rate card and cruising speeds a real order is. #}
+                    <div class="route-card">
+                        <div class="route-card-header">
+                            <span class="route-card-title">Sample consignment</span>
+                            <span class="route-card-badge"><i class="fas {{ consignment.mode_icon }}" aria-hidden="true"></i> {{ consignment.mode_label }}</span>
+                        </div>
+
+                        <ol class="route-legs">
+                            <li class="route-leg route-leg-origin">
+                                <span class="route-leg-place">{{ consignment.origin }}</span>
+                                <span class="route-leg-role">Origin</span>
+                            </li>
+                            <li class="route-leg route-leg-destination">
+                                <span class="route-leg-place">{{ consignment.destination }}</span>
+                                <span class="route-leg-role">Destination</span>
+                            </li>
+                        </ol>
+
+                        <dl class="route-figures-inline">
+                            <div class="route-figure-inline">
+                                <dt>Weight</dt>
+                                <dd>{{ consignment.weight }}</dd>
+                            </div>
+                            <div class="route-figure-inline">
+                                <dt>Distance</dt>
+                                <dd>{{ consignment.distance }}</dd>
+                            </div>
+                            <div class="route-figure-inline">
+                                <dt>Transit</dt>
+                                <dd>{{ consignment.duration }}</dd>
+                            </div>
+                        </dl>
+
+                        <div class="route-card-footer">
+                            <span><span class="route-total-value">{{ consignment.cost }}</span> quoted</span>
+                            <a class="route-card-link" href="{% url 'order_create' %}">Place an order <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="section section-light" id="features">
         <div class="container">
             <div class="section-intro">

@@ -1,0 +1,22 @@
+{# Moves between pages of a table, carrying whatever search, narrowing and ordering is in force. #}
+{% if page_obj.has_other_pages %}
+    <nav class="panel-pages" aria-label="Pages">
+        {% if page_obj.has_previous %}
+            <a class="btn btn-ctms-outline btn-sm" href="?{{ page_query }}&amp;page={{ page_obj.previous_page_number }}">
+                <i class="fas fa-chevron-left" aria-hidden="true"></i> Previous
+            </a>
+        {% else %}
+            <span class="btn btn-ctms-outline btn-sm panel-pages-spent"><i class="fas fa-chevron-left" aria-hidden="true"></i> Previous</span>
+        {% endif %}
+
+        <span class="panel-pages-count">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a class="btn btn-ctms-outline btn-sm" href="?{{ page_query }}&amp;page={{ page_obj.next_page_number }}">
+                Next <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </a>
+        {% else %}
+            <span class="btn btn-ctms-outline btn-sm panel-pages-spent">Next <i class="fas fa-chevron-right" aria-hidden="true"></i></span>
+        {% endif %}
+    </nav>
+{% endif %}

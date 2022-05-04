@@ -1,6 +1,6 @@
 # CTMS — Cargo Transportation Management System
 
-A freight platform. Visitors register, verify their address and sign in, then keep a profile with a cropped picture of their own.
+A freight booking platform. Customers price and place cargo orders across air, sea, road and rail, and follow each one through its stages; anyone can reach the desk through the contact page.
 
 | Component | Version |
 | --- | --- |
@@ -131,11 +131,28 @@ ctms/
 │   │   ├── urls.py                  Routes for the account flows
 │   │   └── views.py                 Registration, sign-in, sign-out, activation, passwords and profile
 │   ├── common/                      Shared helpers, imported by the apps rather than owned by one
-│   │   └── forms.py                 Bootstrap control classes and label icons, applied to every form
-│   └── pages/                       Landing and about pages
+│   │   ├── forms.py                 Bootstrap control classes and label icons, applied to every form
+│   │   └── lists.py                 A table that can be searched, narrowed, reordered and paged
+│   ├── enquiries/                   Messages sent through the public contact page
+│   │   ├── migrations/              Empty package; migration files are generated, not committed
+│   │   ├── admin.py                 Read-only admin listing of what visitors sent
+│   │   ├── apps.py                  Application configuration
+│   │   ├── forms.py                 Contact form and its minimum message length
+│   │   ├── models.py                ContactEnquiry model and field length limits
+│   │   ├── urls.py                  Route for the contact page
+│   │   └── views.py                 View that records an enquiry and thanks the sender
+│   ├── pages/                       Landing and about pages
+│   │   ├── apps.py                  Application configuration
+│   │   ├── urls.py                  Routes for the public pages
+│   │   └── views.py                 Landing and about pages
+│   └── transport/                   Transport orders
+│       ├── migrations/              Empty package; migration files are generated, not committed
+│       ├── admin.py                 Admin registration and fieldset layout
 │       ├── apps.py                  Application configuration
-│       ├── urls.py                  Routes for the public pages
-│       └── views.py                 Landing and about pages
+│       ├── forms.py                 Order form, its weight bounds and its route check
+│       ├── models.py                Order model, the modes it ships by, how it is priced and where it stands
+│       ├── urls.py                  Routes for placing, listing, reading and cancelling an order
+│       └── views.py                 Order placement, the owner's own list and detail, and cancellation
 ├── config/                          Project configuration
 │   ├── db.py                        Database backend adjustment the MongoDB connector needs
 │   ├── settings.py                  Every setting, all read from the environment
@@ -146,13 +163,15 @@ ctms/
 ├── static/                          Source assets (STATICFILES_DIRS)
 │   ├── css/styles.css               Design tokens, and every component the site draws itself with
 │   ├── images/                      Icons, backgrounds, avatars and partner logos
-│   ├── js/script.js                 Scroll-to-top, flash messages, password reveal and picture cropping
+│   ├── js/script.js                 Scroll-to-top, messages, password reveal, cropping, confirmations and column widths
 │   ├── lib/                         Bootstrap, Font Awesome and Cropper.js
 │   └── videos/hero.webm             Landing page hero video
 ├── templates/                       HTML templates
 │   ├── accounts/                    Account and profile pages, and the plain-text emails they send
-│   ├── includes/                    Navigation, footer, messages, form fields and detail rows
+│   ├── enquiries/                   Contact page
+│   ├── includes/                    Navigation, footer, messages, form fields, detail rows, status pills, the confirm dialogue
 │   ├── pages/                       Landing and about pages
+│   ├── transport/                   Order form, order list and order detail
 │   └── base.html                    Document shell that every page extends
 ├── .env.example                     Environment variable template, copied to .env
 ├── .gitattributes                   Line endings, binary handling and vendored paths
@@ -181,11 +200,23 @@ Each package also carries an `__init__.py`.
 
 **Profile pictures.** PNG and JPEG only, under 5 MB, with the format read from the file's own bytes rather than its name. Cropped server-side with Pillow to a 512-pixel square; a stored path can outlive its file, so `profile_image_url` falls back to the shared default.
 
+**Contact enquiries.** Anyone may send one, signed in or not; staff move each from **New** through **In progress** to **Resolved** or **Closed**. What the visitor wrote is never editable, and only an administrator may delete one.
+
+**Transport orders.** An order names a mode, origin, destination and weight; the cost and the status follow from those and are never read from the submitted form. Pricing is per kilogram plus a distance rate for every thousand kilometres, so a heavy load pays for the distance while a parcel barely notices it.
+
+**The course an order runs.** Nine stages — **Pending, Confirmed, Processing, Ready for Pickup, Picked Up, In Transit, Out for Delivery, Delivered, Completed** — and three ways to leave early: **Cancelled**, **Returned**, **Archived**. An order that has left draws no tracker, because leaving is not a point along the way.
+
+**How the tracker is drawn.** The stages fold across the page — three to a row on a desktop, two on a tablet, upright on a phone — with each row running the opposite way to the one above and the line turning at a rounded corner. Each stage draws the line leaving it, so the two halves of a turn meet in the row gap and neither has to know how tall the other's wording made its row.
+
 Two flags decide whether an account works at all rather than what it may do: `is_verified` gates signing in and is set by opening the link registration emails, and `is_active` withdraws the account entirely.
+
+**Finding a record.** Every table can be searched, narrowed, reordered and paged from the query string, so any view of one is an address that can be shared or bookmarked. `apps/common/lists.py` holds all of this once at **20 rows** a page, and each table declares its own columns, narrowings and orderings.
+
+**Asking before something cannot be undone.** One dialogue serves the whole site and no page reaches for the browser's own confirm box; a destructive control carries what is asked, what it costs and what accepting is called, and the dialogue takes its wording from whichever control raised it. The submission is held until someone accepts, and a keyboard alone can work it — Tab cycles inside it, Escape closes it, and focus returns to the control that opened it.
 
 **Passwords.** Django's validators apply, and a replacement identical to the current password is refused. Changing one by either route signs out every other device and emails the owner.
 
-**Email.** Only the account notices are sent, from a background thread so a slow mail server cannot stall a response. With `EMAIL_HOST_USER` unset they print to the terminal.
+**Email.** Only the account and order notices are sent, from a background thread so a slow mail server cannot stall a response. With `EMAIL_HOST_USER` unset they print to the terminal.
 
 **Migrations.** The `migrations/` package is tracked but empty, so a fresh clone runs `makemigrations` before its first `migrate`. It cannot be deleted: `django.contrib.admin` and `auth` declare a swappable dependency on `AUTH_USER_MODEL`, and without the package `migrate` fails.
 

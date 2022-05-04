@@ -1,0 +1,20 @@
+{# Asks before an action that cannot be undone, worded by the control that opened it. #}
+<div class="modal fade" id="confirm-dialogue" tabindex="-1" aria-labelledby="confirm-dialogue-title" aria-hidden="true" data-confirm-modal>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="confirm-dialogue-title" data-confirm-title>Are you sure?</h2>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="confirm-detail" data-confirm-detail hidden></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ctms-outline" type="button" data-bs-dismiss="modal">
+                    <i class="fas fa-times" aria-hidden="true"></i> Keep it
+                </button>
+                <button class="btn btn-ctms-danger" type="button" data-confirm-accept>Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>

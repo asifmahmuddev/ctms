@@ -1,0 +1,67 @@
+{# The signed-in account's orders, newest first, with an empty state when there are none. #}
+{% extends 'base.html' %}
+
+{% block title %}My orders &mdash; CTMS{% endblock %}
+
+{% block content %}
+    <section class="section section-muted">
+        <div class="container">
+            <header class="orders-header">
+                <div>
+                    <h1 class="orders-title">My orders</h1>
+                    <p class="orders-count">{{ page_obj.paginator.count }} order{{ page_obj.paginator.count|pluralize }} placed</p>
+                </div>
+                <a class="btn btn-ctms" href="{% url 'order_create' %}"><i class="fas fa-plus" aria-hidden="true"></i> Place an order</a>
+            </header>
+
+            {% include 'includes/panel-table-controls.html' %}
+
+            {% if orders %}
+                <ul class="order-list">
+                    {% for order in orders %}
+                        <li class="order-card">
+                            <div class="order-card-head">
+                                <span class="order-card-mode"><i class="fas {{ order.mode_icon }}" aria-hidden="true"></i></span>
+                                <div class="order-card-heading">
+                                    <a class="order-card-reference" href="{{ order.get_absolute_url }}">{{ order.reference }}</a>
+                                    <p class="order-card-route">{{ order.origin }}
+                                        <i class="fas fa-long-arrow-alt-right order-card-arrow" aria-hidden="true"></i>
+                                        {{ order.destination }}</p>
+                                </div>
+                                {% include 'includes/status-pill.html' with status_value=order.status status_label=order.get_status_display %}
+                            </div>
+
+                            <dl class="order-card-facts">
+                                <div class="order-fact">
+                                    <dt>Mode</dt>
+                                    <dd>{{ order.get_mode_display }}</dd>
+                                </div>
+                                <div class="order-fact">
+                                    <dt>Weight</dt>
+                                    <dd>{{ order.weight_label }}</dd>
+                                </div>
+                                <div class="order-fact">
+                                    <dt>Cost</dt>
+                                    <dd class="order-fact-cost">{{ order.cost_label }}</dd>
+                                </div>
+                                <div class="order-fact">
+                                    <dt>Placed</dt>
+                                    <dd>{{ order.placed_at|date:'N j, Y, g:i A' }}</dd>
+                                </div>
+                            </dl>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                {% include 'includes/panel-pagination.html' %}
+            {% else %}
+                <div class="empty-state">
+                    <span class="empty-state-icon"><i class="fas fa-box-open" aria-hidden="true"></i></span>
+                    <h2 class="empty-state-title">No orders yet</h2>
+                    <p class="empty-state-text">When you book a consignment it appears here, with its price and where it has got to.</p>
+                    <a class="btn btn-ctms" href="{% url 'order_create' %}">Place your first order</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

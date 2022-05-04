@@ -20,8 +20,11 @@
                 <ul class="navbar-nav ms-auto align-items-lg-center">
                     {% include 'includes/site-nav-item.html' with url_name='index' label='Home' %}
                     {% include 'includes/site-nav-item.html' with url_name='about' label='About' %}
+                    {% include 'includes/site-nav-item.html' with url_name='contact' label='Contact' %}
 
                     {% if user.is_authenticated %}
+                        {% include 'includes/site-nav-item.html' with url_name='order_list' label='My orders' %}
+
                         <li class="nav-item dropdown site-account-menu">
                             <button class="site-account-toggle dropdown-toggle" type="button" id="account-menu" data-bs-toggle="dropdown" aria-expanded="false">
                                 <img class="site-account-avatar" src="{{ user.profile_image_url }}" alt="" width="32" height="32">
@@ -35,6 +38,9 @@
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user fa-fw" aria-hidden="true"></i> Profile</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'order_create' %}"><i class="fas fa-plus fa-fw" aria-hidden="true"></i> Place an order</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="{% url 'password_change' %}"><i class="fas fa-key fa-fw" aria-hidden="true"></i> Change password</a>

@@ -1,0 +1,32 @@
+{# Search, narrowing and ordering for a table; GET makes any view a shareable address. #}
+<form class="panel-controls" method="get" role="search">
+    <div class="panel-controls-search">
+        <i class="fas fa-search panel-controls-icon" aria-hidden="true"></i>
+        <label class="visually-hidden" for="panel-search">{{ search_placeholder }}</label>
+        <input class="form-control" id="panel-search" type="search" name="q" value="{{ search_terms }}" placeholder="{{ search_placeholder }}">
+    </div>
+
+    <div class="panel-controls-choices">
+        {% for group in filter_groups %}
+            <label class="visually-hidden" for="panel-{{ group.parameter }}">Narrow by {{ group.parameter }}</label>
+            <select class="form-select" id="panel-{{ group.parameter }}" name="{{ group.parameter }}">
+                <option value="">{{ group.label }}</option>
+                {% for value, label in group.options %}
+                    <option value="{{ value }}"{% if value == group.chosen %} selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        {% endfor %}
+
+        <label class="visually-hidden" for="panel-sort">Order by</label>
+        <select class="form-select" id="panel-sort" name="sort">
+            {% for value, label in sort_options %}
+                <option value="{{ value }}"{% if value == chosen_sort %} selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <button class="btn btn-ctms btn-sm" type="submit"><i class="fas fa-filter" aria-hidden="true"></i> Apply</button>
+        {% if search_terms or narrowed %}
+            <a class="btn btn-ctms-outline btn-sm" href="{{ request.path }}"><i class="fas fa-times" aria-hidden="true"></i> Clear</a>
+        {% endif %}
+    </div>
+</form>

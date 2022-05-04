@@ -31,6 +31,7 @@ FIELD_ICONS = {
 
     # Contact and address
     'mobile': 'fa-mobile-alt',
+    'phone': 'fa-phone',
     'house_number': 'fa-hashtag',
     'address_line': 'fa-map-marker-alt',
     'city': 'fa-city',
@@ -42,6 +43,18 @@ FIELD_ICONS = {
     'instagram_url': 'fa-instagram',
     'twitter_url': 'fa-twitter',
     'linkedin_url': 'fa-linkedin-in',
+
+    # Enquiries
+    'name': 'fa-user',
+    'subject': 'fa-tag',
+    'message': 'fa-comment-dots',
+
+    # Orders
+    'mode': 'fa-route',
+    'origin': 'fa-plane-departure',
+    'destination': 'fa-plane-arrival',
+    'weight_kilograms': 'fa-weight-hanging',
+    'cost': 'fa-dollar-sign',
 
     # Permissions
     'is_admin': 'fa-user-shield',

@@ -1,0 +1,63 @@
+{# Order placement: the consignment form, with the rates it will be priced against beside it. #}
+{% extends 'base.html' %}
+
+{% block title %}Place an order &mdash; CTMS{% endblock %}
+
+{% block content %}
+    <section class="section section-muted">
+        <div class="container">
+            <div class="section-intro">
+                <h2>Place a transport order</h2>
+                <p>Tell us what is moving and where it is going. We price it as you submit and confirm it shortly after.</p>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                <div class="col-12 col-lg-7">
+                    <div class="order-form-card">
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+                            {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+                            {% for error in form.non_field_errors %}<p class="form-error form-error-summary">{{ error }}</p>{% endfor %}
+
+                            {% include 'includes/form-field.html' with field=form.mode %}
+
+                            {# Each address box grows its own suggestion list, so the wrapper anchors it. #}
+                            <div class="row g-3">
+                                <div class="col-12 col-sm-6 place-field">{% include 'includes/form-field.html' with field=form.origin %}</div>
+                                <div class="col-12 col-sm-6 place-field">{% include 'includes/form-field.html' with field=form.destination %}</div>
+                            </div>
+
+                            <p class="form-help place-field-help">Pick a place from the list to have the route drawn and measured.</p>
+
+                            {% include 'includes/form-field.html' with field=form.weight_kilograms %}
+
+                            <div class="order-form-actions">
+                                <button class="btn btn-ctms" type="submit"><i class="fas fa-check" aria-hidden="true"></i> Place order</button>
+                                <a class="btn btn-ctms-outline" href="{% url 'order_list' %}">Back to my orders</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-5 col-xl-4">
+                    <aside class="rate-card">
+                        <h3 class="rate-card-title">What it costs</h3>
+                        <p class="rate-card-note">Priced per kilogram, plus a distance rate for every thousand kilometres it
+                            travels. Any order costs at least {{ minimum_cost }}.</p>
+                        <ul class="rate-list">
+                            {% for rate in rates %}
+                                <li class="rate-row">
+                                    <span class="rate-mode"><i class="fas {{ rate.icon }} fa-fw" aria-hidden="true"></i> {{ rate.label }}</span>
+                                    <span class="rate-value">
+                                        {{ rate.weight_rate }}<span class="rate-unit"> / kg</span>
+                                        <span class="rate-distance">+ {{ rate.distance_rate }}<span class="rate-unit"> / kg / 1,000 km</span></span>
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

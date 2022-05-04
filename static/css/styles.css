@@ -209,6 +209,18 @@ its own padding.
     border-color: var(--ctms-text-muted);
 }
 
+.btn-ctms-danger {
+    color: var(--ctms-danger);
+    background-color: transparent;
+    border-color: var(--ctms-danger);
+}
+
+.btn-ctms-danger:hover,
+.btn-ctms-danger:focus {
+    color: var(--ctms-text-inverse);
+    background-color: var(--ctms-danger);
+    border-color: var(--ctms-danger);
+}
 /* Bootstrap's .btn-sm never reaches these on source order, so each variant states its own size. */
 .btn-ctms.btn-sm,
 .btn-ctms-accent.btn-sm,
@@ -790,6 +802,169 @@ an ultrawide monitor nor collapses to a strip on a phone.
     }
 }
 
+/* --- Highlight ----------------------------------------------------------------------------- */
+
+.highlight-text h2 {
+    font-weight: 700;
+    font-size: clamp(1.5rem, 1.15rem + 1.6vw, 2.25rem);
+    margin-bottom: 1rem;
+}
+
+.highlight-text p {
+    color: var(--ctms-text-muted);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    margin-bottom: 1.75rem;
+}
+
+/* ----------------------------------------------------------------------------------------------
+Route card
+
+Sample multi-leg journey. The connecting line is drawn with a pseudo-element on each leg, so it
+stays sharp at any size and follows the text as it wraps.
+---------------------------------------------------------------------------------------------- */
+
+.route-card {
+    padding: 1.5rem;
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-lg);
+}
+
+.route-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--ctms-border);
+}
+
+.route-card-title {
+    font-weight: 700;
+    font-size: 0.9375rem;
+}
+
+.route-card-badge {
+    padding: 0.1875rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ctms-primary);
+    background-color: rgba(11, 79, 216, 0.1);
+    border-radius: 62.5rem;
+}
+
+.route-legs {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.route-leg {
+    position: relative;
+    padding: 0 0 1.75rem 1.75rem;
+}
+
+.route-leg:last-child {
+    padding-bottom: 0;
+}
+
+.route-leg::before {
+    content: "";
+    position: absolute;
+    top: 0.25rem;
+    left: 0;
+    width: 0.75rem;
+    height: 0.75rem;
+    background-color: var(--ctms-surface);
+    border: 2px solid var(--ctms-primary);
+    border-radius: 50%;
+}
+
+/* Connecting line, omitted on the final leg so the track ends at the destination. */
+.route-leg:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 1.25rem;
+    left: 0.3125rem;
+    width: 2px;
+    height: calc(100% - 1.25rem);
+    background-color: var(--ctms-border);
+}
+
+.route-leg-origin::before,
+.route-leg-destination::before {
+    background-color: var(--ctms-primary);
+}
+
+.route-leg-place {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    line-height: 1.3;
+}
+
+.route-leg-role {
+    display: block;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+}
+
+.route-figures-inline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+    gap: 0.75rem 1rem;
+    margin: 1.25rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ctms-border);
+}
+
+.route-figure-inline dt {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+}
+
+.route-figure-inline dd {
+    margin-bottom: 0;
+    font-weight: 600;
+}
+
+.route-card-link {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ctms-primary);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.route-card-link:hover,
+.route-card-link:focus {
+    text-decoration: underline;
+}
+
+.route-card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+    padding-top: 1rem;
+    margin-top: 1.25rem;
+    border-top: 1px solid var(--ctms-border);
+    font-size: 0.8125rem;
+    color: var(--ctms-text-muted);
+}
+
+.route-total-value {
+    font-weight: 700;
+    color: var(--ctms-text);
+}
+
 /* --- Feature cards ------------------------------------------------------------------------- */
 
 .feature-card {
@@ -830,6 +1005,28 @@ an ultrawide monitor nor collapses to a strip on a phone.
     font-size: 0.9375rem;
     color: var(--ctms-text-muted);
     margin-bottom: 0;
+}
+
+/* --- Statistics ---------------------------------------------------------------------------- */
+
+.stat {
+    text-align: center;
+    padding: 1rem 0.5rem;
+}
+
+.stat-value {
+    display: block;
+    font-weight: 700;
+    font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+    line-height: 1.1;
+    color: var(--ctms-primary);
+}
+
+.stat-label {
+    display: block;
+    margin-top: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -1377,6 +1574,914 @@ Pinned below the fixed header so a message is visible wherever the page is scrol
     box-shadow: var(--ctms-shadow-lg);
 }
 
+/* ----------------------------------------------------------------------------------------------
+Contact page
+
+An information panel beside the message form. Both are full width on a phone and sit side by side
+from the lg breakpoint, where the panel is the narrower of the two.
+---------------------------------------------------------------------------------------------- */
+
+.contact-details,
+.contact-form-card {
+    height: 100%;
+    padding: 1.5rem 1.25rem;
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-sm);
+}
+
+.contact-details-title,
+.contact-form-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+}
+
+.contact-channels {
+    display: grid;
+    gap: 1.125rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.contact-channel {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+}
+
+.contact-channel-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    color: var(--ctms-primary);
+    background-color: rgba(11, 79, 216, 0.1);
+}
+
+/* Long addresses have no natural break, so the column wraps rather than overflows. */
+.contact-channel-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.contact-channel-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+}
+
+.contact-channel-value {
+    color: var(--ctms-text);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+a.contact-channel-value:hover,
+a.contact-channel-value:focus {
+    color: var(--ctms-primary);
+}
+
+.contact-details-note {
+    margin: 1.5rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ctms-border);
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+}
+
+.contact-submit {
+    width: 100%;
+    margin-top: 1.25rem;
+}
+
+@media (min-width: 576px) {
+    .contact-details,
+    .contact-form-card {
+        padding: 2rem 1.75rem;
+    }
+
+    /* Auto margins centre the button under the fields once it stops spanning them. */
+    .contact-submit {
+        display: block;
+        width: auto;
+        min-width: 12rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* ----------------------------------------------------------------------------------------------
+Transport orders
+
+The order form and its rate card, the list of an account's orders, and one order in full. Every
+block is a single column on a phone and gains its columns at the breakpoint where they still fit.
+---------------------------------------------------------------------------------------------- */
+
+.order-form-card,
+.rate-card,
+.order-detail,
+.empty-state {
+    padding: 1.5rem 1.25rem;
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-sm);
+}
+
+.order-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+/* Full width on a phone puts the two actions one above the other, both tappable. */
+.order-form-actions .btn {
+    flex: 1 1 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.rate-card-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.rate-card-note {
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+    margin-bottom: 1.25rem;
+}
+
+.rate-list {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rate-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.625rem 0;
+    border-bottom: 1px solid var(--ctms-border);
+}
+
+.rate-row:last-child {
+    border-bottom: 0;
+}
+
+.rate-mode {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: var(--ctms-text);
+}
+
+.rate-mode i {
+    color: var(--ctms-primary);
+}
+
+.rate-unit {
+    font-weight: 400;
+    font-size: 0.8125rem;
+    color: var(--ctms-text-muted);
+}
+
+/* --- Order list ---------------------------------------------------------------------------- */
+
+.orders-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+}
+
+.orders-title {
+    font-weight: 700;
+    font-size: clamp(1.5rem, 1.15rem + 1.6vw, 2.25rem);
+    margin-bottom: 0.25rem;
+}
+
+.orders-count {
+    color: var(--ctms-text-muted);
+    margin-bottom: 0;
+}
+
+.orders-header .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.order-list {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.order-card {
+    padding: 1.25rem;
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-sm);
+    transition: box-shadow var(--ctms-transition), transform var(--ctms-transition);
+}
+
+.order-card:hover {
+    box-shadow: var(--ctms-shadow-md);
+    transform: translateY(-2px);
+}
+
+.order-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+}
+
+.order-card-mode {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--ctms-radius);
+    font-size: 1.125rem;
+    color: var(--ctms-primary);
+    background-color: rgba(11, 79, 216, 0.1);
+}
+
+/* Takes the space left over, so the status pill is pushed to the far end of the row. */
+.order-card-heading {
+    flex: 1 1 10rem;
+    min-width: 0;
+}
+
+.order-card-reference {
+    font-weight: 700;
+    color: var(--ctms-text);
+    text-decoration: none;
+}
+
+.order-card-reference:hover,
+.order-card-reference:focus {
+    color: var(--ctms-primary);
+}
+
+.order-card-route {
+    margin-bottom: 0;
+    font-size: 0.9375rem;
+    color: var(--ctms-text-muted);
+    overflow-wrap: anywhere;
+}
+
+.order-card-arrow {
+    margin: 0 0.25rem;
+    color: var(--ctms-primary);
+}
+
+.order-card-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.875rem 1rem;
+    margin: 1.125rem 0 0;
+    padding-top: 1.125rem;
+    border-top: 1px solid var(--ctms-border);
+}
+
+.order-fact dt {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+}
+
+.order-fact dd {
+    margin-bottom: 0;
+    overflow-wrap: anywhere;
+}
+
+.order-fact-cost {
+    font-weight: 700;
+}
+
+@media (min-width: 768px) {
+    .order-card-facts {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* --- Status pill --------------------------------------------------------------------------- */
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.status-pill-pending {
+    color: var(--ctms-warning);
+    background-color: rgba(255, 152, 0, 0.16);
+}
+
+.status-pill-processing {
+    color: var(--ctms-primary);
+    background-color: rgba(11, 79, 216, 0.1);
+}
+
+.status-pill-cancelled,
+.status-pill-returned {
+    color: var(--ctms-danger);
+    background-color: rgba(220, 53, 69, 0.12);
+}
+
+/* Confirming through delivering is all work in hand, so it reads as one colour. */
+.status-pill-confirmed,
+.status-pill-ready-for-pickup,
+.status-pill-picked-up,
+.status-pill-in-transit,
+.status-pill-out-for-delivery {
+    color: var(--ctms-primary);
+    background-color: rgba(11, 79, 216, 0.1);
+}
+
+.status-pill-delivered,
+.status-pill-completed {
+    color: var(--ctms-success);
+    background-color: rgba(25, 135, 84, 0.12);
+}
+
+.status-pill-archived {
+    color: var(--ctms-text-muted);
+    background-color: var(--ctms-surface-alt);
+}
+
+/* An enquiry runs an order's shape: waiting, in hand, finished, or ended early. */
+.status-pill-new {
+    color: var(--ctms-warning);
+    background-color: rgba(255, 152, 0, 0.16);
+}
+
+.status-pill-in-progress {
+    color: var(--ctms-primary);
+    background-color: rgba(11, 79, 216, 0.1);
+}
+
+.status-pill-resolved {
+    color: var(--ctms-success);
+    background-color: rgba(25, 135, 84, 0.12);
+}
+
+.status-pill-closed {
+    color: var(--ctms-text-muted);
+    background-color: var(--ctms-surface-alt);
+}
+
+/* A payment either stands or has been given back, so it needs only the two. */
+.status-pill-paid {
+    color: var(--ctms-success);
+    background-color: rgba(25, 135, 84, 0.12);
+}
+
+.status-pill-payment-pending {
+    color: var(--ctms-warning);
+    background-color: rgba(255, 152, 0, 0.16);
+}
+
+.status-pill-failed {
+    color: var(--ctms-danger);
+    background-color: rgba(220, 53, 69, 0.12);
+}
+
+.status-pill-refunded {
+    color: var(--ctms-warning);
+    background-color: rgba(255, 152, 0, 0.16);
+}
+
+/* --- Progress tracker ---------------------------------------------------------------------- */
+
+/* Upright on a phone, where a row would be narrower than the wording inside one stage. */
+.order-progress {
+    width: fit-content;
+    margin: 1.75rem auto;
+    padding: 0;
+    list-style: none;
+}
+
+.order-progress-step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.875rem;
+    padding-bottom: 1.125rem;
+}
+
+.order-progress-step:last-child {
+    padding-bottom: 0;
+}
+
+/* The line runs down from each marker to the next, so the last stage has none below it. */
+.order-progress-step::before {
+    content: '';
+    position: absolute;
+    top: 2rem;
+    bottom: 0;
+    left: 0.9375rem;
+    width: 2px;
+    background-color: var(--ctms-border);
+}
+
+.order-progress-step:last-child::before {
+    content: none;
+}
+
+.order-progress-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.75rem;
+    color: var(--ctms-text-muted);
+    background-color: var(--ctms-surface-alt);
+    border-radius: 50%;
+}
+
+.order-progress-label {
+    font-size: 0.9375rem;
+    color: var(--ctms-text-muted);
+}
+
+.order-progress-done .order-progress-marker,
+.order-progress-current .order-progress-marker {
+    color: var(--ctms-text-inverse);
+    background-color: var(--ctms-primary);
+}
+
+.order-progress-done::before {
+    background-color: var(--ctms-primary);
+}
+
+.order-progress-current .order-progress-marker {
+    box-shadow: 0 0 0 4px rgba(11, 79, 216, 0.18);
+}
+
+.order-progress-current .order-progress-label {
+    font-weight: 700;
+    color: var(--ctms-text);
+}
+
+.order-progress-done .order-progress-label {
+    color: var(--ctms-text);
+}
+
+/* --- The tracker as a snake ---------------------------------------------------------------- */
+
+/* The track runs across and folds back: left to right, down a row, right to left, down again.
+
+Each stage draws the line leaving it, so a row's last stage draws the top half of the turn and the
+stage below draws the bottom half; they meet in the row gap, neither needing the other's height.
+Which stage ends a row depends on how many fit, so the two foldings are written as alternatives. */
+@media (min-width: 576px) {
+    .order-progress {
+        --track-marker: 2.5rem;
+        --track-column-gap: 1.5rem;
+        --track-row-gap: 2.25rem;
+        --track-line: 2px;
+        --track-turn-radius: 0.875rem;
+        /* A turn drops in the gutter, clear of the wording below. The percentage resolves against
+        the stage, so this is half a stage plus half the gap: the middle of the gutter. */
+        --track-turn-reach: calc(50% + var(--track-column-gap) / 2);
+        /* A straight rule spans the gap between two markers, less the halves it starts and ends at. */
+        --track-line-length: calc(100% + var(--track-column-gap) - var(--track-marker));
+        --track-line-top: calc(var(--track-marker) / 2 - var(--track-line) / 2);
+        --track-marker-edge: calc(50% + var(--track-marker) / 2);
+
+        display: grid;
+        /* Ordinary placement never steps back into a passed column, so dense packing fills them. */
+        grid-auto-flow: row dense;
+        column-gap: var(--track-column-gap);
+        row-gap: var(--track-row-gap);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+        max-width: 34rem;
+    }
+
+    .order-progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding-bottom: 0;
+        text-align: center;
+    }
+
+    .order-progress-marker {
+        width: var(--track-marker);
+        height: var(--track-marker);
+        font-size: 0.875rem;
+        /* Lifted above the line, so a connector passes behind the circle rather than across it. */
+        position: relative;
+        z-index: 1;
+    }
+
+    .order-progress-label {
+        font-size: 0.8125rem;
+        line-height: 1.35;
+    }
+
+    /* Named through the list to outweigh the upright rule: a folded last stage needs its turn. */
+    /* Named through the list to outweigh the upright rules: folded, connectors are drawn from
+    borders, and each role below sets only the edges it needs. */
+    .order-progress .order-progress-step::before,
+    .order-progress .order-progress-step::after {
+        content: '';
+        position: absolute;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        width: var(--track-turn-reach);
+        height: auto;
+        background-color: transparent;
+        border: 0 solid var(--ctms-border);
+    }
+
+    /* A line leaving or entering a stage already reached is solid; named through the list to match
+    the weight of the neutral rule above. */
+    .order-progress .order-progress-done::after,
+    .order-progress .order-progress-done::before,
+    .order-progress .order-progress-current::before {
+        border-color: var(--ctms-primary);
+    }
+}
+
+/* Two across, so a row folds every second stage and the pattern repeats every four. */
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .order-progress-step:nth-child(4n+1),
+    .order-progress-step:nth-child(4n+4) {
+        grid-column: 1;
+    }
+
+    .order-progress-step:nth-child(4n+2),
+    .order-progress-step:nth-child(4n+3) {
+        grid-column: 2;
+    }
+
+    .order-progress-step:nth-child(4n+1)::after {
+        top: var(--track-line-top);
+        left: var(--track-marker-edge);
+        width: var(--track-line-length);
+        border-top-width: var(--track-line);
+    }
+
+    .order-progress-step:nth-child(4n+3)::after {
+        top: var(--track-line-top);
+        right: var(--track-marker-edge);
+        width: var(--track-line-length);
+        border-top-width: var(--track-line);
+    }
+
+    .order-progress-step:nth-child(4n+2)::after {
+        top: var(--track-line-top);
+        bottom: calc(var(--track-row-gap) / -2);
+        left: 50%;
+        border-top-width: var(--track-line);
+        border-right-width: var(--track-line);
+        border-top-right-radius: var(--track-turn-radius);
+    }
+
+    .order-progress-step:nth-child(4n+4)::after {
+        top: var(--track-line-top);
+        bottom: calc(var(--track-row-gap) / -2);
+        right: 50%;
+        border-top-width: var(--track-line);
+        border-left-width: var(--track-line);
+        border-top-left-radius: var(--track-turn-radius);
+    }
+
+    .order-progress-step:nth-child(4n+3)::before {
+        top: calc(var(--track-row-gap) / -2);
+        height: calc(var(--track-row-gap) / 2 + var(--track-marker) / 2);
+        left: 50%;
+        border-bottom-width: var(--track-line);
+        border-right-width: var(--track-line);
+        border-bottom-right-radius: var(--track-turn-radius);
+    }
+
+    .order-progress-step:nth-child(4n+1)::before {
+        top: calc(var(--track-row-gap) / -2);
+        height: calc(var(--track-row-gap) / 2 + var(--track-marker) / 2);
+        right: 50%;
+        border-bottom-width: var(--track-line);
+        border-left-width: var(--track-line);
+        border-bottom-left-radius: var(--track-turn-radius);
+    }
+
+    /* Nothing follows the last stage, and nothing leads into the first. */
+    .order-progress-step:last-child::after,
+    .order-progress-step:first-child::before {
+        content: none;
+    }
+}
+
+/* Three across, so a row folds every third stage and the pattern repeats every six. */
+@media (min-width: 992px) {
+    .order-progress {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: 46rem;
+    }
+
+    .order-progress-step:nth-child(6n+1),
+    .order-progress-step:nth-child(6n+6) {
+        grid-column: 1;
+    }
+
+    .order-progress-step:nth-child(6n+2),
+    .order-progress-step:nth-child(6n+5) {
+        grid-column: 2;
+    }
+
+    .order-progress-step:nth-child(6n+3),
+    .order-progress-step:nth-child(6n+4) {
+        grid-column: 3;
+    }
+
+    .order-progress-step:nth-child(6n+1)::after,
+    .order-progress-step:nth-child(6n+2)::after {
+        top: var(--track-line-top);
+        left: var(--track-marker-edge);
+        width: var(--track-line-length);
+        border-top-width: var(--track-line);
+    }
+
+    .order-progress-step:nth-child(6n+4)::after,
+    .order-progress-step:nth-child(6n+5)::after {
+        top: var(--track-line-top);
+        right: var(--track-marker-edge);
+        width: var(--track-line-length);
+        border-top-width: var(--track-line);
+    }
+
+    .order-progress-step:nth-child(6n+3)::after {
+        top: var(--track-line-top);
+        bottom: calc(var(--track-row-gap) / -2);
+        left: 50%;
+        border-top-width: var(--track-line);
+        border-right-width: var(--track-line);
+        border-top-right-radius: var(--track-turn-radius);
+    }
+
+    .order-progress-step:nth-child(6n+6)::after {
+        top: var(--track-line-top);
+        bottom: calc(var(--track-row-gap) / -2);
+        right: 50%;
+        border-top-width: var(--track-line);
+        border-left-width: var(--track-line);
+        border-top-left-radius: var(--track-turn-radius);
+    }
+
+    .order-progress-step:nth-child(6n+4)::before {
+        top: calc(var(--track-row-gap) / -2);
+        height: calc(var(--track-row-gap) / 2 + var(--track-marker) / 2);
+        left: 50%;
+        border-bottom-width: var(--track-line);
+        border-right-width: var(--track-line);
+        border-bottom-right-radius: var(--track-turn-radius);
+    }
+
+    .order-progress-step:nth-child(6n+1)::before {
+        top: calc(var(--track-row-gap) / -2);
+        height: calc(var(--track-row-gap) / 2 + var(--track-marker) / 2);
+        right: 50%;
+        border-bottom-width: var(--track-line);
+        border-left-width: var(--track-line);
+        border-bottom-left-radius: var(--track-turn-radius);
+    }
+
+    .order-progress-step:last-child::after,
+    .order-progress-step:first-child::before {
+        content: none;
+    }
+}
+
+/* --- Order detail -------------------------------------------------------------------------- */
+
+.order-back {
+    margin-bottom: 1.25rem;
+    font-size: 0.875rem;
+}
+
+.order-back a {
+    color: var(--ctms-text-muted);
+    text-decoration: none;
+}
+
+.order-back a:hover,
+.order-back a:focus {
+    color: var(--ctms-primary);
+}
+
+.order-detail {
+    max-width: 48rem;
+    margin: 0 auto;
+}
+
+.order-detail-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--ctms-border);
+}
+
+.order-detail-reference {
+    font-weight: 700;
+    font-size: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+    margin-bottom: 0.25rem;
+}
+
+.order-detail-placed {
+    margin-bottom: 0;
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+}
+
+/* The two places stack with the mode between them, and become one line from sm upward. */
+.order-route {
+    display: grid;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+}
+
+.order-route-point {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.order-route-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+}
+
+.order-route-place {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* The mode centres on the track, so the line reads as the journey, not a trail from one end. */
+.order-route-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.25rem;
+}
+
+.order-route-mode {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 3px solid var(--ctms-surface);
+    border-radius: 50%;
+    color: var(--ctms-text-inverse);
+    background-color: var(--ctms-primary);
+}
+
+.order-route-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-image: linear-gradient(90deg, var(--ctms-primary) 50%, transparent 50%);
+    background-size: 8px 2px;
+}
+
+@media (min-width: 576px) {
+    .order-route {
+        /* The middle column needs a share of its own, or the track collapses to nothing. */
+        grid-template-columns: minmax(0, 1fr) minmax(6rem, 0.7fr) minmax(0, 1fr);
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .order-route-point-end {
+        text-align: right;
+    }
+}
+
+.order-cancelled-note {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin: 1.75rem 0;
+    padding: 0.875rem 1rem;
+    border-radius: var(--ctms-radius);
+    font-size: 0.9375rem;
+    color: var(--ctms-danger);
+    background-color: rgba(220, 53, 69, 0.08);
+}
+
+/* --- Order summary ------------------------------------------------------------------------- */
+
+.order-summary {
+    margin: 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ctms-border);
+}
+
+.order-summary-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    padding: 0.625rem 0;
+}
+
+.order-summary-row dt {
+    font-weight: 400;
+    color: var(--ctms-text-muted);
+}
+
+.order-summary-row dd {
+    margin-bottom: 0;
+    font-weight: 600;
+}
+.order-summary-total {
+    margin-top: 0.25rem;
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--ctms-border);
+    font-size: 1.125rem;
+}
+
+.order-summary-total dd {
+    font-weight: 700;
+    color: var(--ctms-primary);
+}
+
+.order-detail-actions {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ctms-border);
+}
+
+.order-detail-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.order-detail-hint {
+    margin: 0.875rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--ctms-text-muted);
+}
+
 /* --- Confirm dialogue ---------------------------------------------------------------------- */
 
 .modal-content {
@@ -1396,6 +2501,12 @@ Pinned below the fixed header so a message is visible wherever the page is scrol
     margin-bottom: 0;
 }
 
+.confirm-detail {
+    margin-bottom: 0;
+    font-size: 0.9375rem;
+    color: var(--ctms-text-muted);
+}
+
 /* The two ways out are the same size, so neither is the one the pointer lands on by accident. */
 .modal-footer .btn {
     flex: 1 1 auto;
@@ -1406,4 +2517,471 @@ Pinned below the fixed header so a message is visible wherever the page is scrol
     .modal-footer .btn {
         flex: 0 0 auto;
     }
+}
+
+/* --- Empty state --------------------------------------------------------------------------- */
+
+.empty-state {
+    max-width: 32rem;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.empty-state-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    color: var(--ctms-primary);
+    background-color: rgba(11, 79, 216, 0.1);
+}
+
+.empty-state-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state-text {
+    color: var(--ctms-text-muted);
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 576px) {
+    .order-form-card,
+    .rate-card,
+    .order-detail,
+    .empty-state {
+        padding: 2rem 1.75rem;
+    }
+
+    .order-card {
+        padding: 1.5rem;
+    }
+
+    .order-form-actions .btn,
+    .order-detail-actions .btn {
+        flex: 0 0 auto;
+        width: auto;
+        min-width: 11rem;
+    }
+}
+
+/* ----------------------------------------------------------------------------------------------
+Control panel
+
+The back office: heading, section tabs, stat tiles and the data tables. A table carries far more
+columns than a phone can show, so each row is a stacked block by default and becomes a real table
+row from the lg breakpoint, where the columns fit. One markup serves both.
+---------------------------------------------------------------------------------------------- */
+
+.panel-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.panel-heading {
+    min-width: 0;
+}
+
+.panel-eyebrow {
+    margin-bottom: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ctms-primary);
+}
+
+.panel-title {
+    font-weight: 700;
+    font-size: clamp(1.5rem, 1.15rem + 1.6vw, 2.25rem);
+    margin-bottom: 0.25rem;
+}
+
+.panel-intro {
+    margin-bottom: 0;
+    color: var(--ctms-text-muted);
+}
+
+.panel-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* --- Table controls ------------------------------------------------------------------------ */
+
+/* A row from md, so the search box is not squeezed beside two dropdowns. */
+.panel-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.panel-controls-search {
+    position: relative;
+    flex: 1;
+}
+
+.panel-controls-icon {
+    position: absolute;
+    top: 50%;
+    left: 0.875rem;
+    transform: translateY(-50%);
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+    pointer-events: none;
+}
+
+.panel-controls-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.panel-controls-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.panel-controls-choices .form-select {
+    flex: 1 1 10rem;
+    width: auto;
+}
+
+@media (min-width: 768px) {
+    .panel-controls {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .panel-controls-choices {
+        flex-wrap: nowrap;
+    }
+
+    .panel-controls-choices .form-select {
+        flex: 0 0 auto;
+    }
+}
+
+/* --- Data tables --------------------------------------------------------------------------- */
+
+.panel-table-wrap {
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-sm);
+}
+
+.panel-table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+}
+
+/* Stacked by default: the header is redundant once every cell names itself. */
+.panel-table thead {
+    display: none;
+}
+
+.panel-table,
+.panel-table tbody,
+.panel-table tr,
+.panel-table td {
+    display: block;
+}
+
+.panel-table tr {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--ctms-border);
+}
+
+.panel-table tr:last-child {
+    border-bottom: 0;
+}
+
+.panel-table tbody tr {
+    transition: background-color var(--ctms-transition);
+}
+
+.panel-table tbody tr:hover {
+    background-color: var(--ctms-surface-muted);
+}
+
+.panel-table td {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    padding: 0.3125rem 0;
+}
+
+.panel-table td::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+}
+
+/* Actions sit under their label, so the buttons keep a tappable width. */
+.panel-table td[data-label='Action'] {
+    padding-top: 0.75rem;
+}
+
+.panel-count-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.875rem;
+}
+
+.panel-strong {
+    display: block;
+    font-weight: 600;
+}
+
+/* Only text that needs it breaks mid-word: a figure such as a cost must never be split. */
+.panel-muted,
+.panel-person-email,
+.panel-cell-wide {
+    overflow-wrap: anywhere;
+}
+
+/* A date and the time on it read as one moment, and are never broken between two lines. */
+.panel-when {
+    white-space: nowrap;
+}
+
+.panel-muted {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--ctms-text-muted);
+    text-decoration: none;
+}
+
+a.panel-muted:hover,
+a.panel-muted:focus {
+    color: var(--ctms-primary);
+}
+
+.panel-person {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-width: 0;
+}
+
+.panel-person-avatar {
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.panel-person-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.panel-person-name {
+    font-weight: 600;
+}
+
+.panel-person-email {
+    font-size: 0.8125rem;
+    color: var(--ctms-text-muted);
+}
+
+/* --- Pages --------------------------------------------------------------------------------- */
+
+.panel-pages {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.panel-pages-count {
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+}
+
+/* The end of the run is shown, not hidden, so the control keeps its shape. */
+.panel-pages-spent {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+/* --- Row actions --------------------------------------------------------------------------- */
+
+.panel-action-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.panel-action-group .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    white-space: nowrap;
+}
+
+.panel-status-form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.panel-status-form .form-select {
+    width: auto;
+    min-width: 8rem;
+}
+
+@media (min-width: 992px) {
+    .panel-table-wrap {
+        /* Columns can still outgrow a narrow laptop, so the wrapper scrolls. */
+        overflow-x: auto;
+    }
+
+    .panel-table {
+        display: table;
+        table-layout: auto;
+    }
+
+    .panel-table thead {
+        display: table-header-group;
+    }
+
+    .panel-table tbody {
+        display: table-row-group;
+    }
+
+    .panel-table tr {
+        display: table-row;
+        padding: 0;
+    }
+
+    .panel-table th {
+        position: relative;
+        padding: 0.875rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        text-align: left;
+        white-space: nowrap;
+        color: var(--ctms-text-muted);
+        background-color: var(--ctms-surface-muted);
+        border-bottom: 1px solid var(--ctms-border);
+    }
+
+    .panel-table td {
+        display: table-cell;
+        padding: 0.875rem 1rem;
+        vertical-align: middle;
+    }
+
+    .panel-table td::before {
+        content: none;
+    }
+
+    .panel-table td[data-label='Action'] {
+        padding-top: 0.875rem;
+    }
+
+    /* A figure and its unit are one thing, so neither is left alone; the wrapper scrolls. */
+    .panel-table td[data-label='Weight'],
+    .panel-table td[data-label='Cost'],
+    .panel-table td[data-label='Amount'] {
+        white-space: nowrap;
+    }
+
+    /* Resizing only means anything once rows are real; the grip shows on approach. */
+    .panel-column-grip {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 0.75rem;
+        height: 100%;
+        cursor: col-resize;
+        border-right: 2px solid transparent;
+        transition: border-color var(--ctms-transition);
+        touch-action: none;
+    }
+
+    .panel-column-grip:hover,
+    .panel-column-grip.is-resizing {
+        border-right-color: var(--ctms-primary);
+    }
+
+    /* Dragging a heading must not start selecting the wording it is dragging. */
+    .panel-table.is-resizing {
+        user-select: none;
+    }
+
+    /* As table cells the actions keep one line; the wrapper scrolls if the table outgrows it. */
+    .panel-action-group {
+        flex-wrap: nowrap;
+    }
+
+    .panel-cell-wide {
+        min-width: 18rem;
+    }
+
+    .panel-card {
+        padding: 2rem 1.75rem;
+    }
+}
+
+/* ----------------------------------------------------------------------------------------------
+Routing
+
+The address suggestions on the order form, and the journey panel and map on the order page. The map
+is sized in viewport units so it keeps a usable height on a phone without dominating a laptop.
+---------------------------------------------------------------------------------------------- */
+
+/* Anchors the suggestion list to the box it belongs to rather than to the page. */
+.place-field {
+    position: relative;
+}
+
+.place-field-help {
+    margin-top: 0.75rem;
+}
+
+/* --- Map ----------------------------------------------------------------------------------- */
+
+/* The two rates stack in the row so the distance one reads as an addition to the weight one. */
+.rate-value {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-weight: 700;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.rate-distance {
+    font-weight: 400;
+    font-size: 0.75rem;
+    color: var(--ctms-text-muted);
 }

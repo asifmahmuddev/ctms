@@ -1,0 +1,74 @@
+{# One order in full; the owner and the panel each supply their own way back and actions. #}
+{% extends 'base.html' %}
+
+{% block title %}{{ order.reference }} &mdash; CTMS{% endblock %}
+
+{% block content %}
+    <section class="section section-muted">
+        <div class="container">
+            <nav class="order-back" aria-label="Breadcrumb">
+                {% block order_back %}{% endblock %}
+            </nav>
+
+            <article class="order-detail">
+                <header class="order-detail-head">
+                    <div>
+                        <h1 class="order-detail-reference">{{ order.reference }}</h1>
+                        <p class="order-detail-placed">Placed {{ order.placed_at|date:'N j, Y, g:i A' }}</p>
+                    </div>
+                    {% include 'includes/status-pill.html' with status_value=order.status status_label=order.get_status_display %}
+                </header>
+
+                {% block order_owner %}{% endblock %}
+
+                <div class="order-route">
+                    <div class="order-route-point">
+                        <span class="order-route-label">From</span>
+                        <span class="order-route-place">{{ order.origin }}</span>
+                    </div>
+                    <div class="order-route-link" aria-hidden="true">
+                        <span class="order-route-mode"><i class="fas {{ order.mode_icon }}" aria-hidden="true"></i></span>
+                        <span class="order-route-track"></span>
+                    </div>
+                    <div class="order-route-point order-route-point-end">
+                        <span class="order-route-label">To</span>
+                        <span class="order-route-place">{{ order.destination }}</span>
+                    </div>
+                </div>
+
+                {% if order.progress %}
+                    <ol class="order-progress">
+                        {% for step in order.progress %}
+                            <li class="order-progress-step order-progress-{{ step.state }}">
+                                <span class="order-progress-marker" aria-hidden="true"><i class="fas {{ step.icon }}"></i></span>
+                                <span class="order-progress-label">{{ step.label }}</span>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    <p class="order-cancelled-note">
+                        <i class="fas {{ order.status_icon }}" aria-hidden="true"></i>
+                        This order is {{ order.get_status_display|lower }} and is no longer on its way.
+                    </p>
+                {% endif %}
+
+                <dl class="order-summary">
+                    <div class="order-summary-row">
+                        <dt>Transport by</dt>
+                        <dd><i class="fas {{ order.mode_icon }} fa-fw" aria-hidden="true"></i> {{ order.get_mode_display }}</dd>
+                    </div>
+                    <div class="order-summary-row">
+                        <dt>Total weight</dt>
+                        <dd>{{ order.weight_label }}</dd>
+                    </div>
+                    <div class="order-summary-row order-summary-total">
+                        <dt>Cost</dt>
+                        <dd>{{ order.cost_label }}</dd>
+                    </div>
+                </dl>
+
+                {% block order_actions %}{% endblock %}
+            </article>
+        </div>
+    </section>
+{% endblock %}
