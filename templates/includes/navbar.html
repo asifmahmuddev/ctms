@@ -19,7 +19,9 @@
             <div class="collapse navbar-collapse" id="primary-navigation">
                 <ul class="navbar-nav ms-auto align-items-lg-center">
                     {% include 'includes/site-nav-item.html' with url_name='index' label='Home' %}
+                    {% include 'includes/site-nav-item.html' with url_name='services' label='Services' %}
                     {% include 'includes/site-nav-item.html' with url_name='about' label='About' %}
+                    {% include 'includes/site-nav-item.html' with url_name='careers' label='Careers' %}
                     {% include 'includes/site-nav-item.html' with url_name='contact' label='Contact' %}
 
                     {% if user.is_authenticated %}

@@ -141,10 +141,11 @@ ctms/
 │   │   ├── models.py                ContactEnquiry model and field length limits
 │   │   ├── urls.py                  Route for the contact page
 │   │   └── views.py                 View that records an enquiry and thanks the sender
-│   ├── pages/                       Landing and about pages
+│   ├── pages/                       Landing, about, services and careers pages
 │   │   ├── apps.py                  Application configuration
-│   │   ├── urls.py                  Routes for the public pages
-│   │   └── views.py                 Landing and about pages
+│   │   ├── content.py               Service and role copy, with the rates read from the transport app
+│   │   ├── urls.py                  Routes for the four pages
+│   │   └── views.py                 Renders each page with the copy and figures it quotes
 │   └── transport/                   Transport orders
 │       ├── migrations/              Empty package; migration files are generated, not committed
 │       ├── admin.py                 Admin registration and fieldset layout
@@ -170,7 +171,7 @@ ctms/
 │   ├── accounts/                    Account and profile pages, and the plain-text emails they send
 │   ├── enquiries/                   Contact page
 │   ├── includes/                    Navigation, footer, messages, form fields, detail rows, status pills, the confirm dialogue
-│   ├── pages/                       Landing and about pages
+│   ├── pages/                       Landing, about, services and careers pages
 │   ├── transport/                   Order form, order list and order detail
 │   └── base.html                    Document shell that every page extends
 ├── .env.example                     Environment variable template, copied to .env
@@ -199,6 +200,8 @@ Each package also carries an `__init__.py`.
 **Changing an email address.** The new address is held pending while a one-time link goes to it, and only opening that link moves the account. The address being left is warned both when the change is asked for and when it completes, and changing the password cancels the request outright.
 
 **Profile pictures.** PNG and JPEG only, under 5 MB, with the format read from the file's own bytes rather than its name. Cropped server-side with Pillow to a 512-pixel square; a stored path can outlive its file, so `profile_image_url` falls back to the shared default.
+
+**Public pages.** Landing, about, services and careers, with the copy in `apps/pages/content.py` rather than buried in templates. The services page is built from the transport app's own rate tables, so a quote and a charge cannot describe different things.
 
 **Contact enquiries.** Anyone may send one, signed in or not; staff move each from **New** through **In progress** to **Resolved** or **Closed**. What the visitor wrote is never editable, and only an administrator may delete one.
 

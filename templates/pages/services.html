@@ -1,0 +1,87 @@
+{# Services: the four ways cargo travels, what each is charged, and what is promised. #}
+{% extends 'base.html' %}
+
+{% block title %}Services &mdash; CTMS{% endblock %}
+{% block description %}Air, sea, road and rail freight, each priced by weight and distance before an order is placed.{% endblock %}
+
+{% block content %}
+    <section class="section section-light">
+        <div class="container">
+            <div class="section-intro">
+                <h2>Freight services</h2>
+                <p>Four ways to move a consignment, priced the same way in every case: a rate per kilogram, plus a
+                    surcharge for every thousand kilometres it travels. Pick the one that fits the deadline and the budget.</p>
+            </div>
+
+            <div class="row g-4">
+                {% for service in services %}
+                    <div class="col-md-6 col-xl-3">
+                        <article class="service-card" id="{{ service.anchor }}">
+                            <span class="service-card-icon"><i class="fas {{ service.icon }}" aria-hidden="true"></i></span>
+                            <h3 class="service-card-title">{{ service.name }}</h3>
+                            <p class="service-card-carrier">by {{ service.carrier }}</p>
+                            <p class="service-card-text">{{ service.description }}</p>
+
+                            <dl class="service-rates">
+                                <div class="service-rate">
+                                    <dt>Per kilogram</dt>
+                                    <dd>${{ service.cost_per_kilogram }}</dd>
+                                </div>
+                                <div class="service-rate">
+                                    <dt>Per 1,000 km</dt>
+                                    <dd>${{ service.cost_per_thousand_kilometres|floatformat:2 }}<span>/kg</span></dd>
+                                </div>
+                                <div class="service-rate">
+                                    <dt>Typical speed</dt>
+                                    <dd>{{ service.cruising_speed }}<span>km/h</span></dd>
+                                </div>
+                            </dl>
+
+                            <p class="service-suits-title">Best for</p>
+                            <ul class="service-suits">
+                                {% for suits in service.suits %}<li>{{ suits }}</li>{% endfor %}
+                            </ul>
+                        </article>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-alt">
+        <div class="container">
+            <div class="section-intro">
+                <h2>What every booking gets</h2>
+                <p>Whichever mode carries it, a consignment is handled the same way.</p>
+            </div>
+            <div class="row g-4">
+                {% for icon, title, text in promises %}
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <span class="feature-card-icon"><i class="fas {{ icon }}" aria-hidden="true"></i></span>
+                            <h3 class="feature-card-title">{{ title }}</h3>
+                            <p class="feature-card-text">{{ text }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-light">
+        <div class="container">
+            <div class="page-cta">
+                <h2 class="page-cta-title">Ready to move something?</h2>
+                <p class="page-cta-text">Place an order and see the route, the transit time and the price before you confirm it.</p>
+                <div class="page-cta-actions">
+                    {% if user.is_authenticated %}
+                        <a class="btn btn-ctms" href="{% url 'order_create' %}">Place an order</a>
+                    {% else %}
+                        <a class="btn btn-ctms" href="{% url 'signup' %}">Create an account</a>
+                    {% endif %}
+                    <a class="btn btn-ctms-outline" href="{% url 'contact' %}">Talk to the freight desk</a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

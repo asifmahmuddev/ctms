@@ -3,9 +3,20 @@
     <div class="container">
         <div class="row g-4">
             <div class="col-6 col-lg-2">
+                <h3>Services</h3>
+                {% url 'services' as services_url %}
+                <ul class="site-footer-links">
+                    <li><a href="{{ services_url }}#air-freight">Air freight</a></li>
+                    <li><a href="{{ services_url }}#sea-freight">Sea freight</a></li>
+                    <li><a href="{{ services_url }}#road-freight">Road freight</a></li>
+                    <li><a href="{{ services_url }}#rail-freight">Rail freight</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-lg-2">
                 <h3>Company</h3>
                 <ul class="site-footer-links">
                     <li><a href="{% url 'about' %}">About</a></li>
+                    <li><a href="{% url 'careers' %}">Careers</a></li>
                     <li><a href="{% url 'contact' %}">Contact</a></li>
                 </ul>
             </div>

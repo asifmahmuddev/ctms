@@ -1,0 +1,70 @@
+{# Careers page: what working here is like, and the roles currently open. #}
+{% extends 'base.html' %}
+
+{% block title %}Careers &mdash; CTMS{% endblock %}
+{% block description %}Open roles across operations, engineering and support at CTMS.{% endblock %}
+
+{% block content %}
+    <section class="section section-light">
+        <div class="container">
+            <div class="section-intro">
+                <h2>Work at CTMS</h2>
+                <p>We keep freight moving for the people who depend on it arriving. That takes an operations desk that
+                    knows the work and engineers who have sat beside them, so we hire for both and keep them close.</p>
+            </div>
+            <div class="row g-4">
+                {% for icon, title, text in values %}
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <span class="feature-card-icon"><i class="fas {{ icon }}" aria-hidden="true"></i></span>
+                            <h3 class="feature-card-title">{{ title }}</h3>
+                            <p class="feature-card-text">{{ text }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-alt">
+        <div class="container">
+            <div class="section-intro">
+                <h2>Open roles</h2>
+                <p>Tell us which one fits and why. Every application reaches the same desk.</p>
+            </div>
+
+            <ul class="role-list">
+                {% for role in roles %}
+                    <li class="role-card">
+                        <div class="role-card-body">
+                            <h3 class="role-card-title">{{ role.title }}</h3>
+                            <ul class="role-card-meta">
+                                <li><i class="fas fa-users fa-fw" aria-hidden="true"></i> {{ role.team }}</li>
+                                <li><i class="fas fa-map-marker-alt fa-fw" aria-hidden="true"></i> {{ role.location }}</li>
+                                <li><i class="fas fa-clock fa-fw" aria-hidden="true"></i> {{ role.arrangement }}</li>
+                            </ul>
+                            <p class="role-card-text">{{ role.summary }}</p>
+                        </div>
+                        <div class="role-card-action">
+                            <a class="btn btn-ctms btn-sm" href="{% url 'contact' %}?subject={{ role.subject|urlencode }}">Apply</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+
+    <section class="section section-light">
+        <div class="container">
+            <div class="page-cta">
+                <h2 class="page-cta-title">Nothing here for you?</h2>
+                <p class="page-cta-text">Send us what you do and where you would want to do it. We read every one, and we
+                    keep the ones we cannot place yet.</p>
+                <div class="page-cta-actions">
+                    <a class="btn btn-ctms" href="{% url 'contact' %}?subject={{ 'Speculative application'|urlencode }}">Get in touch</a>
+                    <a class="btn btn-ctms-outline" href="{% url 'about' %}">Read about CTMS</a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
