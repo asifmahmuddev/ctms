@@ -521,7 +521,6 @@ only, so a phone never downloads it and the card keeps the full width of the scr
     .auth-visual-username-change {
         background-image: url('../images/change-username-bg.jpg');
     }
-
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -3201,7 +3200,133 @@ is sized in viewport units so it keeps a usable height on a phone without domina
     margin-top: 0.75rem;
 }
 
+.place-suggestions {
+    position: absolute;
+    z-index: 5;
+    left: 0;
+    right: 0;
+    margin: 0.25rem 0 0;
+    padding: 0.25rem;
+    list-style: none;
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius);
+    box-shadow: var(--ctms-shadow-lg);
+    /* A long list scrolls inside itself instead of running past the bottom of the card. */
+    max-height: 15rem;
+    overflow-y: auto;
+}
+
+.place-suggestion {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.625rem;
+    border: 0;
+    border-radius: var(--ctms-radius);
+    font-size: 0.9375rem;
+    text-align: left;
+    color: var(--ctms-text);
+    background-color: transparent;
+}
+
+.place-suggestion:hover,
+.place-suggestion:focus {
+    color: var(--ctms-primary);
+    background-color: var(--ctms-surface-muted);
+}
+
+/* --- Journey panel ------------------------------------------------------------------------- */
+
+.route-panel {
+    margin: 1.75rem 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ctms-border);
+}
+
+.route-panel-head {
+    margin-bottom: 1rem;
+}
+
+.route-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.route-panel-title i {
+    color: var(--ctms-primary);
+}
+
+.route-panel-note {
+    margin-bottom: 0;
+    font-size: 0.8125rem;
+    color: var(--ctms-text-muted);
+}
+
+.route-figures {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.route-figure {
+    display: flex;
+    flex-direction: column;
+    padding: 0.875rem 1rem;
+    border-radius: var(--ctms-radius);
+    background-color: var(--ctms-surface-muted);
+}
+
+.route-figure-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.route-figure-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+}
+
 /* --- Map ----------------------------------------------------------------------------------- */
+
+.route-map {
+    height: 60vw;
+    max-height: 26rem;
+    min-height: 14rem;
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius);
+    /* Leaflet paints to the container's corners, which would spill past the radius. */
+    overflow: hidden;
+}
+
+/* Bootstrap gives every image a max-width, which stops Leaflet's tiles tiling correctly. */
+.route-map img {
+    max-width: none;
+}
+
+.route-map .leaflet-container {
+    font: inherit;
+}
+
+@media (min-width: 576px) {
+    .route-map {
+        height: 22rem;
+    }
+}
+
+/* While the geocoder is answering, the row says so rather than leaving an empty box. */
+.place-suggestions-busy {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+}
 
 /* The two rates stack in the row so the distance one reads as an addition to the weight one. */
 .rate-value {
@@ -3217,4 +3342,17 @@ is sized in viewport units so it keeps a usable height on a phone without domina
     font-weight: 400;
     font-size: 0.75rem;
     color: var(--ctms-text-muted);
+}
+
+/* The reference in a control panel table opens the record it names. */
+.panel-link {
+    display: block;
+    font-weight: 700;
+    color: var(--ctms-text);
+    text-decoration: none;
+}
+
+.panel-link:hover,
+.panel-link:focus {
+    color: var(--ctms-primary);
 }

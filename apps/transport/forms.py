@@ -32,13 +32,19 @@ class TransportOrderForm(BootstrapFormMixin, forms.ModelForm):
         widget=forms.NumberInput(attrs={'step': WEIGHT_STEP}),
     )
 
+    # Filled when a place is picked from the list; a missing pair costs the map, not the order.
+    origin_latitude = forms.FloatField(required=False, widget=forms.HiddenInput)
+    origin_longitude = forms.FloatField(required=False, widget=forms.HiddenInput)
+    destination_latitude = forms.FloatField(required=False, widget=forms.HiddenInput)
+    destination_longitude = forms.FloatField(required=False, widget=forms.HiddenInput)
+
     class Meta:
         model = TransportOrder
         fields = ORDER_FIELDS
         labels = {'mode': 'Transport by'}
         widgets = {
-            'origin': forms.TextInput(attrs={'placeholder': ORIGIN_PLACEHOLDER, 'autocomplete': 'off'}),
-            'destination': forms.TextInput(attrs={'placeholder': DESTINATION_PLACEHOLDER, 'autocomplete': 'off'}),
+            'origin': forms.TextInput(attrs={'placeholder': ORIGIN_PLACEHOLDER, 'autocomplete': 'off', 'data-place-field': 'origin'}),
+            'destination': forms.TextInput(attrs={'placeholder': DESTINATION_PLACEHOLDER, 'autocomplete': 'off', 'data-place-field': 'destination'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -58,3 +64,10 @@ class TransportOrderForm(BootstrapFormMixin, forms.ModelForm):
             self.add_error('destination', SAME_PLACE_MESSAGE)
 
         return cleaned_data
+
+    def coordinates(self, place):
+        """Return where a place sits as a (latitude, longitude) pair, or None when it was not picked."""
+
+        latitude = self.cleaned_data.get(f'{place}_latitude')
+        longitude = self.cleaned_data.get(f'{place}_longitude')
+        return (latitude, longitude) if latitude is not None and longitude is not None else None

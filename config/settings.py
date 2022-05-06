@@ -36,6 +36,9 @@ DEFAULT_SENDER_ADDRESS = 'no-reply@ctms-asifmahmuddev.com'
 
 DEFAULT_LOG_LEVEL = 'INFO'
 
+# The routing service answers slowly for a long route, and a request thread must not wait for ever.
+ROUTING_REQUEST_TIMEOUT_SECONDS = 20
+
 
 # --- Environment helpers -----------------------------------------------------------------------
 
@@ -163,6 +166,12 @@ SESSION_COOKIE_AGE = SESSION_LIFETIME_SECONDS
 
 # Verification, reset and address links share this timeout, and the emails quote the same constant.
 PASSWORD_RESET_TIMEOUT = ACCOUNT_LINK_LIFETIME_MINUTES * 60
+
+
+# --- Routing -----------------------------------------------------------------------------------
+# Geocoding and routing are proxied through this project, so the key never reaches a browser.
+
+OPENROUTESERVICE_API_KEY = get_env('OPENROUTESERVICE_API_KEY')
 
 
 # --- Email -------------------------------------------------------------------------------------

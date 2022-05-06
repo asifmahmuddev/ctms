@@ -1,5 +1,6 @@
 {# One order in full; the owner and the panel each supply their own way back and actions. #}
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}{{ order.reference }} &mdash; CTMS{% endblock %}
 
@@ -52,6 +53,32 @@
                     </p>
                 {% endif %}
 
+                {% if order.has_route %}
+                    <section class="route-panel">
+                        <header class="route-panel-head">
+                            <h2 class="route-panel-title"><i class="fas fa-route" aria-hidden="true"></i> The journey</h2>
+                            {% if order.route_is_direct %}
+                                <p class="route-panel-note">Measured as a direct line: no road route covers this journey.</p>
+                            {% endif %}
+                        </header>
+
+                        <div class="route-figures">
+                            <div class="route-figure">
+                                <span class="route-figure-value">{{ order.distance_label }}</span>
+                                <span class="route-figure-label">Distance</span>
+                            </div>
+                            <div class="route-figure">
+                                <span class="route-figure-value">{{ order.duration_label }}</span>
+                                <span class="route-figure-label">Estimated transit</span>
+                            </div>
+                        </div>
+
+                        {# Drawn from what the order stored, so the page asks the routing service for nothing. #}
+                        {{ order.route_line|json_script:'route-points' }}
+                        <div class="route-map" data-route-map{% if order.route_is_direct %} data-route-direct{% endif %}></div>
+                    </section>
+                {% endif %}
+
                 <dl class="order-summary">
                     <div class="order-summary-row">
                         <dt>Transport by</dt>
@@ -61,6 +88,12 @@
                         <dt>Total weight</dt>
                         <dd>{{ order.weight_label }}</dd>
                     </div>
+                    {% if order.has_route %}
+                        <div class="order-summary-row">
+                            <dt>Distance</dt>
+                            <dd>{{ order.distance_label }}</dd>
+                        </div>
+                    {% endif %}
                     <div class="order-summary-row order-summary-total">
                         <dt>Cost</dt>
                         <dd>{{ order.cost_label }}</dd>
@@ -71,4 +104,13 @@
             </article>
         </div>
     </section>
+{% endblock %}
+
+{% block extra_stylesheet %}
+    <link rel="stylesheet" href="{% static 'lib/leaflet/leaflet.css' %}">
+{% endblock %}
+
+{% block extra_script %}
+    <script src="{% static 'lib/leaflet/leaflet.js' %}"></script>
+    <script src="{% static 'js/map.js' %}"></script>
 {% endblock %}

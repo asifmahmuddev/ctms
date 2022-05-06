@@ -24,3 +24,11 @@ Pillow==9.1.0
 # --- Configuration -----------------------------------------------------------------------------
 # Loads the .env file into the environment during local development.
 python-dotenv==0.20.0
+
+# --- Routing -----------------------------------------------------------------------------------
+# Calls the geocoding and directions services from the server, so the key never reaches a browser.
+requests==2.27.1
+certifi==2021.10.8
+charset-normalizer==2.0.12
+idna==3.3
+urllib3==1.26.9

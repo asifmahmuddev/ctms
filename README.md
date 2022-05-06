@@ -1,13 +1,15 @@
 # CTMS — Cargo Transportation Management System
 
-A freight booking platform. Customers price and place cargo orders across air, sea, road and rail, and follow each one through its stages; anyone can reach the desk through the contact page.
+A freight booking and tracking platform. Customers price and place cargo orders across air, sea, road and rail, then follow the route and the status of each one.
 
 | Component | Version |
 | --- | --- |
 | Python | 3.10.4 |
 | Django | 4.0.4 |
 | Database | MongoDB |
-| Front end | Bootstrap 5.1.3, Font Awesome 5.15.4, Cropper.js 1.5.12 |
+| Front end | Bootstrap 5.1.3, Font Awesome 5.15.4, Cropper.js 1.5.12, Leaflet 1.8.0 |
+| Maps | Leaflet 1.8.0 over OpenStreetMap tiles |
+| Geocoding and routing | OpenRouteService |
 
 ---
 
@@ -43,7 +45,7 @@ python manage.py runserver
 Site: <http://127.0.0.1:8000/> · Admin: <http://127.0.0.1:8000/admin/>
 
 - **Step 2** is not optional: `djongo` ships only as a source distribution, so setuptools and wheel must already be present to build it.
-- **Step 4** needs a MongoDB connection string.
+- **Step 4** needs a MongoDB connection string, and for maps a free OpenRouteService key from <https://openrouteservice.org>. Without the key an order is still placed and priced; it simply has no route and no map.
 - **Step 5** is required on a fresh clone, because migration files are generated from the models rather than committed.
 
 ---
@@ -65,6 +67,7 @@ Read from `.env` at startup. A missing required variable raises `ImproperlyConfi
 | `EMAIL_USE_TLS` | no | `True` | Negotiate TLS on connect |
 | `EMAIL_HOST_USER` | no | — | Mail account; empty prints messages to the console instead of sending them |
 | `EMAIL_HOST_PASSWORD` | no | — | Mail account password, or an app password where the provider requires one |
+| `OPENROUTESERVICE_API_KEY` | no | — | Free routing key; without it an order is placed without a route |
 
 Generate a secret key with:
 
@@ -152,6 +155,7 @@ ctms/
 │       ├── apps.py                  Application configuration
 │       ├── forms.py                 Order form, its weight bounds and its route check
 │       ├── models.py                Order model, the modes it ships by, how it is priced and where it stands
+│       ├── services.py              Geocoding, road routing and great-circle geometry
 │       ├── urls.py                  Routes for placing, listing, reading and cancelling an order
 │       └── views.py                 Order placement, the owner's own list and detail, and cancellation
 ├── config/                          Project configuration
@@ -164,8 +168,10 @@ ctms/
 ├── static/                          Source assets (STATICFILES_DIRS)
 │   ├── css/styles.css               Design tokens, and every component the site draws itself with
 │   ├── images/                      Icons, backgrounds, avatars and partner logos
-│   ├── js/script.js                 Scroll-to-top, messages, password reveal, cropping, confirmations and column widths
-│   ├── lib/                         Bootstrap, Font Awesome and Cropper.js
+│   ├── js/                          Browser behaviour, loaded as written with no build step
+│   │   ├── map.js                   Address suggestions and the route map, on the two order pages
+│   │   └── script.js                Scroll-to-top, messages, password reveal, cropping, confirmations and column widths
+│   ├── lib/                         Bootstrap, Font Awesome, Cropper.js and Leaflet
 │   └── videos/hero.webm             Landing page hero video
 ├── templates/                       HTML templates
 │   ├── accounts/                    Account and profile pages, and the plain-text emails they send
@@ -205,7 +211,7 @@ Each package also carries an `__init__.py`.
 
 **Contact enquiries.** Anyone may send one, signed in or not; staff move each from **New** through **In progress** to **Resolved** or **Closed**. What the visitor wrote is never editable, and only an administrator may delete one.
 
-**Transport orders.** An order names a mode, origin, destination and weight; the cost and the status follow from those and are never read from the submitted form. Pricing is per kilogram plus a distance rate for every thousand kilometres, so a heavy load pays for the distance while a parcel barely notices it.
+**Transport orders.** An order names a mode, origin, destination and weight; the cost and the status follow from those and are never read from the submitted form. Pricing is per kilogram plus a distance rate for every thousand kilometres, so a heavy load pays for the distance while a parcel barely notices it, and an order without a route is charged on weight alone.
 
 **The course an order runs.** Nine stages — **Pending, Confirmed, Processing, Ready for Pickup, Picked Up, In Transit, Out for Delivery, Delivered, Completed** — and three ways to leave early: **Cancelled**, **Returned**, **Archived**. An order that has left draws no tracker, because leaving is not a point along the way.
 
@@ -217,6 +223,8 @@ Two flags decide whether an account works at all rather than what it may do: `is
 
 **Asking before something cannot be undone.** One dialogue serves the whole site and no page reaches for the browser's own confirm box; a destructive control carries what is asked, what it costs and what accepting is called, and the dialogue takes its wording from whichever control raised it. The submission is held until someone accepts, and a keyboard alone can work it — Tab cycles inside it, Escape closes it, and focus returns to the control that opened it.
 
+**Routing.** An address box offers places to pick from, and when both ends are known the journey is worked out as the order is placed and stored with it, so the order page draws its map without asking the service again. Road and rail route over the road network; air and sea, and any land journey the service declines, follow the great circle. Both calls are made from the server, so the key never reaches a browser, and an address typed by hand still places an order — simply without a map.
+
 **Passwords.** Django's validators apply, and a replacement identical to the current password is refused. Changing one by either route signs out every other device and emails the owner.
 
 **Email.** Only the account and order notices are sent, from a background thread so a slow mail server cannot stall a response. With `EMAIL_HOST_USER` unset they print to the terminal.
@@ -225,7 +233,7 @@ Two flags decide whether an account works at all rather than what it may do: `is
 
 **Database.** MongoDB is reached through a SQL-transpiling backend, and `config/db.py` declares conditional expressions in `WHERE` clauses unsupported — without it ordinary filters fail inside the transpiler.
 
-**Front end.** Bootstrap supplies the grid and components, and `styles.css` layers the project's design on top without redefining a Bootstrap class. Rules are mobile-first, every colour, radius and spacing step is a token at the top of the file, and every text colour clears WCAG AA against the surface it sits on rather than merely against white.
+**Front end.** Bootstrap supplies the grid and components, Leaflet draws the maps over OpenStreetMap tiles, and `styles.css` layers the project's design on top without redefining a Bootstrap class. Rules are mobile-first, every colour, radius and spacing step is a token at the top of the file, and every text colour clears WCAG AA against the surface it sits on rather than merely against white.
 
 **Form fields.** Every label carries an icon mapped from the field's name in `apps/common/forms.py` and attached by the shared Bootstrap mixin, so a field looks the same wherever it is rendered. The profile groups — personal details, contact, social links — come from one definition that the holder's own editor lays itself out from.
 
