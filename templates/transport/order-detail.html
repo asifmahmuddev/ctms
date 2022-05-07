@@ -6,6 +6,35 @@
 {% endblock %}
 
 {% block order_actions %}
+    {% with payment=order.payment_record %}
+        <section class="order-billing">
+            <h2 class="order-billing-title"><i class="fas fa-receipt" aria-hidden="true"></i> Payment</h2>
+
+            <p class="order-billing-state order-billing-state-{{ payment.status }}">
+                <i class="fas {{ payment.status_icon }}" aria-hidden="true"></i>
+                {% if order.is_paid %}
+                    Paid {{ payment.paid_at|date:'N j, Y' }} with {{ payment.card_label }} &middot;
+                    receipt {{ payment.reference }}
+                {% elif payment.is_refunded %}
+                    Refunded {{ payment.updated_at|date:'N j, Y' }}. This order can be paid again.
+                {% elif payment.is_failed %}
+                    This payment did not go through. You can try again.
+                {% else %}
+                    {{ payment.amount_label }} is due on this order.
+                {% endif %}
+            </p>
+
+            <div class="order-billing-actions">
+                {% if order.can_be_paid %}
+                    <a class="btn btn-ctms" href="{% url 'order_pay' order.pk %}"><i class="fas fa-credit-card" aria-hidden="true"></i> Pay {{ order.cost_label }}</a>
+                {% endif %}
+                {% if order.has_invoice %}
+                    <a class="btn btn-ctms-outline" href="{% url 'invoice' order.pk %}"><i class="fas fa-file-invoice" aria-hidden="true"></i> View invoice</a>
+                {% endif %}
+            </div>
+        </section>
+    {% endwith %}
+
     {% if order.can_be_cancelled %}
         <footer class="order-detail-actions">
             {# Cancelling changes state, so it posts: a prefetched link must not call an order off. #}

@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------------------------
-CTMS site behaviour: scroll-to-top, flash messages, password reveal, picture cropping, action confirmation and
-table column widths.
+CTMS site behaviour: scroll-to-top, flash messages, password reveal, picture cropping, action confirmation,
+card entry and table column widths.
 ---------------------------------------------------------------------------------------------- */
 
 (function () {
@@ -21,6 +21,15 @@ table column widths.
     const CONFIRM_MODAL_SELECTOR = '[data-confirm-modal]';
     const CONFIRM_CONTROL_SELECTOR = 'button:not([disabled])';
     const DEFAULT_CONFIRM_ACTION = 'Confirm';
+
+    const SAVED_CARD_SELECT_ID = 'id_saved_card';
+    const NEW_CARD_ATTRIBUTE = 'data-new-card';
+    const NEW_CARD_CHOICE = '';
+
+    const EXPIRY_FIELD_ID = 'id_expiry';
+    const EXPIRY_SEPARATOR = '/';
+    const EXPIRY_MONTH_DIGITS = 2;
+    const EXPIRY_DIGITS = 4;
 
     const TABLE_NAME_ATTRIBUTE = 'data-table';
     const COLUMN_RESET_ATTRIBUTE = 'data-columns-reset';
@@ -302,6 +311,55 @@ table column widths.
     /* A reCAPTCHA token is single-use and expires two minutes after it is minted, so one is asked for
     at the moment the form is submitted rather than when the page loads. Submitting again after a
     refused password, or after filling the form slowly, therefore carries a token that is still good. */
+    function initCardChoice() {
+        const choice = document.getElementById(SAVED_CARD_SELECT_ID);
+        const blocks = document.querySelectorAll('[' + NEW_CARD_ATTRIBUTE + ']');
+        if (!choice || !blocks.length) {
+            return;
+        }
+
+        function syncNewCardFields() {
+            const wanted = choice.value === NEW_CARD_CHOICE;
+
+            Array.prototype.forEach.call(blocks, function (block) {
+                block.hidden = !wanted;
+                Array.prototype.forEach.call(block.querySelectorAll('input'), function (input) {
+                    input.disabled = !wanted;
+                });
+            });
+        }
+
+        choice.addEventListener('change', syncNewCardFields);
+        syncNewCardFields();
+    }
+
+    /* An expiry is printed MM/YY, so the slash is written as the digits are typed rather than asked
+    for. It appears only once a year digit follows it, which leaves backspace a way back out. */
+    function formatExpiry(value) {
+        const digits = value.replace(/\D/g, '').slice(0, EXPIRY_DIGITS);
+        if (digits.length <= EXPIRY_MONTH_DIGITS) {
+            return digits;
+        }
+        return digits.slice(0, EXPIRY_MONTH_DIGITS) + EXPIRY_SEPARATOR + digits.slice(EXPIRY_MONTH_DIGITS);
+    }
+
+    function initCardExpiry() {
+        const field = document.getElementById(EXPIRY_FIELD_ID);
+        if (!field) {
+            return;
+        }
+
+        field.addEventListener('input', function () {
+            const typingAtEnd = field.selectionStart === field.value.length;
+            field.value = formatExpiry(field.value);
+            if (typingAtEnd) {
+                field.setSelectionRange(field.value.length, field.value.length);
+            }
+        });
+    }
+
+    /* The tab strip scrolls sideways on a narrow screen and starts at its left edge, which can leave
+    the tab the page is actually on out of sight. It is centred without moving the page itself. */
     function readColumnWidths(name) {
         try {
             return JSON.parse(window.localStorage.getItem(COLUMN_WIDTH_KEY + name));
@@ -440,6 +498,8 @@ table column widths.
         initPasswordToggles();
         initPictureCropper();
         initActionConfirmation();
+        initCardChoice();
+        initCardExpiry();
         initResizableColumns();
     });
 }());

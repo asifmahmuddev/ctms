@@ -1,0 +1,24 @@
+{# The cards this account keeps for a quicker checkout, and the way to remove one. #}
+{% extends 'accounts/profile-base.html' %}
+
+{% block title %}Payment methods &mdash; CTMS{% endblock %}
+
+{% block profile_actions %}
+    <a class="btn btn-ctms-outline" href="{% url 'profile' %}"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to profile</a>
+{% endblock %}
+
+{% block profile_body %}
+    <section class="detail-card">
+        <h2 class="detail-card-title"><i class="fas fa-credit-card" aria-hidden="true"></i> Saved cards</h2>
+        <p class="detail-card-text">
+            A saved card is only a description: the brand, the last four digits, the expiry and the name on it.
+            The number and the security code were never stored, so paying with one asks for its code again.
+        </p>
+
+        {% if cards %}
+            {% include 'includes/saved-card-list.html' with cards=cards removable=True %}
+        {% else %}
+            <p class="detail-card-text">You have no saved cards. Tick <em>Save this card for next time</em> when you pay for an order.</p>
+        {% endif %}
+    </section>
+{% endblock %}

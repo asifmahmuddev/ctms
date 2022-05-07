@@ -1,6 +1,6 @@
 # CTMS — Cargo Transportation Management System
 
-A freight booking and tracking platform. Customers price and place cargo orders across air, sea, road and rail, then follow the route and the status of each one.
+A freight booking and tracking platform. Customers price and place cargo orders, follow the route and status of each one, settle it and take away an invoice.
 
 | Component | Version |
 | --- | --- |
@@ -10,6 +10,7 @@ A freight booking and tracking platform. Customers price and place cargo orders 
 | Front end | Bootstrap 5.1.3, Font Awesome 5.15.4, Cropper.js 1.5.12, Leaflet 1.8.0 |
 | Maps | Leaflet 1.8.0 over OpenStreetMap tiles |
 | Geocoding and routing | OpenRouteService |
+| Invoices | ReportLab 3.6.9 |
 
 ---
 
@@ -133,6 +134,17 @@ ctms/
 │   │   ├── tokens.py                One-time token generators behind the activation and confirmation links
 │   │   ├── urls.py                  Routes for the account flows
 │   │   └── views.py                 Registration, sign-in, sign-out, activation, passwords and profile
+│   ├── billing/                     Payments taken against an order, and cards kept for the next
+│   │   ├── migrations/              Empty package; migration files are generated, not committed
+│   │   ├── admin.py                 Read-only admin listing of payments and kept cards
+│   │   ├── apps.py                  Application configuration
+│   │   ├── forms.py                 Checkout, which keeps no card number and no security code
+│   │   ├── invoices.py              Draws an invoice as a PDF, measured down the page
+│   │   ├── models.py                Payment and SavedCard, and how a receipt is numbered
+│   │   ├── responses.py             Hands a drawn invoice to the browser as a download
+│   │   ├── signals.py               Opens a payment against every order as it is placed
+│   │   ├── urls.py                  Routes for paying, the invoice and the kept cards
+│   │   └── views.py                 Settling an order, drawing its invoice, removing a kept card
 │   ├── common/                      Shared helpers, imported by the apps rather than owned by one
 │   │   ├── forms.py                 Bootstrap control classes and label icons, applied to every form
 │   │   └── lists.py                 A table that can be searched, narrowed, reordered and paged
@@ -170,11 +182,12 @@ ctms/
 │   ├── images/                      Icons, backgrounds, avatars and partner logos
 │   ├── js/                          Browser behaviour, loaded as written with no build step
 │   │   ├── map.js                   Address suggestions and the route map, on the two order pages
-│   │   └── script.js                Scroll-to-top, messages, password reveal, cropping, confirmations and column widths
+│   │   └── script.js                Scroll-to-top, messages, password reveal, cropping, confirmations, card entry and column widths
 │   ├── lib/                         Bootstrap, Font Awesome, Cropper.js and Leaflet
 │   └── videos/hero.webm             Landing page hero video
 ├── templates/                       HTML templates
 │   ├── accounts/                    Account and profile pages, and the plain-text emails they send
+│   ├── billing/                     Checkout, the invoice and the kept cards
 │   ├── enquiries/                   Contact page
 │   ├── includes/                    Navigation, footer, messages, form fields, detail rows, status pills, the confirm dialogue
 │   ├── pages/                       Landing, about, services and careers pages
@@ -213,9 +226,21 @@ Each package also carries an `__init__.py`.
 
 **Transport orders.** An order names a mode, origin, destination and weight; the cost and the status follow from those and are never read from the submitted form. Pricing is per kilogram plus a distance rate for every thousand kilometres, so a heavy load pays for the distance while a parcel barely notices it, and an order without a route is charged on weight alone.
 
+**Paying for an order.** Placing an order opens a payment against it at **Payment Pending**, so no table carries a column that is sometimes blank; paying settles that same record and issues a receipt number. An administrator may mark a settled payment **Refunded** or **Failed**, either of which leaves the amount due again.
+
+**Cards.** The checkout is a demonstration and no money moves. **No card number and no security code is ever stored** — a kept card holds only the brand, last four digits, expiry and name on it, which is how a payment service keeps one on file; paying with a kept card asks for its security code again.
+
+**Entering a card.** An expiry is printed MM/YY, so the slash is written as the digits are typed and appears only once a year digit follows it, which leaves backspace a way out. The field stays a single control, so a browser's own card filler still fills it in one go.
+
+**Invoices.** `/orders/<pk>/invoice/` shows the invoice as a page and `/orders/<pk>/invoice.pdf` hands over the file, drawn by ReportLab on the way out rather than stored, so it always reflects where the payment stands now. Its number derives from the order, so it never changes once issued.
+
+**How an invoice stands.** Page and file both carry a tilted stamp — **PAID** in green, **REFUNDED** amber, **FAILED** red, **PAYMENT PENDING** grey — with the drawn wording shrunk to fit between the stamp's rings. The file names itself, so a reader opens it as its own number rather than as "untitled".
+
 **The course an order runs.** Nine stages — **Pending, Confirmed, Processing, Ready for Pickup, Picked Up, In Transit, Out for Delivery, Delivered, Completed** — and three ways to leave early: **Cancelled**, **Returned**, **Archived**. An order that has left draws no tracker, because leaving is not a point along the way.
 
 **How the tracker is drawn.** The stages fold across the page — three to a row on a desktop, two on a tablet, upright on a phone — with each row running the opposite way to the one above and the line turning at a rounded corner. Each stage draws the line leaving it, so the two halves of a turn meet in the row gap and neither has to know how tall the other's wording made its row.
+
+**Freight is not handed over before it is paid for.** An order cannot reach Ready for Pickup or any stage beyond until its payment is settled; `TransportOrder.may_reach` answers that, and both the dropdown and the route acting on it read it, so withholding the option is presentation and the refusal is the guard. Ending an order early is never blocked.
 
 Two flags decide whether an account works at all rather than what it may do: `is_verified` gates signing in and is set by opening the link registration emails, and `is_active` withdraws the account entirely.
 
@@ -231,7 +256,7 @@ Two flags decide whether an account works at all rather than what it may do: `is
 
 **Migrations.** The `migrations/` package is tracked but empty, so a fresh clone runs `makemigrations` before its first `migrate`. It cannot be deleted: `django.contrib.admin` and `auth` declare a swappable dependency on `AUTH_USER_MODEL`, and without the package `migrate` fails.
 
-**Database.** MongoDB is reached through a SQL-transpiling backend, and `config/db.py` declares conditional expressions in `WHERE` clauses unsupported — without it ordinary filters fail inside the transpiler.
+**Database.** MongoDB is reached through a SQL-transpiling backend, and `config/db.py` declares conditional expressions in `WHERE` clauses unsupported — without it ordinary filters fail inside the transpiler. `DecimalField` is avoided throughout: the connector writes `Decimal128` and registers no converter to read one back.
 
 **Front end.** Bootstrap supplies the grid and components, Leaflet draws the maps over OpenStreetMap tiles, and `styles.css` layers the project's design on top without redefining a Bootstrap class. Rules are mobile-first, every colour, radius and spacing step is a token at the top of the file, and every text colour clears WCAG AA against the surface it sits on rather than merely against white.
 

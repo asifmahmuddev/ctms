@@ -56,6 +56,14 @@ FIELD_ICONS = {
     'weight_kilograms': 'fa-weight-hanging',
     'cost': 'fa-dollar-sign',
 
+    # Payment
+    'card_number': 'fa-credit-card',
+    'cardholder_name': 'fa-user',
+    'expiry': 'fa-calendar-alt',
+    'security_code': 'fa-lock',
+    'save_card': 'fa-bookmark',
+    'saved_card': 'fa-credit-card',
+
     # Permissions
     'is_admin': 'fa-user-shield',
     'is_staff': 'fa-user-tie',

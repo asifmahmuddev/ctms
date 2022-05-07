@@ -58,6 +58,12 @@
                     {% endif %}
                     {% include 'includes/detail-row.html' with icon='fas fa-calendar-alt' label='Member since' value=user.date_joined|date:'N j, Y, g:i A' %}
                     <div class="detail-row">
+                        <dt class="detail-label"><i class="fas fa-credit-card fa-fw form-label-icon" aria-hidden="true"></i>Payment methods</dt>
+                        {% with kept=user.saved_cards.count %}
+                            <dd class="detail-value"><a href="{% url 'saved_cards' %}">{{ kept }} saved card{{ kept|pluralize }}</a></dd>
+                        {% endwith %}
+                    </div>
+                    <div class="detail-row">
                         <dt class="detail-label"><i class="fas fa-shield-alt fa-fw form-label-icon" aria-hidden="true"></i>Signs in with</dt>
                         <dd class="detail-value">{% include 'includes/sign-in-methods.html' with account=user %}</dd>
                     </div>

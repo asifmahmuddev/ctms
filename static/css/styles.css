@@ -1788,6 +1788,552 @@ Hidden until the page is scrolled; the site script toggles the is-visible class.
 }
 
 /* ----------------------------------------------------------------------------------------------
+Billing
+
+A checkout puts what is owed beside what settles it, and an invoice reads as the document it is.
+The file a visitor downloads is drawn separately, so the two are laid out from different rules.
+---------------------------------------------------------------------------------------------- */
+
+.checkout {
+    display: grid;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.checkout-summary,
+.checkout-form-card {
+    padding: 1.75rem 1.5rem;
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-sm);
+}
+
+.checkout-summary-title,
+.checkout-title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+}
+
+.checkout-title i {
+    color: var(--ctms-primary);
+}
+
+.checkout-lines {
+    margin-bottom: 0;
+}
+
+.checkout-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.625rem 0;
+    font-size: 0.9375rem;
+}
+
+.checkout-line:not(:last-child) {
+    border-bottom: 1px solid var(--ctms-border);
+}
+
+.checkout-line dt {
+    font-weight: 400;
+    color: var(--ctms-text-muted);
+}
+
+.checkout-line dd {
+    margin-bottom: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.checkout-line-total {
+    padding-top: 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.checkout-line-total dt {
+    font-weight: 700;
+    color: var(--ctms-text);
+}
+
+.checkout-note,
+.checkout-hint {
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+}
+
+.checkout-note {
+    padding: 0.875rem 1rem;
+    margin-bottom: 1.5rem;
+    background-color: var(--ctms-surface-muted);
+    border-left: 3px solid var(--ctms-warning);
+    border-radius: var(--ctms-radius);
+}
+
+.checkout-hint {
+    margin-top: -0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.checkout-submit {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* --- Payment on an order page -------------------------------------------------------------- */
+
+.order-billing {
+    padding: 1.5rem;
+    margin-top: 1.75rem;
+    background-color: var(--ctms-surface-muted);
+    border-radius: var(--ctms-radius-lg);
+}
+
+.order-billing-title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    margin-bottom: 0.875rem;
+}
+
+.order-billing-title i {
+    color: var(--ctms-primary);
+}
+
+.order-billing-state {
+    font-size: 0.9375rem;
+    color: var(--ctms-text-muted);
+    margin-bottom: 1.25rem;
+}
+
+.order-billing-state-paid {
+    color: var(--ctms-success);
+}
+
+.order-billing-state-refunded,
+.order-billing-state-payment-pending {
+    color: var(--ctms-warning);
+}
+
+.order-billing-state-failed {
+    color: var(--ctms-danger);
+}
+
+.order-billing-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+/* --- Saved cards --------------------------------------------------------------------------- */
+
+.card-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.card-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.25rem;
+    padding: 1rem;
+    background-color: var(--ctms-surface-muted);
+    border-radius: var(--ctms-radius);
+}
+
+.card-row:not(:last-child) {
+    margin-bottom: 0.75rem;
+}
+
+/* An expired card stays listed so it can be removed, but reads as no longer usable. */
+.card-row-expired {
+    color: var(--ctms-text-muted);
+}
+
+.card-row-brand {
+    font-weight: 700;
+}
+
+.card-row-digits {
+    letter-spacing: 0.08em;
+}
+
+.card-row-expiry,
+.card-row-name {
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+}
+
+.card-row .panel-action {
+    margin-left: auto;
+}
+
+/* --- The invoice --------------------------------------------------------------------------- */
+
+/* Held to the document's width, so the controls line up with the paper, not the page. */
+.invoice-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    max-width: 52rem;
+    margin: 0 auto 1.25rem;
+}
+
+/* The link keeps its quiet colouring, which must stop there: a button beside it has its own. */
+.invoice-controls .order-back {
+    margin-bottom: 0;
+}
+
+.invoice {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-sm);
+}
+
+.invoice-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--ctms-border);
+}
+
+/* The mark and the name read as one thing, with the sender's details beneath both. */
+.invoice-brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.invoice-brand-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--ctms-primary);
+}
+
+.invoice-brand-line {
+    display: block;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--ctms-text-muted);
+}
+
+.invoice-meta {
+    text-align: left;
+}
+
+.invoice-title {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+}
+
+.invoice-number {
+    display: block;
+    margin-bottom: 0.625rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.invoice-parties {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 1.75rem;
+}
+
+.invoice-party-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.invoice-party-body {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    margin-bottom: 0;
+}
+
+.invoice-facts {
+    margin-bottom: 0;
+    font-size: 0.9375rem;
+}
+
+.invoice-fact {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.1875rem 0;
+}
+
+.invoice-fact dt {
+    font-weight: 400;
+    color: var(--ctms-text-muted);
+}
+
+.invoice-fact dd {
+    margin-bottom: 0;
+    font-weight: 600;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+/* Stacked by default: the heading row is dropped and each cell names itself instead. */
+.invoice-table,
+.invoice-table tbody,
+.invoice-table tfoot,
+.invoice-table tr,
+.invoice-table td,
+.invoice-table tfoot th {
+    display: block;
+}
+
+.invoice-table {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    border-collapse: collapse;
+}
+
+.invoice-table thead {
+    display: none;
+}
+
+.invoice-table tbody tr {
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--ctms-border);
+}
+
+.invoice-table td {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    padding: 0.375rem 0;
+    text-align: left;
+}
+
+.invoice-table tbody td::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+}
+
+.invoice-table tfoot tr {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-top: 0.75rem;
+}
+
+.invoice-table tfoot th,
+.invoice-table tfoot td {
+    padding: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.invoice-item {
+    display: block;
+    font-weight: 600;
+}
+
+.invoice-item-note {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+}
+
+.invoice-foot {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ctms-border);
+}
+
+/* A tilted rubber stamp: the border rings it, two inset shadows draw the inner ring, and the
+margin is the room the tilt needs, since a rotated box still lays out square. */
+.invoice-stamp {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+    margin: 1rem 0.5rem;
+    padding: 0.625rem 1.5rem;
+    color: var(--ctms-text-muted);
+    border: 3px solid currentColor;
+    border-radius: var(--ctms-radius);
+    box-shadow: inset 0 0 0 3px var(--ctms-surface), inset 0 0 0 4.5px currentColor;
+    transform: rotate(-12deg);
+}
+
+.invoice-stamp-label {
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+.invoice-stamp-date {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.invoice-stamp-paid {
+    color: var(--ctms-success);
+}
+
+.invoice-stamp-refunded {
+    color: var(--ctms-warning);
+}
+
+.invoice-stamp-failed {
+    color: var(--ctms-danger);
+}
+
+.invoice-stamp-payment-pending {
+    color: var(--ctms-text-muted);
+}
+
+.invoice-foot-note {
+    font-size: 0.8125rem;
+    color: var(--ctms-text-muted);
+    margin-bottom: 0;
+}
+
+@media (min-width: 576px) {
+    /* Room enough for the columns to stand side by side, so the table is a table again. */
+    .invoice-table {
+        display: table;
+    }
+
+    .invoice-table thead {
+        display: table-header-group;
+    }
+
+    .invoice-table tbody {
+        display: table-row-group;
+    }
+
+    .invoice-table tfoot {
+        display: table-footer-group;
+    }
+
+    .invoice-table tr,
+    .invoice-table tfoot tr {
+        display: table-row;
+        padding: 0;
+        border-bottom: 0;
+    }
+
+    /* The stacked rule stripping the total row's padding outscores a plain cell, so both halves
+    are named again here or the figure hangs past its column. */
+    .invoice-table td,
+    .invoice-table th,
+    .invoice-table tfoot th,
+    .invoice-table tfoot td {
+        display: table-cell;
+        padding: 0.75rem 0.5rem;
+    }
+
+    .invoice-table thead th {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--ctms-text-muted);
+        border-bottom: 1px solid var(--ctms-border);
+    }
+
+    .invoice-table tbody td {
+        vertical-align: top;
+        border-bottom: 1px solid var(--ctms-border);
+    }
+
+    .invoice-table tbody td::before {
+        content: none;
+    }
+
+    .invoice-table tfoot th,
+    .invoice-table tfoot td {
+        padding-top: 1rem;
+    }
+
+    /* Amounts are compared down the column, so they align on the last digit, not the first. */
+    .invoice-table th:last-child,
+    .invoice-table td:last-child,
+    .invoice-table tfoot th {
+        text-align: right;
+    }
+}
+
+@media (min-width: 768px) {
+    .invoice {
+        padding: 2.5rem;
+    }
+
+    .invoice-meta {
+        text-align: right;
+    }
+
+    .invoice-brand-lockup {
+        margin-bottom: 0.625rem;
+    }
+
+    .invoice-parties {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 992px) {
+    .checkout {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    }
+
+    .checkout-submit {
+        width: auto;
+        min-width: 14rem;
+    }
+}
+
+/* ----------------------------------------------------------------------------------------------
 Flash messages
 
 Pinned below the fixed header so a message is visible wherever the page is scrolled.

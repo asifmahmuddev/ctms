@@ -105,8 +105,8 @@ class TransportOrderListView(OwnOrdersMixin, RecordListView):
     template_name = ORDER_LIST_TEMPLATE
     context_object_name = 'orders'
 
-    search_fields = ('origin', 'destination')
-    search_placeholder = 'Search by place'
+    search_fields = ('origin', 'destination', 'payment__reference')
+    search_placeholder = 'Search by place or receipt'
     filter_groups = (
         FilterGroup('status', 'All statuses', tuple((status.value, status.label, Q(status=status.value)) for status in OrderStatus)),
         FilterGroup('mode', 'All modes', tuple((mode.value, mode.label, Q(mode=mode.value)) for mode in TransportMode)),

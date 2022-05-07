@@ -115,6 +115,9 @@ PROGRESS_STATUSES = (
 
 ENDED_STATUSES = (OrderStatus.CANCELLED, OrderStatus.RETURNED, OrderStatus.ARCHIVED)
 
+# Freight is not handed over before it is paid for, so every stage from here needs payment.
+FIRST_PAID_STATUS = OrderStatus.READY_FOR_PICKUP
+
 # The owner calls an order off only before the desk confirms it; from then on it is the desk's.
 OWNER_CANCELLABLE_STATUSES = (OrderStatus.PENDING,)
 
@@ -362,6 +365,38 @@ class TransportOrder(models.Model):
         return self.status in ENDED_STATUSES
 
     @property
+    def payment_record(self):
+        """Return the payment settled against this order, or None when none has been taken.
+
+        The reverse accessor raises a subclass of `AttributeError`, so a default can be asked for.
+        """
+
+        return getattr(self, 'payment', None)
+
+    @property
+    def is_paid(self):
+        """Return whether this order stands settled, which one refunded or failed no longer does."""
+
+        payment = self.payment_record
+        return payment is not None and payment.is_settled
+
+    @property
+    def can_be_paid(self):
+        """Return whether this order is still open to be settled.
+
+        One that ended early has nothing to settle; a late refund leaves anything else owing again.
+        """
+
+        return not self.has_ended and not self.is_paid
+
+    @property
+    def has_invoice(self):
+        """Return whether an invoice can be drawn, which needs the order to have been settled once."""
+
+        payment = self.payment_record
+        return payment is not None and payment.has_invoice
+
+    @property
     def can_be_cancelled(self):
         """Return whether the owner may still call this order off.
 
@@ -369,3 +404,16 @@ class TransportOrder(models.Model):
         """
 
         return self.status in OWNER_CANCELLABLE_STATUSES
+
+    def may_reach(self, status):
+        """Return whether this order may be moved to a status, which payment can stand in the way of.
+
+        Every stage from being made ready needs a settled payment. Ending early is never blocked: a
+        consignment going nowhere still has to be cancelled, returned or filed away.
+        """
+
+        status = OrderStatus(status)
+        if status in ENDED_STATUSES or self.is_paid:
+            return True
+
+        return PROGRESS_STATUSES.index(status) < PROGRESS_STATUSES.index(FIRST_PAID_STATUS)

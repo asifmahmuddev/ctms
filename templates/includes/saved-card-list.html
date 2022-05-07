@@ -1,0 +1,19 @@
+{# The cards an account keeps, described well enough to recognise and never enough to charge. #}
+<ul class="card-list">
+    {% for card in cards %}
+        <li class="card-row{% if card.has_expired %} card-row-expired{% endif %}">
+            <span class="card-row-brand"><i class="fas fa-credit-card" aria-hidden="true"></i> {{ card.brand }}</span>
+            <span class="card-row-digits">&bull;&bull;&bull;&bull; {{ card.last_four }}</span>
+            <span class="card-row-expiry">
+                {% if card.has_expired %}Expired {{ card.expiry_label }}{% else %}Expires {{ card.expiry_label }}{% endif %}
+            </span>
+            <span class="card-row-name">{{ card.cardholder_name }}</span>
+            {% if removable %}
+                {% url 'saved_card_delete' card.pk as remove_url %}
+                {% with detail='Paying with it again means entering the card afresh.' question='Remove this saved card?' %}
+                    {% include 'includes/panel-delete.html' with action_url=remove_url compact=True label='Remove' icon='fa-times' confirm=question confirm_detail=detail %}
+                {% endwith %}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>

@@ -1,0 +1,11 @@
+{# Destructive action for one record: posts, asks first, and stays compact in a row. #}
+<form class="panel-action" method="post" action="{{ action_url }}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <button class="btn btn-ctms-danger{% if compact %} btn-sm{% endif %}" type="submit"
+            data-confirm="{{ confirm }}"
+            data-confirm-detail="{{ confirm_detail }}"
+            data-confirm-action="{{ label|default:'Delete' }}">
+        <i class="fas {{ icon|default:'fa-trash' }}" aria-hidden="true"></i> {{ label|default:'Delete' }}
+    </button>
+</form>

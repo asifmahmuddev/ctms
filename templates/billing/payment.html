@@ -1,0 +1,83 @@
+{# Checkout for one order: what is owed, and the card it is being settled with. #}
+{% extends 'base.html' %}
+
+{% block title %}Pay {{ order.reference }} &mdash; CTMS{% endblock %}
+
+{% block content %}
+    <section class="section section-muted">
+        <div class="container">
+            <nav class="order-back" aria-label="Breadcrumb">
+                <a href="{% url 'order_detail' order.pk %}"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to {{ order.reference }}</a>
+            </nav>
+
+            <div class="checkout">
+                <section class="checkout-summary">
+                    <h2 class="checkout-summary-title">What you are paying for</h2>
+                    <dl class="checkout-lines">
+                        <div class="checkout-line">
+                            <dt>Order</dt>
+                            <dd>{{ order.reference }}</dd>
+                        </div>
+                        <div class="checkout-line">
+                            <dt>Route</dt>
+                            <dd>{{ order.origin }} &rarr; {{ order.destination }}</dd>
+                        </div>
+                        <div class="checkout-line">
+                            <dt>Carried by</dt>
+                            <dd><i class="fas {{ order.mode_icon }} fa-fw" aria-hidden="true"></i> {{ order.get_mode_display }}</dd>
+                        </div>
+                        <div class="checkout-line">
+                            <dt>Weight</dt>
+                            <dd>{{ order.weight_label }}</dd>
+                        </div>
+                        {% if order.has_route %}
+                            <div class="checkout-line">
+                                <dt>Distance</dt>
+                                <dd>{{ order.distance_label }}</dd>
+                            </div>
+                        {% endif %}
+                        <div class="checkout-line checkout-line-total">
+                            <dt>Total due</dt>
+                            <dd>{{ order.cost_label }}</dd>
+                        </div>
+                    </dl>
+                </section>
+
+                <section class="checkout-form-card">
+                    <h1 class="checkout-title"><i class="fas fa-credit-card" aria-hidden="true"></i> Card details</h1>
+                    <p class="checkout-note">
+                        This is a demonstration checkout and no money moves. Your card number and security code are
+                        checked and then discarded &mdash; only the brand, the last four digits and the expiry are ever kept.
+                    </p>
+
+                    <form class="checkout-form" method="post" novalidate>
+                        {% csrf_token %}
+                        {% for error in form.non_field_errors %}<p class="form-error form-error-summary">{{ error }}</p>{% endfor %}
+                        {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+
+                        {% if form.saved_card %}
+                            {% with field=form.saved_card %}{% include 'includes/form-field.html' %}{% endwith %}
+                            <p class="checkout-hint">Paying with a saved card still asks for its security code.</p>
+                        {% endif %}
+
+                        {# The fields a new card needs, spaced by the form furniture like every other field. #}
+                        <div data-new-card>
+                            {% with field=form.card_number %}{% include 'includes/form-field.html' %}{% endwith %}
+                            {% with field=form.cardholder_name %}{% include 'includes/form-field.html' %}{% endwith %}
+                            {% with field=form.expiry %}{% include 'includes/form-field.html' %}{% endwith %}
+                        </div>
+
+                        {# The code is asked for whichever card is paying with, so it is never switched off. #}
+                        {% with field=form.security_code %}{% include 'includes/form-field.html' %}{% endwith %}
+
+                        <div data-new-card>{% with field=form.save_card %}{% include 'includes/form-field.html' %}{% endwith %}</div>
+
+                        <button class="btn btn-ctms checkout-submit" type="submit">
+                            <i class="fas fa-lock" aria-hidden="true"></i> Pay {{ order.cost_label }}
+                        </button>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </section>
+{% endblock %}
