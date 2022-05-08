@@ -10,6 +10,7 @@ from django.urls import reverse
 
 MAX_LENGTH_CHOICE = 16
 MAX_LENGTH_PLACE = 128
+MAX_LENGTH_COST_REASON = 200
 
 MINIMUM_ORDER_COST = 25
 MINIMUM_WEIGHT_KILOGRAMS = 0.1
@@ -272,6 +273,10 @@ class TransportOrder(models.Model):
 
     cost = models.PositiveIntegerField()
 
+    # The rate card's figure, kept beside what is charged; a standing reason stops it overwriting.
+    quoted_cost = models.PositiveIntegerField(blank=True, null=True)
+    cost_reason = models.CharField(max_length=MAX_LENGTH_COST_REASON, blank=True)
+
     status = models.CharField(max_length=MAX_LENGTH_CHOICE, choices=OrderStatus.choices, default=OrderStatus.PENDING)
 
     class Meta:
@@ -283,11 +288,15 @@ class TransportOrder(models.Model):
     def save(self, *args, **kwargs):
         """Settle the weight and price it, so what is stored, charged and shown are the same figures.
 
-        The price is worked out afresh every time, from the mode, the weight and the journey.
+        The quote is reworked every time but becomes the price only while no reason stands, so an
+        explained correction survives every later save.
         """
 
         self.weight_kilograms = round(self.weight_kilograms, WEIGHT_DECIMAL_PLACES)
-        self.cost = quote_cost(self.mode, self.weight_kilograms, self.distance_metres)
+        self.quoted_cost = quote_cost(self.mode, self.weight_kilograms, self.distance_metres)
+
+        if not self.cost_reason:
+            self.cost = self.quoted_cost
 
         super().save(*args, **kwargs)
 
@@ -307,6 +316,16 @@ class TransportOrder(models.Model):
     @property
     def cost_label(self):
         return money_label(self.cost)
+
+    @property
+    def quoted_cost_label(self):
+        return money_label(self.quoted_cost) if self.quoted_cost is not None else ''
+
+    @property
+    def has_corrected_cost(self):
+        """Return whether the desk priced this order by hand rather than leaving it to the rate card."""
+
+        return bool(self.cost_reason)
 
     @property
     def weight_label(self):
@@ -395,6 +414,15 @@ class TransportOrder(models.Model):
 
         payment = self.payment_record
         return payment is not None and payment.has_invoice
+
+    @property
+    def can_be_repriced(self):
+        """Return whether the desk may still change what this order costs.
+
+        A settled payment fixes the figure its invoice and receipt quote; reversing it reopens both.
+        """
+
+        return not self.is_paid
 
     @property
     def can_be_cancelled(self):

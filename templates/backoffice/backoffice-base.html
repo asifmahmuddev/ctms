@@ -1,0 +1,32 @@
+{# Shell for the back office: heading, section navigation, then the page's own content. #}
+{% extends 'base.html' %}
+
+{% block content %}
+    <section class="section section-muted panel">
+        <div class="container">
+            <header class="panel-header">
+                <div class="panel-heading">
+                    <p class="panel-eyebrow">Control panel &middot; {{ user.role_label }}</p>
+                    <h1 class="panel-title">{% block panel_title %}{% endblock %}</h1>
+                    <p class="panel-intro">{% block panel_intro %}{% endblock %}</p>
+                </div>
+                <div class="panel-actions">{% block panel_actions %}{% endblock %}</div>
+            </header>
+
+            {# Scrolls sideways on a narrow screen rather than wrapping into a second row of tabs. #}
+            <nav class="panel-nav" aria-label="Control panel sections">
+                <ul class="panel-nav-list">
+                    {% include 'includes/panel-nav-item.html' with url_name='dashboard' label='Dashboard' icon='fa-tachometer-alt' %}
+                    {% if may_administer %}
+                        {% include 'includes/panel-nav-item.html' with url_name='accounts' label='Accounts' icon='fa-users' %}
+                    {% endif %}
+                    {% include 'includes/panel-nav-item.html' with url_name='orders' label='Orders' icon='fa-boxes' %}
+                    {% include 'includes/panel-nav-item.html' with url_name='payments' label='Payments' icon='fa-receipt' %}
+                    {% include 'includes/panel-nav-item.html' with url_name='enquiries' label='Enquiries' icon='fa-envelope-open-text' %}
+                </ul>
+            </nav>
+
+            {% block panel_body %}{% endblock %}
+        </div>
+    </section>
+{% endblock %}

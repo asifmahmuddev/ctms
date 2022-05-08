@@ -1,0 +1,125 @@
+{# Dashboard: where each kind of record stands, in the sections the viewer may open. #}
+{% extends 'backoffice/backoffice-base.html' %}
+
+{% block title %}Control panel &mdash; CTMS{% endblock %}
+
+{% block panel_title %}Dashboard{% endblock %}
+{% block panel_intro %}
+    {% if may_administer %}
+        Everything registered with CTMS, and how much of it is still moving.
+    {% else %}
+        The orders and enquiries you look after, and how much of the work is still moving.
+    {% endif %}
+{% endblock %}
+
+{% block panel_body %}
+    {% if roles %}
+        {# One population split between ranks, so it is drawn as a single divided bar. #}
+        <section class="panel-card">
+            <div class="panel-card-head">
+                <h2 class="panel-card-title"><i class="fas fa-users" aria-hidden="true"></i> Accounts by role</h2>
+                <a class="panel-card-total" href="{{ accounts_url }}">{{ account_total }} total <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            </div>
+
+            <div class="role-bar" role="img" aria-label="How the accounts divide between roles">
+                {% for role in roles %}
+                    {% if role.count %}<span class="role-bar-slice role-bar-slice-{{ role.value }}" style="width: {{ role.share }}%"></span>{% endif %}
+                {% endfor %}
+            </div>
+
+            <ul class="role-legend">
+                {% for role in roles %}
+                    <li class="role-legend-item">
+                        <span class="role-legend-key role-bar-slice-{{ role.value }}" aria-hidden="true"></span>
+                        <span class="role-legend-count">{{ role.count }}</span>
+                        <span class="role-legend-label">{{ role.label }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
+
+    {# A mode is what an order travels by rather than a stage it passes, so each is a tile of its own. #}
+    <section class="panel-card">
+        <div class="panel-card-head">
+            <h2 class="panel-card-title"><i class="fas fa-route" aria-hidden="true"></i> Orders by transport mode</h2>
+            <a class="panel-card-total" href="{{ orders_url }}">{{ order_total }} total <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+
+        <ul class="mode-grid">
+            {% for mode in order_modes %}
+                <li class="mode-grid-item">
+                    <span class="mode-grid-icon"><i class="fas {{ mode.icon }}" aria-hidden="true"></i></span>
+                    <span class="mode-grid-count">{{ mode.count }}</span>
+                    <span class="mode-grid-label">{{ mode.label }}</span>
+                    <span class="mode-grid-share">{{ mode.share }}% of all</span>
+                    <span class="mode-grid-completed">{{ mode.completed }} completed</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    {# Orders run a course, so they are drawn as bars that fill as the work moves along it. #}
+    <section class="panel-card">
+        <div class="panel-card-head">
+            <h2 class="panel-card-title"><i class="fas fa-boxes" aria-hidden="true"></i> Orders by status</h2>
+            <a class="panel-card-total" href="{{ orders_url }}">{{ order_total }} total <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+
+        <ul class="status-breakdown">
+            {% for status in order_statuses %}
+                <li class="status-row">
+                    <span class="status-row-label">
+                        {% include 'includes/status-pill.html' with status_value=status.value status_label=status.label %}
+                    </span>
+                    <span class="status-row-bar" aria-hidden="true">
+                        <span class="status-row-fill status-row-fill-{{ status.value }}" style="width: {{ status.share }}%"></span>
+                    </span>
+                    <span class="status-row-count">{{ status.count }}<span class="status-row-share"> &middot; {{ status.share }}%</span></span>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    {# Money is a running total, not a course, so the sum leads and the split follows. #}
+    <section class="panel-card">
+        <div class="panel-card-head">
+            <h2 class="panel-card-title"><i class="fas fa-receipt" aria-hidden="true"></i> Payments taken</h2>
+            <a class="panel-card-total" href="{{ payments_url }}">{{ payment_total }} total <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+
+        <p class="money-total"><span class="money-total-value">{{ payment_taken }}</span> settled and not refunded</p>
+
+        <ul class="status-breakdown">
+            {% for status in payment_statuses %}
+                <li class="status-row">
+                    <span class="status-row-label">
+                        {% include 'includes/status-pill.html' with status_value=status.value status_label=status.label %}
+                    </span>
+                    <span class="status-row-bar" aria-hidden="true">
+                        <span class="status-row-fill status-row-fill-{{ status.value }}" style="width: {{ status.share }}%"></span>
+                    </span>
+                    <span class="status-row-count">{{ status.count }}<span class="status-row-share"> &middot; {{ status.share }}%</span></span>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    {# Enquiries are a queue, not a journey, so each status is a card of how many wait. #}
+    <section class="panel-card">
+        <div class="panel-card-head">
+            <h2 class="panel-card-title"><i class="fas fa-envelope-open-text" aria-hidden="true"></i> Enquiries by status</h2>
+            <a class="panel-card-total" href="{{ enquiries_url }}">{{ enquiry_total }} total <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+
+        <ul class="status-grid">
+            {% for status in enquiry_statuses %}
+                <li class="status-grid-item status-grid-item-{{ status.value }}">
+                    <span class="status-grid-count">{{ status.count }}</span>
+                    <span class="status-grid-label">{{ status.label }}</span>
+                    <span class="status-grid-share">{{ status.share }}% of all</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endblock %}

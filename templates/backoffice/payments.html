@@ -1,0 +1,62 @@
+{# Every payment taken, whoever made it, read here and settled from the order each belongs to. #}
+{% extends 'backoffice/backoffice-base.html' %}
+
+{% block title %}Payments &mdash; CTMS{% endblock %}
+
+{% block panel_title %}Payments{% endblock %}
+{% block panel_intro %}What has been settled against the order book, and what has been given back.{% endblock %}
+
+{% block panel_body %}
+    {% include 'includes/panel-table-controls.html' %}
+
+    {% if payments %}
+        {% include 'includes/panel-count.html' with noun='payment' plural='s' %}
+
+        <div class="panel-table-wrap">
+            <table class="panel-table" data-table="payments">
+                <thead>
+                    <tr>
+                        <th scope="col">Receipt</th>
+                        <th scope="col">Order</th>
+                        <th scope="col">Paid by</th>
+                        <th scope="col">Card</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                        <tr>
+                            <td data-label="Receipt">
+                                <span class="panel-strong">{{ payment.reference }}</span>
+                                <span class="panel-muted panel-when">{{ payment.paid_at|date:'N j, Y, g:i A' }}</span>
+                            </td>
+                            <td data-label="Order">
+                                <a class="panel-link" href="{% url 'backoffice:order_detail' payment.order.pk %}">{{ payment.order.reference }}</a>
+                                <span class="panel-muted">{{ payment.invoice_number }}</span>
+                            </td>
+                            <td data-label="Paid by">
+                                <span class="panel-strong">{{ payment.account.get_full_name }}</span>
+                                <span class="panel-muted">{{ payment.account.email }}</span>
+                            </td>
+                            <td data-label="Card"><i class="fas fa-credit-card fa-fw" aria-hidden="true"></i> {{ payment.card_label }}</td>
+                            <td data-label="Amount"><span class="panel-strong">{{ payment.amount_label }}</span></td>
+                            <td data-label="Status">
+                                {% include 'includes/status-pill.html' with status_value=payment.status status_label=payment.get_status_display %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include 'includes/panel-pagination.html' %}
+    {% else %}
+        <div class="empty-state">
+            <span class="empty-state-icon"><i class="fas fa-receipt" aria-hidden="true"></i></span>
+            <h2 class="empty-state-title">No payments yet</h2>
+            <p class="empty-state-text">Orders settled by their owners will appear here.</p>
+        </div>
+    {% endif %}
+
+{% endblock %}

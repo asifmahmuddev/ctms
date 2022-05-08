@@ -1,0 +1,6 @@
+{# A yes or no answer for a flag, shown the same way wherever a table or a page reports one. #}
+{% if granted %}
+    <span class="panel-flag panel-flag-yes"><i class="fas fa-check" aria-hidden="true"></i> Yes</span>
+{% else %}
+    <span class="panel-flag panel-flag-no"><i class="fas fa-times" aria-hidden="true"></i> No</span>
+{% endif %}

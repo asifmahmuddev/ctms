@@ -1,0 +1,70 @@
+{# Accounts table; each row opens the account, where anything about it is settled. #}
+{% extends 'backoffice/backoffice-base.html' %}
+
+{% block title %}Accounts &mdash; CTMS{% endblock %}
+
+{% block panel_title %}Accounts{% endblock %}
+{% block panel_intro %}Everyone registered with CTMS. Open an account to see it in full and manage it.{% endblock %}
+
+{% block panel_actions %}
+    <a class="btn btn-ctms" href="{% url 'backoffice:account_create' %}"><i class="fas fa-user-plus" aria-hidden="true"></i> Create account</a>
+{% endblock %}
+
+{% block panel_body %}
+    {% include 'includes/panel-table-controls.html' %}
+
+    {% if accounts %}
+        {% include 'includes/panel-count.html' with noun='account' plural='s' %}
+
+        <div class="panel-table-wrap">
+            <table class="panel-table" data-table="accounts">
+                <thead>
+                    <tr>
+                        <th scope="col">Account</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Verified</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                        <tr>
+                            <td data-label="Account">
+                                {# Opened in its own tab, so a long list keeps its place while an account is worked on. #}
+                                <a class="panel-person panel-person-link" href="{% url 'backoffice:account_detail' account.pk %}" target="_blank" rel="noopener">
+                                    <img class="panel-person-avatar" src="{{ account.profile_image_url }}" alt="" width="36" height="36" loading="lazy">
+                                    <span class="panel-person-body">
+                                        <span class="panel-person-name">{{ account.get_full_name }}</span>
+                                        <span class="panel-person-email">{{ account.email }}</span>
+                                    </span>
+                                    <i class="fas fa-external-link-alt panel-person-open" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                            <td data-label="Username">{{ account.username }}</td>
+                            <td data-label="Role">
+                                <span class="panel-badge panel-badge-{{ account.role_label|lower }}">{{ account.role_label }}</span>
+                            </td>
+                            <td data-label="Verified">
+                                {% include 'includes/panel-flag.html' with granted=account.is_verified %}
+                            </td>
+                            <td data-label="Active">
+                                {% include 'includes/panel-flag.html' with granted=account.is_active %}
+                            </td>
+                            <td data-label="Joined">{{ account.date_joined|date:'N j, Y' }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include 'includes/panel-pagination.html' %}
+    {% else %}
+        <div class="empty-state">
+            <span class="empty-state-icon"><i class="fas fa-users" aria-hidden="true"></i></span>
+            <h2 class="empty-state-title">Nothing to show</h2>
+            <p class="empty-state-text">No account matches what you are looking for.</p>
+        </div>
+    {% endif %}
+{% endblock %}

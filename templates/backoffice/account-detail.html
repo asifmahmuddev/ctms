@@ -1,0 +1,130 @@
+{# One account in full: what it is, what it may do, and what an administrator may correct. #}
+{% extends 'backoffice/backoffice-base.html' %}
+
+{% block title %}{{ account.username }} &mdash; CTMS{% endblock %}
+
+{% block panel_title %}{{ account.get_full_name }}{% endblock %}
+{% block panel_intro %}{{ account.email }}{% endblock %}
+
+{% block panel_actions %}
+    <a class="btn btn-ctms-outline" href="{% url 'backoffice:accounts' %}"><i class="fas fa-arrow-left" aria-hidden="true"></i> All accounts</a>
+{% endblock %}
+
+{% block panel_body %}
+    <section class="panel-card account-summary">
+        <img class="account-summary-avatar" src="{{ account.profile_image_url }}" alt="" width="88" height="88">
+        <div class="account-summary-body">
+            <span class="panel-badge panel-badge-{{ account.role_label|lower }}">{{ account.role_label }}</span>
+            <dl class="account-summary-facts">
+                <div class="account-summary-fact">
+                    <dt>Joined</dt>
+                    <dd>{{ account.date_joined|date:'N j, Y, g:i A' }}</dd>
+                </div>
+                <div class="account-summary-fact">
+                    <dt>Last signed in</dt>
+                    <dd>{% if account.last_login %}{{ account.last_login|date:'N j, Y, g:i A' }}{% else %}Never{% endif %}</dd>
+                </div>
+                <div class="account-summary-fact">
+                    <dt>Orders placed</dt>
+                    <dd>{{ account.transport_orders.count }}</dd>
+                </div>
+                <div class="account-summary-fact">
+                    <dt>Signs in with</dt>
+                    <dd>{% include 'includes/sign-in-methods.html' %}</dd>
+                </div>
+            </dl>
+        </div>
+    </section>
+
+    {# Delete posts elsewhere, so it sits outside this form and Save reaches in: nesting is dropped. #}
+    <form id="account-form" method="post" novalidate>
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}<p class="form-error form-error-summary">{{ error }}</p>{% endfor %}
+
+        <div class="row g-4">
+            <div class="col-12 col-lg-6">
+                <article class="detail-card">
+                    <h2 class="detail-card-title"><i class="fas fa-lock" aria-hidden="true"></i> The account holder's own</h2>
+                    <p class="detail-card-text">Each of these is changed by the account holder alone, behind a confirmation only they can complete.</p>
+                    <ul class="credential-list">
+                        <li class="credential-row">
+                            <span class="credential-label"><i class="fas fa-camera fa-fw" aria-hidden="true"></i> Picture</span>
+                            <span class="credential-value">Set from their own profile</span>
+                        </li>
+                        <li class="credential-row">
+                            <span class="credential-label"><i class="fas fa-signature fa-fw" aria-hidden="true"></i> Username</span>
+                            <span class="credential-value">{{ account.username }}</span>
+                        </li>
+                        <li class="credential-row">
+                            <span class="credential-label"><i class="fas fa-at fa-fw" aria-hidden="true"></i> Email address</span>
+                            <span class="credential-value">{{ account.email }}</span>
+                        </li>
+                        <li class="credential-row">
+                            <span class="credential-label"><i class="fas fa-key fa-fw" aria-hidden="true"></i> Password</span>
+                            <span class="credential-value">
+                                {% if account.has_usable_password %}&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;{% else %}Not set{% endif %}
+                            </span>
+                        </li>
+                        <li class="credential-row">
+                            <span class="credential-label"><i class="fas fa-credit-card fa-fw" aria-hidden="true"></i> Payment methods</span>
+                            <span class="credential-value">{{ saved_cards.count }} saved card{{ saved_cards.count|pluralize }}</span>
+                        </li>
+                    </ul>
+
+                    {% if saved_cards %}
+                        {# Read only: what an account pays with is shown, and removing one stays the holder's to do. #}
+                        {% include 'includes/saved-card-list.html' with cards=saved_cards %}
+                    {% endif %}
+                </article>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <section class="detail-card">
+                    <h2 class="detail-card-title"><i class="fas fa-user-shield" aria-hidden="true"></i> Permissions</h2>
+                    {% if form.flag_fields %}
+                        <p class="detail-card-text">What this account may do.</p>
+                        <div class="account-flags">
+                            {% for field in form.flag_fields %}{% include 'includes/form-field.html' %}{% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="detail-card-text">
+                            {% if account == user %}
+                                Your own permissions are not yours to change.
+                            {% else %}
+                                This account ranks at or above yours, so its permissions are not yours to change.
+                            {% endif %}
+                        </p>
+                        <ul class="credential-list">
+                            {% for label, granted in account_flags %}
+                                <li class="credential-row">
+                                    <span class="credential-label">{{ label }}</span>
+                                    <span class="credential-value">{% include 'includes/panel-flag.html' %}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </section>
+            </div>
+
+            {% for group in form.field_groups %}
+                <div class="col-12 col-lg-6">
+                    <section class="detail-card">
+                        <h2 class="detail-card-title"><i class="fas {{ group.icon }}" aria-hidden="true"></i> {{ group.title }}</h2>
+                        {% for field in group.fields %}{% include 'includes/form-field.html' %}{% endfor %}
+                    </section>
+                </div>
+            {% endfor %}
+        </div>
+
+    </form>
+
+    <div class="account-actions">
+        <button class="btn btn-ctms" type="submit" form="account-form"><i class="fas fa-save" aria-hidden="true"></i> Save changes</button>
+        {% if may_delete %}
+            {% url 'backoffice:account_delete' account.pk as delete_url %}
+            {% with detail='Every order it placed goes with it, and none of it can be recovered.' %}
+                {% include 'includes/panel-delete.html' with action_url=delete_url confirm='Delete this account?' confirm_detail=detail %}
+            {% endwith %}
+        {% endif %}
+    </div>
+{% endblock %}

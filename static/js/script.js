@@ -31,6 +31,9 @@ card entry and table column widths.
     const EXPIRY_MONTH_DIGITS = 2;
     const EXPIRY_DIGITS = 4;
 
+    const PANEL_NAV_SELECTOR = '.panel-nav';
+    const PANEL_NAV_CURRENT_SELECTOR = '.panel-nav-link-current';
+
     const TABLE_NAME_ATTRIBUTE = 'data-table';
     const COLUMN_RESET_ATTRIBUTE = 'data-columns-reset';
     const COLUMN_GRIP_CLASS = 'panel-column-grip';
@@ -360,6 +363,17 @@ card entry and table column widths.
 
     /* The tab strip scrolls sideways on a narrow screen and starts at its left edge, which can leave
     the tab the page is actually on out of sight. It is centred without moving the page itself. */
+    function initPanelNavPosition() {
+        const strip = document.querySelector(PANEL_NAV_SELECTOR);
+        const current = strip && strip.querySelector(PANEL_NAV_CURRENT_SELECTOR);
+
+        if (!current || strip.scrollWidth <= strip.clientWidth) {
+            return;
+        }
+
+        strip.scrollLeft = current.offsetLeft - (strip.clientWidth - current.offsetWidth) / 2;
+    }
+
     function readColumnWidths(name) {
         try {
             return JSON.parse(window.localStorage.getItem(COLUMN_WIDTH_KEY + name));
@@ -501,5 +515,6 @@ card entry and table column widths.
         initCardChoice();
         initCardExpiry();
         initResizableColumns();
+        initPanelNavPosition();
     });
 }());

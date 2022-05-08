@@ -1,0 +1,7 @@
+{# How many rows the whole table holds, beside the control that puts hand-set column widths back. #}
+<div class="panel-count-bar">
+    <p class="panel-count">{{ page_obj.paginator.count }} {{ noun }}{{ page_obj.paginator.count|pluralize:plural }}</p>
+    <button class="btn btn-ctms-outline btn-sm" type="button" data-columns-reset hidden>
+        <i class="fas fa-undo" aria-hidden="true"></i> Reset columns
+    </button>
+</div>

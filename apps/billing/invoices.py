@@ -71,6 +71,9 @@ DESCRIPTION_WIDTH = COLUMN_OFFSETS[1] - COLUMN_OFFSETS[0] - COLUMN_GUTTER
 
 DATE_FORMAT = '%d %B %Y'
 
+# Written under the item when the desk priced by hand, so the figure is never unexplained.
+PRICING_NOTE = 'Priced at {cost} rather than {quoted} · {reason}'
+
 # A reader shows the document's own title, so an invoice names itself rather than "untitled".
 DOCUMENT_TITLE = 'Invoice {number}'
 DOCUMENT_SUBJECT = 'Invoice for order {reference}'
@@ -239,6 +242,10 @@ def item_notes(order):
     """
 
     notes = [f'{order.origin} to {order.destination}']
+
+    if order.has_corrected_cost:
+        notes.append(PRICING_NOTE.format(cost=order.cost_label, quoted=order.quoted_cost_label, reason=order.cost_reason))
+
     return [line for note in notes for line in wrapped_note(note, DESCRIPTION_WIDTH)]
 
 

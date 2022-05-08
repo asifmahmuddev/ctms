@@ -1,0 +1,14 @@
+{# Status control for one record: the choice and the save land in a single POST. #}
+<form class="panel-status-form" method="post" action="{{ action_url }}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <label class="visually-hidden" for="status-{{ field_id }}">Status for {{ record_label }}</label>
+    <select class="form-select{% if compact %} form-select-sm{% endif %}" id="status-{{ field_id }}" name="status">
+        {% for value, label in statuses %}
+            <option value="{{ value }}" {% if value == current_status %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <button class="btn btn-ctms{% if compact %} btn-sm{% endif %}" type="submit">
+        <i class="fas fa-save" aria-hidden="true"></i> Save
+    </button>
+</form>

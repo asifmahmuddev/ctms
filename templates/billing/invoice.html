@@ -68,6 +68,11 @@
                             <td data-label="Description">
                                 <span class="invoice-item">{{ order.get_mode_display }} freight</span>
                                 <span class="invoice-item-note">{{ order.origin }} to {{ order.destination }}</span>
+                                {% if order.has_corrected_cost %}
+                                    <span class="invoice-item-note">
+                                        Priced at {{ order.cost_label }} rather than {{ order.quoted_cost_label }} &middot; {{ order.cost_reason }}
+                                    </span>
+                                {% endif %}
                             </td>
                             <td data-label="Weight">{{ order.weight_label }}</td>
                             <td data-label="Distance">{% if order.has_route %}{{ order.distance_label }}{% else %}Not measured{% endif %}</td>

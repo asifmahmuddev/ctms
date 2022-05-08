@@ -97,6 +97,9 @@
                     <div class="order-summary-row order-summary-total">
                         <dt>Cost</dt>
                         <dd>{{ order.cost_label }}</dd>
+                        {% if order.has_corrected_cost %}
+                            <dd class="order-cost-note">was {{ order.quoted_cost_label }} &middot; {{ order.cost_reason }}</dd>
+                        {% endif %}
                     </div>
                 </dl>
 

@@ -47,6 +47,11 @@
                                 <li>
                                     <a class="dropdown-item" href="{% url 'password_change' %}"><i class="fas fa-key fa-fw" aria-hidden="true"></i> Change password</a>
                                 </li>
+                                {% if user.can_open_backoffice %}
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'backoffice:dashboard' %}"><i class="fas fa-user-cog fa-fw" aria-hidden="true"></i> Control panel</a>
+                                    </li>
+                                {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     {# Signing out changes state, so it posts: a prefetched link is indistinguishable. #}

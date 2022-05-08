@@ -1,0 +1,105 @@
+{# One order from the panel: what its owner sees, plus who placed it and what may be done. #}
+{% extends 'transport/order-detail-base.html' %}
+
+{% block order_back %}
+    <a href="{% url 'backoffice:orders' %}"><i class="fas fa-long-arrow-alt-left" aria-hidden="true"></i> All orders</a>
+{% endblock %}
+
+{% block order_owner %}
+    <div class="order-owner">
+        <img class="order-owner-avatar" src="{{ order.account.profile_image_url }}" alt="" width="40" height="40" loading="lazy">
+        <div class="order-owner-body">
+            <span class="order-owner-label">Placed by</span>
+            <span class="order-owner-name">{{ order.account.get_full_name }}</span>
+            <a class="order-owner-email" href="mailto:{{ order.account.email }}">{{ order.account.email }}</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block order_actions %}
+    <section class="order-billing">
+        <h2 class="order-billing-title"><i class="fas fa-dollar-sign" aria-hidden="true"></i> Pricing</h2>
+
+        {% if order.can_be_repriced %}
+            <form class="order-pricing-form" method="post" action="{% url 'backoffice:order_cost' order.pk %}">
+                {% csrf_token %}
+                <div class="order-pricing-fields">
+                    {% for field in cost_form %}{% include 'includes/form-field.html' %}{% endfor %}
+                </div>
+                <button class="btn btn-ctms" type="submit"><i class="fas fa-save" aria-hidden="true"></i> Set the price</button>
+            </form>
+            <p class="order-pricing-note">The rate card quotes {{ order.quoted_cost_label }} for this consignment. Whatever is still owed follows the price set here.</p>
+        {% else %}
+            <p class="order-pricing-note">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+                This order has been paid for at {{ order.cost_label }}, so its price is fixed. Reverse the payment to change it.
+            </p>
+        {% endif %}
+    </section>
+
+    <section class="order-billing">
+        <h2 class="order-billing-title"><i class="fas fa-receipt" aria-hidden="true"></i> Payment</h2>
+
+        <dl class="order-billing-facts">
+            <div class="order-billing-fact">
+                <dt>Standing</dt>
+                <dd>{% include 'includes/status-pill.html' with status_value=payment.status status_label=payment.get_status_display %}</dd>
+            </div>
+            <div class="order-billing-fact">
+                <dt>Amount</dt>
+                <dd>{{ payment.amount_label }}</dd>
+            </div>
+            <div class="order-billing-fact">
+                <dt>Receipt</dt>
+                <dd>{{ payment.reference }}</dd>
+            </div>
+            <div class="order-billing-fact">
+                <dt>Paid with</dt>
+                <dd>{{ payment.card_label }}</dd>
+            </div>
+            <div class="order-billing-fact">
+                <dt>Settled</dt>
+                <dd>{% if payment.paid_at %}{{ payment.paid_at|date:'N j, Y, g:i A' }}{% else %}Not yet{% endif %}</dd>
+            </div>
+        </dl>
+
+        <div class="order-billing-actions">
+            {% if order.has_invoice %}
+                <a class="btn btn-ctms-outline" href="{% url 'backoffice:order_invoice' order.pk %}">
+                    <i class="fas fa-file-invoice" aria-hidden="true"></i> View invoice
+                </a>
+            {% endif %}
+
+            {% if may_administer and payment.is_settled %}
+                <form class="panel-status-form" method="post" action="{% url 'backoffice:payment_status' order.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <label class="visually-hidden" for="payment-status">Mark the payment for {{ order.reference }}</label>
+                    <select class="form-select form-select-sm" id="payment-status" name="status">
+                        {% for status in payment_statuses %}
+                            <option value="{{ status.value }}">{{ status.label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-ctms-danger btn-sm" type="submit"
+                            data-confirm="Reverse this payment?"
+                            data-confirm-detail="The order becomes payable again, and the receipt already issued no longer stands."
+                            data-confirm-action="Reverse">
+                        <i class="fas fa-undo" aria-hidden="true"></i> Reverse
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </section>
+
+    <footer class="order-detail-actions order-admin-actions">
+        {% url 'backoffice:order_status' order.pk as status_url %}
+        {% include 'includes/panel-status-form.html' with action_url=status_url field_id=order.pk record_label=order.reference current_status=order.status %}
+
+        {% if may_administer %}
+            {% url 'backoffice:order_delete' order.pk as action_url %}
+            {% with detail='The consignment, its payment and its invoice are all removed for good.' %}
+                {% include 'includes/panel-delete.html' with confirm='Delete this order?' confirm_detail=detail %}
+            {% endwith %}
+        {% endif %}
+    </footer>
+{% endblock %}

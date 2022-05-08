@@ -1,6 +1,6 @@
 # CTMS — Cargo Transportation Management System
 
-A freight booking and tracking platform. Customers price and place cargo orders, follow the route and status of each one, settle it and take away an invoice.
+A freight booking and tracking platform. Customers price and place cargo orders across air, sea, road and rail, follow their route and status; staff and administrators manage users, orders and enquiries from a control panel.
 
 | Component | Version |
 | --- | --- |
@@ -134,6 +134,11 @@ ctms/
 │   │   ├── tokens.py                One-time token generators behind the activation and confirmation links
 │   │   ├── urls.py                  Routes for the account flows
 │   │   └── views.py                 Registration, sign-in, sign-out, activation, passwords and profile
+│   ├── backoffice/                  Control panel for staff and administrators
+│   │   ├── apps.py                  Application configuration
+│   │   ├── forms.py                 Creating an account, editing one within rank, pricing an order
+│   │   ├── urls.py                  Namespaced routes for the panel's pages and actions
+│   │   └── views.py                 Dashboard, the tables, the account pages, and their actions
 │   ├── billing/                     Payments taken against an order, and cards kept for the next
 │   │   ├── migrations/              Empty package; migration files are generated, not committed
 │   │   ├── admin.py                 Read-only admin listing of payments and kept cards
@@ -187,6 +192,7 @@ ctms/
 │   └── videos/hero.webm             Landing page hero video
 ├── templates/                       HTML templates
 │   ├── accounts/                    Account and profile pages, and the plain-text emails they send
+│   ├── backoffice/                  Control panel dashboard, tables, account page and form
 │   ├── billing/                     Checkout, the invoice and the kept cards
 │   ├── enquiries/                   Contact page
 │   ├── includes/                    Navigation, footer, messages, form fields, detail rows, status pills, the confirm dialogue
@@ -226,6 +232,8 @@ Each package also carries an `__init__.py`.
 
 **Transport orders.** An order names a mode, origin, destination and weight; the cost and the status follow from those and are never read from the submitted form. Pricing is per kilogram plus a distance rate for every thousand kilometres, so a heavy load pays for the distance while a parcel barely notices it, and an order without a route is charged on weight alone.
 
+**Pricing an order by hand.** Staff may set a figure other than the quote, with a reason shown to the account holder beside the price on both the order and the invoice. The reason is what makes it stick: `save()` recomputes the quote every time but only overwrites the price while no reason is recorded, and a settled payment fixes the price until the payment is reversed.
+
 **Paying for an order.** Placing an order opens a payment against it at **Payment Pending**, so no table carries a column that is sometimes blank; paying settles that same record and issues a receipt number. An administrator may mark a settled payment **Refunded** or **Failed**, either of which leaves the amount due again.
 
 **Cards.** The checkout is a demonstration and no money moves. **No card number and no security code is ever stored** — a kept card holds only the brand, last four digits, expiry and name on it, which is how a payment service keeps one on file; paying with a kept card asks for its security code again.
@@ -242,11 +250,21 @@ Each package also carries an `__init__.py`.
 
 **Freight is not handed over before it is paid for.** An order cannot reach Ready for Pickup or any stage beyond until its payment is settled; `TransportOrder.may_reach` answers that, and both the dropdown and the route acting on it read it, so withholding the option is presentation and the refusal is the guard. Ending an order early is never blocked.
 
+**Who may do what.** An account is a **member**, **staff**, an **administrator** or a **superuser**: a member books their own orders, staff run the freight desk, an administrator also deletes records and manages accounts, and a superuser appoints administrators. The rule lives on the account as `can_open_backoffice` and `can_administer_backoffice`, so the guards, the navigation and the menus all read one definition.
+
+**Acting on an account.** `Account.manageable_flags_for` answers which flags one account may set on another: a superuser sets `is_admin`, `is_staff`, `is_verified` and `is_active`; an administrator sets the last three, and only on members and staff. Nobody edits their own privileges, and a flag the actor may not set is removed from the form rather than merely hidden — `construct_instance` copies only fields that reach `cleaned_data`.
+
 Two flags decide whether an account works at all rather than what it may do: `is_verified` gates signing in and is set by opening the link registration emails, and `is_active` withdraws the account entirely.
+
+**Control panel.** A back office at `/backoffice/` — dashboard, accounts, orders, payments, enquiries — guarded by two mixins: one admits anyone who may open the panel, the other narrows the account pages to administrators. Every page and every action carries one, so nothing is guarded by omission, and every action posts. Django's own admin remains at `/admin/` for raw data work.
 
 **Finding a record.** Every table can be searched, narrowed, reordered and paged from the query string, so any view of one is an address that can be shared or bookmarked. `apps/common/lists.py` holds all of this once at **20 rows** a page, and each table declares its own columns, narrowings and orderings.
 
 **Asking before something cannot be undone.** One dialogue serves the whole site and no page reaches for the browser's own confirm box; a destructive control carries what is asked, what it costs and what accepting is called, and the dialogue takes its wording from whichever control raised it. The submission is held until someone accepts, and a keyboard alone can work it — Tab cycles inside it, Escape closes it, and focus returns to the control that opened it.
+
+**Reading a table.** A row lights up under the pointer, and a heading can be dragged wider by the grip at its trailing edge, with the widths kept against the table's own name and a **Reset columns** control to put them back. Only while the rows are real table rows: narrower than a laptop a row is stacked and names its own cells.
+
+Orders and payments are acted on from the record itself rather than through an action column, and accounts open in a tab of their own. Every search, narrowing and ordering is matched against what the page declares before it reaches the database.
 
 **Routing.** An address box offers places to pick from, and when both ends are known the journey is worked out as the order is placed and stored with it, so the order page draws its map without asking the service again. Road and rail route over the road network; air and sea, and any land journey the service declines, follow the great circle. Both calls are made from the server, so the key never reaches a browser, and an address typed by hand still places an order — simply without a map.
 
@@ -260,7 +278,7 @@ Two flags decide whether an account works at all rather than what it may do: `is
 
 **Front end.** Bootstrap supplies the grid and components, Leaflet draws the maps over OpenStreetMap tiles, and `styles.css` layers the project's design on top without redefining a Bootstrap class. Rules are mobile-first, every colour, radius and spacing step is a token at the top of the file, and every text colour clears WCAG AA against the surface it sits on rather than merely against white.
 
-**Form fields.** Every label carries an icon mapped from the field's name in `apps/common/forms.py` and attached by the shared Bootstrap mixin, so a field looks the same wherever it is rendered. The profile groups — personal details, contact, social links — come from one definition that the holder's own editor lays itself out from.
+**Form fields.** Every label carries an icon mapped from the field's name in `apps/common/forms.py` and attached by the shared Bootstrap mixin, so a field looks the same wherever it is rendered. The profile groups — personal details, contact, social links — come from one definition that both the holder's own editor and the administrator's account page lay themselves out from.
 
 ---
 

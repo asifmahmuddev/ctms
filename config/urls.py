@@ -13,6 +13,7 @@ urlpatterns = [
     path('favicon.ico', RedirectView.as_view(url=FAVICON_URL)),
     path('admin/', admin.site.urls),
     path('', include('apps.accounts.urls')),
+    path('backoffice/', include('apps.backoffice.urls')),
     path('', include('apps.billing.urls')),
     path('', include('apps.enquiries.urls')),
     path('', include('apps.pages.urls')),

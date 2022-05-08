@@ -1,0 +1,70 @@
+{# Every order placed, whoever placed it, each opening the page it is managed from. #}
+{% extends 'backoffice/backoffice-base.html' %}
+
+{% block title %}Orders &mdash; CTMS{% endblock %}
+
+{% block panel_title %}Orders{% endblock %}
+{% block panel_intro %}Every consignment booked through CTMS, and where each one stands.{% endblock %}
+
+{% block panel_body %}
+    {% include 'includes/panel-table-controls.html' %}
+
+    {% if orders %}
+        {% include 'includes/panel-count.html' with noun='order' plural='s' %}
+
+        <div class="panel-table-wrap">
+            <table class="panel-table" data-table="orders">
+                <thead>
+                    <tr>
+                        <th scope="col">Reference</th>
+                        <th scope="col">Placed by</th>
+                        <th scope="col">Route</th>
+                        <th scope="col">Mode</th>
+                        <th scope="col">Weight</th>
+                        <th scope="col">Cost</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Payment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td data-label="Reference">
+                                <a class="panel-link" href="{% url 'backoffice:order_detail' order.pk %}">{{ order.reference }}</a>
+                                <span class="panel-muted panel-when">{{ order.placed_at|date:'N j, Y, g:i A' }}</span>
+                            </td>
+                            <td data-label="Placed by">
+                                <span class="panel-strong">{{ order.account.get_full_name }}</span>
+                                <span class="panel-muted">{{ order.account.email }}</span>
+                            </td>
+                            <td data-label="Route">
+                                {{ order.origin }}
+                                <i class="fas fa-long-arrow-alt-right order-card-arrow" aria-hidden="true"></i>
+                                {{ order.destination }}
+                            </td>
+                            <td data-label="Mode"><i class="fas {{ order.mode_icon }} fa-fw" aria-hidden="true"></i> {{ order.get_mode_display }}</td>
+                            <td data-label="Weight">{{ order.weight_label }}</td>
+                            <td data-label="Cost"><span class="panel-strong">{{ order.cost_label }}</span></td>
+                            <td data-label="Status">
+                                {% include 'includes/status-pill.html' with status_value=order.status status_label=order.get_status_display %}
+                            </td>
+                            <td data-label="Payment">
+                                {% with payment=order.payment_record %}
+                                    {% include 'includes/status-pill.html' with status_value=payment.status status_label=payment.get_status_display %}
+                                {% endwith %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include 'includes/panel-pagination.html' %}
+    {% else %}
+        <div class="empty-state">
+            <span class="empty-state-icon"><i class="fas fa-boxes" aria-hidden="true"></i></span>
+            <h2 class="empty-state-title">No orders yet</h2>
+            <p class="empty-state-text">Consignments booked by any account will appear here.</p>
+        </div>
+    {% endif %}
+{% endblock %}

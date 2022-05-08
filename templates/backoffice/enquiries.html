@@ -1,0 +1,70 @@
+{# Messages from the contact page, newest first, removable once dealt with. #}
+{% extends 'backoffice/backoffice-base.html' %}
+
+{% block title %}Enquiries &mdash; CTMS{% endblock %}
+
+{% block panel_title %}Enquiries{% endblock %}
+{% block panel_intro %}Messages left on the contact page by visitors and account holders alike.{% endblock %}
+
+{% block panel_body %}
+    {% include 'includes/panel-table-controls.html' %}
+
+    {% if enquiries %}
+        {% include 'includes/panel-count.html' with noun='enquir' plural='y,ies' %}
+
+        <div class="panel-table-wrap">
+            <table class="panel-table" data-table="enquiries">
+                <thead>
+                    <tr>
+                        <th scope="col">Received</th>
+                        <th scope="col">From</th>
+                        <th scope="col">Subject</th>
+                        <th scope="col">Message</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enquiry in enquiries %}
+                        <tr>
+                            <td data-label="Received">{{ enquiry.submitted_at|date:'N j, Y, g:i A' }}</td>
+                            <td data-label="From">
+                                <span class="panel-strong">{{ enquiry.name }}</span>
+                                <a class="panel-muted" href="mailto:{{ enquiry.email }}">{{ enquiry.email }}</a>
+                                {% if enquiry.phone %}<span class="panel-muted">{{ enquiry.phone }}</span>{% endif %}
+                            </td>
+                            <td data-label="Subject">{{ enquiry.subject }}</td>
+                            <td class="panel-cell-wide" data-label="Message">{{ enquiry.message }}</td>
+                            <td data-label="Status">
+                                {% include 'includes/status-pill.html' with status_value=enquiry.status status_label=enquiry.get_status_display %}
+                            </td>
+                            <td data-label="Action">
+                                <div class="panel-action-group">
+                                    {% url 'backoffice:enquiry_status' enquiry.pk as status_url %}
+                                    {% with field_id=enquiry.pk current_status=enquiry.status record_label=enquiry.subject %}
+                                        {% include 'includes/panel-status-form.html' with action_url=status_url compact=True %}
+                                    {% endwith %}
+
+                                    {% if may_administer %}
+                                        {% url 'backoffice:enquiry_delete' enquiry.pk as delete_url %}
+                                        {% with detail='The message and who sent it are removed for good.' %}
+                                            {% include 'includes/panel-delete.html' with action_url=delete_url compact=True confirm='Delete this enquiry?' confirm_detail=detail %}
+                                        {% endwith %}
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% include 'includes/panel-pagination.html' %}
+    {% else %}
+        <div class="empty-state">
+            <span class="empty-state-icon"><i class="fas fa-inbox" aria-hidden="true"></i></span>
+            <h2 class="empty-state-title">No enquiries yet</h2>
+            <p class="empty-state-text">Messages sent through the contact page will appear here.</p>
+        </div>
+    {% endif %}
+{% endblock %}

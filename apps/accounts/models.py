@@ -16,6 +16,24 @@ MAX_LENGTH_POSTAL_CODE = 32
 MAX_LENGTH_URL = 255
 MAX_LENGTH_IMAGE_PATH = 255
 
+# What an account may do, named rather than left as flags to decode; the order is privilege order.
+SUPERUSER_ROLE = 'Superuser'
+ADMINISTRATOR_ROLE = 'Administrator'
+STAFF_ROLE = 'Staff'
+MEMBER_ROLE = 'Member'
+
+# Which flags each rank may set on somebody else; a superuser alone appoints administrators.
+SUPERUSER_MANAGED_FLAGS = ('is_admin', 'is_staff', 'is_verified', 'is_active')
+ADMINISTRATOR_MANAGED_FLAGS = ('is_staff', 'is_verified', 'is_active')
+
+# How each flag reads on a page, so no template decides what a column name means.
+FLAG_LABELS = {
+    'is_admin': 'Administrator',
+    'is_staff': 'Staff access',
+    'is_verified': 'Email verified',
+    'is_active': 'Account active',
+}
+
 PROFILE_IMAGE_DIR = 'profile-images'
 DEFAULT_PROFILE_IMAGE = f'{PROFILE_IMAGE_DIR}/default.png'
 
@@ -123,6 +141,60 @@ class Account(AbstractBaseUser):
 
     def get_short_name(self):
         return self.first_name or self.username
+
+    @property
+    def can_open_backoffice(self):
+        """Return whether this account may reach the control panel at all.
+
+        Staff work the orders and enquiries; an administrator does that and manages accounts besides.
+        """
+
+        return self.is_staff or self.is_admin
+
+    @property
+    def can_administer_backoffice(self):
+        """Return whether this account has the full run of the control panel.
+
+        Staff work the records; an administrator also removes them and manages accounts, so the two
+        powers staff lack are one privilege. A superuser holds all of it, and appoints administrators.
+        """
+
+        return self.is_admin or self.is_superuser
+
+    @property
+    def role_label(self):
+        """Return the name for what this account may do, for a page that shows it back to someone."""
+
+        if self.is_superuser:
+            return SUPERUSER_ROLE
+        if self.is_admin:
+            return ADMINISTRATOR_ROLE
+
+        return STAFF_ROLE if self.is_staff else MEMBER_ROLE
+
+    def manageable_flags_for(self, account):
+        """Return the flags this account may set on `account`, which is often none at all.
+
+        Nobody edits their own privileges, since clearing `is_admin` on oneself locks the panel. An
+        administrator is held off peers and superusers too: deactivating one is a way up, not across.
+        """
+
+        if account.pk == self.pk:
+            return ()
+        if self.is_superuser:
+            return SUPERUSER_MANAGED_FLAGS
+        if self.is_admin and not (account.is_admin or account.is_superuser):
+            return ADMINISTRATOR_MANAGED_FLAGS
+
+        return ()
+
+    def may_delete(self, account):
+        """Return whether this account may remove `account` outright.
+
+        Same rule as changing a flag: no peer an administrator cannot demote, and never oneself.
+        """
+
+        return bool(self.manageable_flags_for(account))
 
     @property
     def email_change_is_pending(self):

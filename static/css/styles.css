@@ -1927,6 +1927,27 @@ The file a visitor downloads is drawn separately, so the two are laid out from d
     color: var(--ctms-danger);
 }
 
+.order-billing-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 0.875rem 1.5rem;
+    margin: 0 0 1.25rem;
+}
+
+.order-billing-fact dt {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.order-billing-fact dd {
+    margin-bottom: 0;
+    overflow-wrap: anywhere;
+}
+
 .order-billing-actions {
     display: flex;
     flex-wrap: wrap;
@@ -2236,6 +2257,20 @@ margin is the room the tilt needs, since a rotated box still lays out square. */
     font-size: 0.8125rem;
     color: var(--ctms-text-muted);
     margin-bottom: 0;
+}
+
+.money-total {
+    margin-bottom: 1.25rem;
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+}
+
+.money-total-value {
+    display: block;
+    font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ctms-text);
 }
 
 @media (min-width: 576px) {
@@ -3228,6 +3263,34 @@ Which stage ends a row depends on how many fit, so the two foldings are written 
     margin-bottom: 0;
     font-weight: 600;
 }
+
+/* A typed reason takes its own line beneath the figure rather than widening the row; named through
+the row to outweigh the rule that makes a total bold and blue. */
+.order-summary-row .order-cost-note {
+    flex: 0 0 100%;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--ctms-text-muted);
+}
+
+.order-pricing-form {
+    margin-bottom: 0.75rem;
+}
+
+.order-pricing-fields {
+    display: grid;
+    gap: 0 1rem;
+}
+
+.order-pricing-note {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0;
+    font-size: 0.8125rem;
+    color: var(--ctms-text-muted);
+}
+
 .order-summary-total {
     margin-top: 0.25rem;
     padding-top: 0.875rem;
@@ -3396,6 +3459,238 @@ row from the lg breakpoint, where the columns fit. One markup serves both.
     gap: 0.5rem;
 }
 
+/* --- Section tabs -------------------------------------------------------------------------- */
+
+.panel-nav {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--ctms-border);
+    /* Narrow screens scroll the tabs sideways rather than wrapping them into a second row. */
+    overflow-x: auto;
+}
+
+.panel-nav-list {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.panel-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid transparent;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--ctms-text-muted);
+    text-decoration: none;
+    transition: color var(--ctms-transition), border-color var(--ctms-transition);
+}
+
+.panel-nav-link:hover,
+.panel-nav-link:focus {
+    color: var(--ctms-primary);
+}
+
+.panel-nav-link-current {
+    color: var(--ctms-primary);
+    border-bottom-color: var(--ctms-primary);
+}
+
+/* --- Stat tiles ---------------------------------------------------------------------------- */
+
+/* One population divided between ranks, so it is drawn as one bar, not four figures. */
+.role-bar {
+    display: flex;
+    overflow: hidden;
+    height: 0.75rem;
+    margin-bottom: 1.25rem;
+    background-color: var(--ctms-surface-alt);
+    border-radius: 2rem;
+}
+
+.role-bar-slice {
+    height: 100%;
+}
+
+.role-bar-slice-member {
+    background-color: var(--ctms-text-muted);
+}
+
+.role-bar-slice-staff {
+    background-color: var(--ctms-warning);
+}
+
+.role-bar-slice-administrator {
+    background-color: var(--ctms-primary);
+}
+
+.role-bar-slice-superuser {
+    background-color: var(--ctms-success);
+}
+
+.role-legend {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.875rem 1.25rem;
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.role-legend-item {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+/* A block of its slice's colour, aligned to the text rather than to the line. */
+.role-legend-key {
+    align-self: center;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 0.25rem;
+}
+
+.role-legend-count {
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.role-legend-label {
+    font-size: 0.8125rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+}
+
+/* Enquiries are a queue rather than a journey, so each status is a card of its own count. */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.status-grid-item {
+    padding: 1rem 1.125rem;
+    background-color: var(--ctms-surface-muted);
+    border-left: 3px solid var(--ctms-text-muted);
+    border-radius: var(--ctms-radius);
+}
+
+.status-grid-item-new {
+    border-left-color: var(--ctms-warning);
+}
+
+.status-grid-item-in-progress {
+    border-left-color: var(--ctms-primary);
+}
+
+.status-grid-item-resolved {
+    border-left-color: var(--ctms-success);
+}
+
+.status-grid-item-closed {
+    border-left-color: var(--ctms-text-muted);
+}
+
+.status-grid-count {
+    display: block;
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.status-grid-label {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+}
+
+.status-grid-share {
+    display: block;
+    margin-top: 0.125rem;
+    font-size: 0.75rem;
+    color: var(--ctms-text-muted);
+}
+
+/* A mode is named by its icon before its wording, so the icon leads the tile. */
+.mode-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.mode-grid-item {
+    padding: 1rem 1.125rem;
+    background-color: var(--ctms-surface-muted);
+    border-left: 3px solid var(--ctms-primary);
+    border-radius: var(--ctms-radius);
+}
+
+.mode-grid-icon {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+    color: var(--ctms-primary);
+}
+
+.mode-grid-count {
+    display: block;
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.mode-grid-label {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.mode-grid-share {
+    display: block;
+    margin-top: 0.125rem;
+    font-size: 0.75rem;
+    color: var(--ctms-text-muted);
+}
+
+.mode-grid-completed {
+    display: block;
+    margin-top: 0.125rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--ctms-success);
+}
+
+@media (min-width: 768px) {
+    .role-legend {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .status-grid,
+    .mode-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
 /* --- Table controls ------------------------------------------------------------------------ */
 
 /* A row from md, so the search box is not squeezed beside two dropdowns. */
@@ -3448,6 +3743,158 @@ row from the lg breakpoint, where the columns fit. One markup serves both.
 
     .panel-controls-choices .form-select {
         flex: 0 0 auto;
+    }
+}
+
+/* --- Cards and counts ---------------------------------------------------------------------- */
+
+.panel-card {
+    margin-top: 1.5rem;
+    padding: 1.5rem 1.25rem;
+    background-color: var(--ctms-surface);
+    border: 1px solid var(--ctms-border);
+    border-radius: var(--ctms-radius-lg);
+    box-shadow: var(--ctms-shadow-sm);
+}
+
+.panel-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.panel-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+}
+
+/* Inside a head the title's own gap would double the row's, so it is dropped there. */
+.panel-card-head .panel-card-title {
+    margin-bottom: 0;
+}
+
+.panel-card-total {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ctms-primary);
+    text-decoration: none;
+}
+
+.panel-card-total:hover,
+.panel-card-total:focus {
+    color: var(--ctms-primary-dark);
+    text-decoration: underline;
+}
+
+.panel-card-title i {
+    color: var(--ctms-primary);
+}
+
+.panel-count {
+    margin-bottom: 0;
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+}
+
+/* --- Status breakdown ---------------------------------------------------------------------- */
+
+.status-breakdown {
+    display: grid;
+    gap: 0.875rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.status-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem 1rem;
+}
+
+.status-row-bar {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    height: 0.5rem;
+    border-radius: 1rem;
+    background-color: var(--ctms-surface-alt);
+    overflow: hidden;
+}
+
+.status-row-fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+}
+
+.status-row-fill-pending,
+.status-row-fill-payment-pending {
+    background-color: var(--ctms-warning);
+}
+
+/* Confirming through delivering is all work in hand, so it reads as one colour. */
+.status-row-fill-confirmed,
+.status-row-fill-processing,
+.status-row-fill-ready-for-pickup,
+.status-row-fill-picked-up,
+.status-row-fill-in-transit,
+.status-row-fill-out-for-delivery {
+    background-color: var(--ctms-primary);
+}
+
+.status-row-fill-delivered,
+.status-row-fill-completed {
+    background-color: var(--ctms-success);
+}
+
+.status-row-fill-cancelled,
+.status-row-fill-returned {
+    background-color: var(--ctms-danger);
+}
+
+.status-row-fill-archived {
+    background-color: var(--ctms-text-muted);
+}
+
+.status-row-fill-paid {
+    background-color: var(--ctms-success);
+}
+
+.status-row-fill-refunded {
+    background-color: var(--ctms-warning);
+}
+
+.status-row-fill-failed {
+    background-color: var(--ctms-danger);
+}
+
+.status-row-count {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-row-share {
+    font-weight: 400;
+    font-size: 0.8125rem;
+    color: var(--ctms-text-muted);
+}
+
+@media (min-width: 768px) {
+    .status-row {
+        grid-template-columns: 8rem minmax(0, 1fr) auto;
+    }
+
+    .status-row-bar {
+        grid-column: 2;
+        grid-row: 1;
     }
 }
 
@@ -3587,6 +4034,94 @@ a.panel-muted:focus {
     color: var(--ctms-text-muted);
 }
 
+/* --- Account detail ------------------------------------------------------------------------ */
+
+/* It opens the page rather than following a card, so the margin moves from above it to below. */
+.account-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.account-summary-avatar {
+    width: 5.5rem;
+    height: 5.5rem;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--ctms-border);
+}
+
+/* Takes the width the picture leaves, so the facts lay out in columns, not a strip. */
+.account-summary-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.account-summary-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 0.875rem 1.5rem;
+    margin: 1rem 0 0;
+}
+
+.account-summary-fact dt {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+}
+
+.account-summary-fact dd {
+    margin-bottom: 0;
+    overflow-wrap: anywhere;
+}
+
+.account-flags {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 0.5rem 1.5rem;
+}
+
+/* A checkbox row already carries its own bottom margin from the form furniture. */
+.account-flags .form-field {
+    margin-bottom: 0;
+}
+
+.account-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+/* A row that opens a record reads as one target, so the whole cell carries the link. */
+.panel-person-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.panel-person-link:hover .panel-person-name,
+.panel-person-link:focus .panel-person-name {
+    color: var(--ctms-primary);
+    text-decoration: underline;
+}
+
+.panel-person-open {
+    font-size: 0.75rem;
+    color: var(--ctms-text-muted);
+}
+
+/* Beside the facts from sm and above them below it, so a narrow screen gives them full width. */
+@media (min-width: 576px) {
+    .account-summary {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+}
+
 /* --- Pages --------------------------------------------------------------------------------- */
 
 .panel-pages {
@@ -3607,6 +4142,50 @@ a.panel-muted:focus {
 .panel-pages-spent {
     opacity: 0.45;
     pointer-events: none;
+}
+
+/* --- Badges and flags ---------------------------------------------------------------------- */
+
+.panel-badge {
+    display: inline-block;
+    padding: 0.1875rem 0.625rem;
+    border-radius: 2rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+    background-color: var(--ctms-surface-alt);
+}
+
+.panel-badge-superuser {
+    color: var(--ctms-success);
+    background-color: rgba(25, 135, 84, 0.12);
+}
+
+.panel-badge-administrator {
+    color: var(--ctms-primary);
+    background-color: rgba(11, 79, 216, 0.1);
+}
+
+.panel-badge-staff {
+    color: var(--ctms-warning);
+    background-color: rgba(255, 152, 0, 0.16);
+}
+
+.panel-flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.panel-flag-yes {
+    color: var(--ctms-success);
+}
+
+.panel-flag-no {
+    color: var(--ctms-text-muted);
 }
 
 /* --- Row actions --------------------------------------------------------------------------- */
@@ -3901,4 +4480,70 @@ is sized in viewport units so it keeps a usable height on a phone without domina
 .panel-link:hover,
 .panel-link:focus {
     color: var(--ctms-primary);
+}
+
+/* --- Who placed an order ------------------------------------------------------------------- */
+
+.order-owner {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    margin-top: 1.25rem;
+    padding: 0.875rem 1rem;
+    border-radius: var(--ctms-radius);
+    background-color: var(--ctms-surface-muted);
+}
+
+.order-owner-avatar {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.order-owner-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.order-owner-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ctms-text-muted);
+}
+
+.order-owner-name {
+    font-weight: 600;
+}
+
+.order-owner-email {
+    font-size: 0.875rem;
+    color: var(--ctms-text-muted);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.order-owner-email:hover,
+.order-owner-email:focus {
+    color: var(--ctms-primary);
+}
+
+/* The status control and the deletion sit on one row from the point they both fit. */
+.order-admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.order-admin-actions .panel-status-form {
+    flex: 1 1 16rem;
+}
+
+.order-admin-actions .form-select {
+    flex: 1 1 auto;
 }

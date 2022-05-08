@@ -55,6 +55,7 @@ FIELD_ICONS = {
     'destination': 'fa-plane-arrival',
     'weight_kilograms': 'fa-weight-hanging',
     'cost': 'fa-dollar-sign',
+    'cost_reason': 'fa-comment-dollar',
 
     # Payment
     'card_number': 'fa-credit-card',

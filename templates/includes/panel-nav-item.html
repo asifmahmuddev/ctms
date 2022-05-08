@@ -1,0 +1,9 @@
+{# One section link in the control panel navigation, marked current when its own page is showing. #}
+{% with current=request.resolver_match.url_name %}
+    <li class="panel-nav-item">
+        <a class="panel-nav-link{% if current == url_name %} panel-nav-link-current{% endif %}" href="{% url 'backoffice:'|add:url_name %}"
+            {% if current == url_name %}aria-current="page"{% endif %}>
+            <i class="fas {{ icon }} fa-fw" aria-hidden="true"></i> {{ label }}
+        </a>
+    </li>
+{% endwith %}

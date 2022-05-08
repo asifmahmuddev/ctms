@@ -1,0 +1,36 @@
+{# Creating an account from the panel, verified because an administrator vouched for it. #}
+{% extends 'backoffice/backoffice-base.html' %}
+
+{% block title %}Create account &mdash; CTMS{% endblock %}
+
+{% block panel_title %}Create an account{% endblock %}
+{% block panel_intro %}The account is ready to use straight away, so pass on the password you set here.{% endblock %}
+
+{% block panel_body %}
+    <div class="row">
+        <div class="col-12 col-lg-8 col-xl-6">
+            <div class="panel-card">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% for error in form.non_field_errors %}<p class="form-error form-error-summary">{{ error }}</p>{% endfor %}
+
+                    <div class="row g-3">
+                        <div class="col-12 col-sm-6">{% include 'includes/form-field.html' with field=form.first_name %}</div>
+                        <div class="col-12 col-sm-6">{% include 'includes/form-field.html' with field=form.last_name %}</div>
+                        <div class="col-12 col-sm-6">{% include 'includes/form-field.html' with field=form.email %}</div>
+                        <div class="col-12 col-sm-6">{% include 'includes/form-field.html' with field=form.username %}</div>
+                    </div>
+
+                    {% include 'includes/form-field.html' with field=form.password1 %}
+                    {% include 'includes/form-field.html' with field=form.password2 %}
+                    {% include 'includes/form-field.html' with field=form.is_staff %}
+
+                    <div class="order-form-actions">
+                        <button class="btn btn-ctms" type="submit"><i class="fas fa-user-plus" aria-hidden="true"></i> Create account</button>
+                        <a class="btn btn-ctms-outline" href="{% url 'backoffice:accounts' %}">Back to accounts</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
