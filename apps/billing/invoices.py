@@ -13,6 +13,7 @@ from reportlab.lib.utils import simpleSplit
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.pdfgen import canvas
 
+from apps.company.models import CompanyProfile
 from apps.transport.models import CURRENCY_SYMBOL
 
 from .models import PaymentStatus
@@ -22,12 +23,6 @@ PAGE_WIDTH, PAGE_HEIGHT = PAGE_SIZE
 
 MARGIN = 18 * mm
 CONTENT_WIDTH = PAGE_WIDTH - 2 * MARGIN
-
-# Who the invoice is issued by, printed at the head of every one.
-TRADING_NAME = 'CTMS'
-FULL_NAME = 'Cargo Transportation Management System'
-ADDRESS_LINES = ('11 Commercial Area', 'Dhaka, Bangladesh')
-CONTACT_EMAIL = 'asifmahmud.ide@gmail.com'
 
 # The site's own palette, so the invoice and the pages it was drawn from are the same document.
 INK = HexColor('#313437')
@@ -160,7 +155,7 @@ def billing_address(account):
     return [line for line in (account.get_full_name(), account.email, account.address_line, town, account.country) if line]
 
 
-def draw_header(page, payment):
+def draw_header(page, payment, company):
     """Draw the mark beside the name, the sender beneath both, and the number against the right edge."""
 
     top = page.y
@@ -169,9 +164,9 @@ def draw_header(page, payment):
         page.pdf.drawImage(str(LOGO_PATH), MARGIN, top - LOGO_SIZE, width=LOGO_SIZE, height=LOGO_SIZE, mask='auto')
 
     page.y = top - LOGO_SIZE + 1 * mm
-    page.line(TRADING_NAME, offset=LOGO_SIZE + LOGO_GAP, font=BOLD_FONT, size=TITLE_SIZE, colour=BRAND, step=NAME_STEP)
+    page.line(company.trading_name, offset=LOGO_SIZE + LOGO_GAP, font=BOLD_FONT, size=TITLE_SIZE, colour=BRAND, step=NAME_STEP)
 
-    for detail in (FULL_NAME, *ADDRESS_LINES, CONTACT_EMAIL):
+    for detail in (company.full_name, *company.address_lines, company.contact_email):
         page.line(detail, size=HEADING_SIZE, colour=MUTED, step=SMALL_LINE_HEIGHT)
 
     left_bottom = page.y
@@ -336,11 +331,12 @@ def render_invoice(target, order):
     """Draw the whole invoice for one order onto `target`, which is anything a file can be written to."""
 
     payment = order.payment_record
+    company = CompanyProfile.current()
 
     page = InvoiceCanvas(target)
-    page.describe(DOCUMENT_TITLE.format(number=payment.invoice_number), DOCUMENT_SUBJECT.format(reference=order.reference), TRADING_NAME)
+    page.describe(DOCUMENT_TITLE.format(number=payment.invoice_number), DOCUMENT_SUBJECT.format(reference=order.reference), company.trading_name)
 
-    draw_header(page, payment)
+    draw_header(page, payment, company)
     draw_parties(page, order, payment)
     draw_items(page, order, payment)
     draw_stamp(page, payment)

@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}CTMS &mdash; Cargo Transportation Management System{% endblock %}
+{% block title %}{{ company.trading_name }} &mdash; {{ company.full_name }}{% endblock %}
 
 {# Suppresses the header offset so the hero video sits behind the translucent header. #}
 {% block body_class %}has-hero{% endblock %}

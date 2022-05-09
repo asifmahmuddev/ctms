@@ -19,12 +19,13 @@
                     <div class="invoice-brand">
                         <span class="invoice-brand-lockup">
                             <img src="{% static 'images/cargo-48px.png' %}" alt="" width="28" height="28">
-                            <span class="invoice-brand-name">CTMS</span>
+                            <span class="invoice-brand-name">{{ company.trading_name }}</span>
                         </span>
-                        <span class="invoice-brand-line">Cargo Transportation Management System</span>
-                        <span class="invoice-brand-line">11 Commercial Area</span>
-                        <span class="invoice-brand-line">Dhaka, Bangladesh</span>
-                        <span class="invoice-brand-line">asifmahmud.ide@gmail.com</span>
+                        <span class="invoice-brand-line">{{ company.full_name }}</span>
+                        {% for line in company.address_lines %}
+                            <span class="invoice-brand-line">{{ line }}</span>
+                        {% endfor %}
+                        <span class="invoice-brand-line">{{ company.contact_email }}</span>
                     </div>
                     <div class="invoice-meta">
                         <span class="invoice-title">Invoice</span>

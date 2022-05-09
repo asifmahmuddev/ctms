@@ -49,6 +49,11 @@ FIELD_ICONS = {
     'subject': 'fa-tag',
     'message': 'fa-comment-dots',
 
+    # The company the site represents
+    'trading_name': 'fa-building',
+    'full_name': 'fa-signature',
+    'contact_email': 'fa-at',
+
     # Orders
     'mode': 'fa-route',
     'origin': 'fa-plane-departure',

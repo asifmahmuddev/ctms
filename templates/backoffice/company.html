@@ -1,0 +1,30 @@
+{# The company the site represents, as an administrator corrects it; every page follows. #}
+{% extends 'backoffice/backoffice-base.html' %}
+
+{% block title %}Company &mdash; CTMS{% endblock %}
+
+{% block panel_title %}Company{% endblock %}
+{% block panel_intro %}Who this site says it is, wherever it says so.{% endblock %}
+
+{% block panel_body %}
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}<p class="form-error form-error-summary">{{ error }}</p>{% endfor %}
+
+        <div class="row g-4">
+            {% for group in form.field_groups %}
+                <div class="col-12 col-lg-6">
+                    <section class="detail-card">
+                        <h2 class="detail-card-title"><i class="fas {{ group.icon }}" aria-hidden="true"></i> {{ group.title }}</h2>
+                        <p class="detail-card-text">{{ group.note }}</p>
+                        {% for field in group.fields %}{% include 'includes/form-field.html' %}{% endfor %}
+                    </section>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="account-actions">
+            <button class="btn btn-ctms" type="submit"><i class="fas fa-save" aria-hidden="true"></i> Save changes</button>
+        </div>
+    </form>
+{% endblock %}

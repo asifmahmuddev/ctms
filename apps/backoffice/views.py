@@ -27,10 +27,11 @@ from apps.accounts.models import (
 from apps.billing.models import REVERSIBLE_STATUSES, Payment, PaymentStatus, SavedCard
 from apps.billing.responses import invoice_response
 from apps.common.lists import FilterGroup, RecordListView
+from apps.company.models import CompanyProfile
 from apps.enquiries.models import ContactEnquiry, EnquiryStatus
 from apps.transport.models import MODE_ICONS, OrderStatus, TransportMode, TransportOrder, money_label
 
-from .forms import AccountCreationForm, AccountUpdateForm, OrderCostForm
+from .forms import AccountCreationForm, AccountUpdateForm, CompanyProfileForm, OrderCostForm
 
 Account = get_user_model()
 
@@ -38,12 +39,14 @@ DASHBOARD_TEMPLATE = 'backoffice/dashboard.html'
 ACCOUNT_LIST_TEMPLATE = 'backoffice/accounts.html'
 ACCOUNT_DETAIL_TEMPLATE = 'backoffice/account-detail.html'
 ACCOUNT_FORM_TEMPLATE = 'backoffice/account-form.html'
+COMPANY_TEMPLATE = 'backoffice/company.html'
 ORDER_LIST_TEMPLATE = 'backoffice/orders.html'
 ORDER_DETAIL_TEMPLATE = 'backoffice/order-detail.html'
 ENQUIRY_LIST_TEMPLATE = 'backoffice/enquiries.html'
 INVOICE_TEMPLATE = 'billing/invoice.html'
 PAYMENT_LIST_TEMPLATE = 'backoffice/payments.html'
 
+COMPANY_UPDATED_MESSAGE = 'The company details have been updated, everywhere they are shown.'
 ACCOUNT_CREATED_MESSAGE = 'Account {username} has been created.'
 ACCOUNT_UPDATED_MESSAGE = 'Account {username} has been updated.'
 ACCOUNT_DELETED_MESSAGE = 'Account {username} has been deleted, along with the orders it placed.'
@@ -263,6 +266,22 @@ class AccountDetailView(BackofficeAdministratorMixin, UpdateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, ACCOUNT_UPDATED_MESSAGE.format(username=self.object.username))
+        return response
+
+
+class CompanyProfileView(BackofficeAdministratorMixin, UpdateView):
+    """Corrects the company every page names. An administrator's alone, because it changes all of them."""
+
+    form_class = CompanyProfileForm
+    template_name = COMPANY_TEMPLATE
+    success_url = reverse_lazy('backoffice:company')
+
+    def get_object(self, queryset=None):
+        return CompanyProfile.current()
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, COMPANY_UPDATED_MESSAGE)
         return response
 
 

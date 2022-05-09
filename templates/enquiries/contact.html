@@ -21,21 +21,21 @@
                                 <span class="contact-channel-icon"><i class="fas fa-phone-alt" aria-hidden="true"></i></span>
                                 <span class="contact-channel-body">
                                     <span class="contact-channel-label">Phone</span>
-                                    <a class="contact-channel-value" href="tel:+880 123 456 789">+880 123 456 789</a>
+                                    <a class="contact-channel-value" href="tel:{{ company.phone }}">{{ company.phone }}</a>
                                 </span>
                             </li>
                             <li class="contact-channel">
                                 <span class="contact-channel-icon"><i class="fas fa-envelope" aria-hidden="true"></i></span>
                                 <span class="contact-channel-body">
                                     <span class="contact-channel-label">Email</span>
-                                    <a class="contact-channel-value" href="mailto:asifmahmud.ide@gmail.com">asifmahmud.ide@gmail.com</a>
+                                    <a class="contact-channel-value" href="mailto:{{ company.contact_email }}">{{ company.contact_email }}</a>
                                 </span>
                             </li>
                             <li class="contact-channel">
                                 <span class="contact-channel-icon"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></span>
                                 <span class="contact-channel-body">
                                     <span class="contact-channel-label">Office</span>
-                                    <span class="contact-channel-value">11 Commercial Area, Dhaka, Bangladesh</span>
+                                    <span class="contact-channel-value">{{ company.address_line }}, {{ company.location }}</span>
                                 </span>
                             </li>
                             <li class="contact-channel">

@@ -18,6 +18,7 @@
                 <ul class="panel-nav-list">
                     {% include 'includes/panel-nav-item.html' with url_name='dashboard' label='Dashboard' icon='fa-tachometer-alt' %}
                     {% if may_administer %}
+                        {% include 'includes/panel-nav-item.html' with url_name='company' label='Company' icon='fa-building' %}
                         {% include 'includes/panel-nav-item.html' with url_name='accounts' label='Accounts' icon='fa-users' %}
                     {% endif %}
                     {% include 'includes/panel-nav-item.html' with url_name='orders' label='Orders' icon='fa-boxes' %}

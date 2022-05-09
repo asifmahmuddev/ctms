@@ -136,9 +136,9 @@ ctms/
 │   │   └── views.py                 Registration, sign-in, sign-out, activation, passwords and profile
 │   ├── backoffice/                  Control panel for staff and administrators
 │   │   ├── apps.py                  Application configuration
-│   │   ├── forms.py                 Creating an account, editing one within rank, pricing an order
+│   │   ├── forms.py                 Creating an account, editing one within rank, pricing an order, the company
 │   │   ├── urls.py                  Namespaced routes for the panel's pages and actions
-│   │   └── views.py                 Dashboard, the tables, the account pages, and their actions
+│   │   └── views.py                 Dashboard, the tables, the company and account pages, and their actions
 │   ├── billing/                     Payments taken against an order, and cards kept for the next
 │   │   ├── migrations/              Empty package; migration files are generated, not committed
 │   │   ├── admin.py                 Read-only admin listing of payments and kept cards
@@ -151,8 +151,13 @@ ctms/
 │   │   ├── urls.py                  Routes for paying, the invoice and the kept cards
 │   │   └── views.py                 Settling an order, drawing its invoice, removing a kept card
 │   ├── common/                      Shared helpers, imported by the apps rather than owned by one
+│   │   ├── context_processors.py    The company, and which ways in a page may offer
 │   │   ├── forms.py                 Bootstrap control classes and label icons, applied to every form
 │   │   └── lists.py                 A table that can be searched, narrowed, reordered and paged
+│   ├── company/                     The organisation the site represents
+│   │   ├── migrations/              Empty package; migration files are generated, not committed
+│   │   ├── apps.py                  Application configuration
+│   │   └── models.py                The single record naming the company, its address and how to reach it
 │   ├── enquiries/                   Messages sent through the public contact page
 │   │   ├── migrations/              Empty package; migration files are generated, not committed
 │   │   ├── admin.py                 Read-only admin listing of what visitors sent
@@ -192,7 +197,7 @@ ctms/
 │   └── videos/hero.webm             Landing page hero video
 ├── templates/                       HTML templates
 │   ├── accounts/                    Account and profile pages, and the plain-text emails they send
-│   ├── backoffice/                  Control panel dashboard, tables, account page and form
+│   ├── backoffice/                  Control panel dashboard, tables, company page, account page and form
 │   ├── billing/                     Checkout, the invoice and the kept cards
 │   ├── enquiries/                   Contact page
 │   ├── includes/                    Navigation, footer, messages, form fields, detail rows, status pills, the confirm dialogue
@@ -256,7 +261,7 @@ Each package also carries an `__init__.py`.
 
 Two flags decide whether an account works at all rather than what it may do: `is_verified` gates signing in and is set by opening the link registration emails, and `is_active` withdraws the account entirely.
 
-**Control panel.** A back office at `/backoffice/` — dashboard, accounts, orders, payments, enquiries — guarded by two mixins: one admits anyone who may open the panel, the other narrows the account pages to administrators. Every page and every action carries one, so nothing is guarded by omission, and every action posts. Django's own admin remains at `/admin/` for raw data work.
+**Control panel.** A back office at `/backoffice/` — dashboard, company, accounts, orders, payments, enquiries — guarded by two mixins: one admits anyone who may open the panel, the other narrows the company and account pages to administrators. Every page and every action carries one, so nothing is guarded by omission, and every action posts. Django's own admin remains at `/admin/` for raw data work.
 
 **Finding a record.** Every table can be searched, narrowed, reordered and paged from the query string, so any view of one is an address that can be shared or bookmarked. `apps/common/lists.py` holds all of this once at **20 rows** a page, and each table declares its own columns, narrowings and orderings.
 
@@ -271,6 +276,8 @@ Orders and payments are acted on from the record itself rather than through an a
 **Passwords.** Django's validators apply, and a replacement identical to the current password is refused. Changing one by either route signs out every other device and emails the owner.
 
 **Email.** Only the account and order notices are sent, from a background thread so a slow mail server cannot stall a response. With `EMAIL_HOST_USER` unset they print to the terminal.
+
+**The company.** The trading name, full name, contact address, phone and postal address are one record, edited by an administrator from the **Company** tab and read wherever the site names itself — the contact page, the footer, the sign-in pages, both invoices, and the sign-off on every account message. Messages are rendered without a request, so nothing a context processor offers reaches them and the record is passed to those templates explicitly.
 
 **Migrations.** The `migrations/` package is tracked but empty, so a fresh clone runs `makemigrations` before its first `migrate`. It cannot be deleted: `django.contrib.admin` and `auth` declare a swappable dependency on `AUTH_USER_MODEL`, and without the package `migrate` fails.
 

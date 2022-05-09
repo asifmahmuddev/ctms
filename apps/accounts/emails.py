@@ -10,6 +10,8 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
+from apps.company.models import CompanyProfile
+
 from .tokens import account_activation_token, email_change_token
 
 ACTIVATION_SUBJECT = 'Verify your CTMS email address'
@@ -52,8 +54,10 @@ def send_account_email(subject, template_name, user, request, recipient=None, **
     A recipient may be named for the one message that goes to an address the account has left.
     """
 
+    # Rendered without a request, so no context processor runs and the company is named here.
     context = {
         'user': user,
+        'company': CompanyProfile.current(),
         'protocol': 'https' if request.is_secure() else 'http',
         'domain': get_current_site(request).domain,
         'link_lifetime_minutes': settings.ACCOUNT_LINK_LIFETIME_MINUTES,

@@ -11,6 +11,7 @@ app_name = 'backoffice'
 
 urlpatterns = [
     path('', views.DashboardView.as_view(), name='dashboard'),
+    path('company/', views.CompanyProfileView.as_view(), name='company'),
     path('accounts/', views.AccountListView.as_view(), name='accounts'),
     path('accounts/new/', views.AccountCreateView.as_view(), name='account_create'),
     path('accounts/<int:pk>/', views.AccountDetailView.as_view(), name='account_detail'),

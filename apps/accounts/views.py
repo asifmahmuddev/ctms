@@ -17,6 +17,8 @@ from django.views.decorators.http import require_POST
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 
+from apps.company.models import CompanyProfile
+
 from .emails import send_activation_email, send_email_change_requested_email, send_email_changed_email, send_password_changed_email, send_pending_email_confirmation
 from .forms import EmailChangeForm, ProfileForm, ProfileImageForm, RegistrationForm, SignInForm, UsernameChangeForm
 from .images import store_profile_image
@@ -135,9 +137,15 @@ class SignOutView(auth_views.LogoutView):
 
 
 class PasswordResetView(auth_views.PasswordResetView):
-    """Emails a reset link, telling its recipient how long the link stays valid."""
+    """Emails a reset link, signed off by the company the way every other account message is.
 
-    extra_email_context = LINK_LIFETIME_CONTEXT
+    Rendered without a request, so no context processor runs and the company is passed in here, read
+    per request because the record is corrected while the site is running.
+    """
+
+    @property
+    def extra_email_context(self):
+        return {**LINK_LIFETIME_CONTEXT, 'company': CompanyProfile.current()}
 
 
 class PasswordChangeView(auth_views.PasswordChangeView):

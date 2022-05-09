@@ -5,6 +5,7 @@ from django import forms
 from apps.accounts.forms import ProfileForm, RegistrationForm
 from apps.accounts.models import FLAG_LABELS, SUPERUSER_MANAGED_FLAGS
 from apps.common.forms import BootstrapFormMixin
+from apps.company.models import CompanyProfile
 from apps.transport.models import MINIMUM_ORDER_COST, TransportOrder, money_label
 
 # The widest set of flags, declared once and narrowed per account rather than assembled each time.
@@ -19,6 +20,23 @@ COST_TOO_LOW_MESSAGE = 'An order cannot cost less than {minimum}.'
 
 COST_ATTRIBUTES = {'inputmode': 'numeric', 'min': MINIMUM_ORDER_COST, 'step': 1}
 COST_REASON_ATTRIBUTES = {'placeholder': 'Oversize surcharge agreed with the shipper'}
+
+# How the company's own fields are laid out on the page that corrects them.
+COMPANY_FIELD_GROUPS = (
+    ('Identity', 'fa-id-card', 'The names this site goes by, wherever it names itself.', ('trading_name', 'full_name')),
+    ('Reaching us', 'fa-headset', 'Shown on the contact page and printed on every invoice.', ('contact_email', 'phone')),
+    ('Address', 'fa-map-marker-alt', 'Where the company sits, as an invoice prints it.', ('address_line', 'city', 'country')),
+)
+
+COMPANY_LABELS = {
+    'trading_name': 'Trading name',
+    'full_name': 'Full name',
+    'contact_email': 'Contact email',
+    'phone': 'Phone',
+    'address_line': 'Address',
+    'city': 'City',
+    'country': 'Country',
+}
 
 
 class AccountCreationForm(RegistrationForm):
@@ -39,6 +57,24 @@ class AccountCreationForm(RegistrationForm):
             account.save()
 
         return account
+
+
+class CompanyProfileForm(BootstrapFormMixin, forms.ModelForm):
+    """Corrects the one company record every page reads its details from."""
+
+    class Meta:
+        model = CompanyProfile
+        fields = tuple(name for _, _, _, names in COMPANY_FIELD_GROUPS for name in names)
+        labels = COMPANY_LABELS
+
+    @property
+    def field_groups(self):
+        """Return the fields grouped as the page lays them out, so no template decides the order."""
+
+        return [
+            {'title': title, 'icon': icon, 'note': note, 'fields': [self[name] for name in names]}
+            for title, icon, note, names in COMPANY_FIELD_GROUPS
+        ]
 
 
 class OrderCostForm(BootstrapFormMixin, forms.ModelForm):
