@@ -1,0 +1,20 @@
+{# Reached only when a provider withholds the address an account here is identified by. #}
+{% extends 'accounts/auth-base.html' %}
+
+{% block title %}Finish creating your account &mdash; CTMS{% endblock %}
+{% block auth_visual_class %}auth-visual-social-signin{% endblock %}
+
+{% block auth_title %}One more step{% endblock %}
+{% block auth_subtitle %}{{ account.get_provider.name }} did not give us everything an account needs, so please fill in the rest.{% endblock %}
+
+{% block auth_body %}
+    <form class="auth-form" method="post" action="{% url 'socialaccount_signup' %}" novalidate>
+        {% csrf_token %}
+        {% include 'includes/form-fields.html' %}
+        <button class="btn btn-ctms auth-submit" type="submit">Create account</button>
+    </form>
+{% endblock %}
+
+{% block auth_links %}
+    <a href="{% url 'signin' %}">Back to sign in</a>
+{% endblock %}

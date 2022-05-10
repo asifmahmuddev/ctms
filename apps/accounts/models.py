@@ -220,6 +220,26 @@ class Account(AbstractBaseUser):
             self.save(update_fields=PENDING_EMAIL_FIELDS)
 
     @property
+    def social_links(self):
+        """Return the provider accounts this one signs in through, newest first.
+
+        The provider tables belong to the sign-in library, so they are imported here, not at module scope.
+        """
+
+        from allauth.socialaccount.models import SocialAccount
+
+        return SocialAccount.objects.filter(user=self).order_by('-date_joined')
+
+    @property
+    def may_disconnect_social(self):
+        """Return whether a provider may be unlinked without leaving the account unreachable.
+
+        Unlinking the only way in would lock the holder out, so a password must exist first, set by reset.
+        """
+
+        return self.has_usable_password()
+
+    @property
     def profile_image_url(self):
         """Return the picture's address, falling back to the shared default when the file is missing.
 

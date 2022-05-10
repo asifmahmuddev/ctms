@@ -70,6 +70,8 @@
                             </div>
                             <button class="btn btn-ctms contact-submit" type="submit">
                                 <i class="fas fa-paper-plane" aria-hidden="true"></i> Send message
+                            </button>
+                            {% include 'includes/recaptcha.html' with action='contact' %}
                         </form>
                     </div>
                 </div>

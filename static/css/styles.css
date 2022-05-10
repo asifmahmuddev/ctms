@@ -221,6 +221,31 @@ its own padding.
     background-color: var(--ctms-danger);
     border-color: var(--ctms-danger);
 }
+
+/* A provider button wears the provider's colours, and mark and wording stay on one line. */
+.btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    color: var(--ctms-google-text);
+    background-color: var(--ctms-surface);
+    border-color: var(--ctms-google-border);
+}
+
+.btn-google:hover,
+.btn-google:focus {
+    color: var(--ctms-google-text);
+    background-color: var(--ctms-surface-muted);
+    border-color: var(--ctms-text-muted);
+    box-shadow: var(--ctms-shadow-md);
+}
+
+.btn-google img {
+    flex-shrink: 0;
+}
+
 /* Bootstrap's .btn-sm never reaches these on source order, so each variant states its own size. */
 .btn-ctms.btn-sm,
 .btn-ctms-accent.btn-sm,
@@ -521,6 +546,69 @@ only, so a phone never downloads it and the card keeps the full width of the scr
     .auth-visual-username-change {
         background-image: url('../images/change-username-bg.jpg');
     }
+
+    .auth-visual-google-signin {
+        background-image: url('../images/google-signin-bg.jpg');
+    }
+
+    .auth-visual-social-signin {
+        background-image: url('../images/social-signin-bg.jpg');
+    }
+}
+
+/* ----------------------------------------------------------------------------------------------
+Social sign-in and reCAPTCHA
+
+The provider button sits above the credentials it is an alternative to, separated by a rule that
+carries the word standing between the two ways in.
+---------------------------------------------------------------------------------------------- */
+
+.social-signin {
+    margin-top: 1.5rem;
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.25rem 0 0;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ctms-text-muted);
+}
+
+/* The rules are drawn by the pseudo-elements either side, so the word keeps its own width. */
+.auth-divider::before,
+.auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: var(--ctms-border);
+}
+
+.recaptcha-notice {
+    margin: 1rem 0 0;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--ctms-text-muted);
+}
+
+.recaptcha-notice a {
+    color: var(--ctms-text-muted);
+    text-decoration: underline;
+}
+
+.recaptcha-notice a:hover,
+.recaptcha-notice a:focus {
+    color: var(--ctms-primary);
+}
+
+/* Pinned opposite the scroll-to-top control, releasing the right edge the service sets. */
+.grecaptcha-badge {
+    left: 1rem !important;
+    right: auto !important;
 }
 
 /* ----------------------------------------------------------------------------------------------
@@ -1518,6 +1606,14 @@ fields so that changing an address or a username starts from the same page.
 .credential-value {
     overflow-wrap: anywhere;
 }
+
+/* Stands where the button it replaces would stand, so the row keeps its shape either way. */
+.credential-note {
+    max-width: 16rem;
+    font-size: 0.8125rem;
+    color: var(--ctms-text-muted);
+}
+
 @media (min-width: 576px) {
     .credential-row {
         grid-template-columns: 9rem minmax(0, 1fr) auto;

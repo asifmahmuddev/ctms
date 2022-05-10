@@ -1,2 +1,5 @@
 {# Every way one account can be signed in to, each wearing the mark of what it is. #}
 {% if account.has_usable_password %}<span class="detail-badge"><i class="fas fa-key" aria-hidden="true"></i> Password</span>{% endif %}
+{% for link in account.social_links %}
+    <span class="detail-badge"><i class="fab fa-{{ link.provider }}" aria-hidden="true"></i> {{ link.get_provider.name }}</span>
+{% endfor %}

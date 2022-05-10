@@ -21,11 +21,14 @@ PASSWORD_RESET_SUBJECT_TEMPLATE = 'accounts/password-reset-subject.txt'
 urlpatterns = [
     path('signup/', views.SignUpView.as_view(), name='signup'),
     path('signin/', views.SignInView.as_view(), name='signin'),
+    # The social sign-in flow reverses this name when it has no pending login left to complete.
+    path('signin/', views.SignInView.as_view(), name='account_login'),
     path('signout/', views.SignOutView.as_view(), name='signout'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('profile/edit/', views.ProfileEditView.as_view(), name='profile_edit'),
     path('profile/picture/', views.change_profile_image, name='profile_image'),
+    path('profile/disconnect/<int:pk>/', views.SocialDisconnectView.as_view(), name='social_disconnect'),
     path('email-change/', views.EmailChangeView.as_view(), name='email_change'),
     path('email-change/<uidb64>/<token>/', views.confirm_email_change, name='email_change_confirm'),
     path('username-change/', views.UsernameChangeView.as_view(), name='username_change'),

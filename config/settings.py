@@ -39,6 +39,10 @@ DEFAULT_LOG_LEVEL = 'INFO'
 # The routing service answers slowly for a long route, and a request thread must not wait for ever.
 ROUTING_REQUEST_TIMEOUT_SECONDS = 20
 
+# reCAPTCHA answers with a score, not a verdict, so name the refusal line and how long to wait.
+RECAPTCHA_MINIMUM_SCORE = 0.5
+RECAPTCHA_REQUEST_TIMEOUT_SECONDS = 10
+
 
 # --- Environment helpers -----------------------------------------------------------------------
 
@@ -92,6 +96,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # The sites framework stays out: credentials are read from settings, not from a SocialApp row.
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     'apps.accounts',
     'apps.backoffice',
     'apps.billing',
@@ -122,6 +131,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.common.context_processors.sign_in_options',
                 'apps.common.context_processors.company_details',
             ],
         },
@@ -170,6 +180,33 @@ SESSION_COOKIE_AGE = SESSION_LIFETIME_SECONDS
 
 # Verification, reset and address links share this timeout, and the emails quote the same constant.
 PASSWORD_RESET_TIMEOUT = ACCOUNT_LINK_LIFETIME_MINUTES * 60
+
+
+# --- Social sign-in ----------------------------------------------------------------------------
+# Credentials come from the environment, not a database row, and only the provider flow is used.
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': get_env('GOOGLE_OAUTH_CLIENT_ID', ''),
+            'secret': get_env('GOOGLE_OAUTH_CLIENT_SECRET', ''),
+            'key': '',
+        },
+        'SCOPE': ['profile', 'email'],
+    },
+}
+
+SOCIALACCOUNT_ADAPTER = 'apps.accounts.adapters.GoogleAccountAdapter'
+
+# Google has already verified the address, so a second link would ask a question already answered.
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+
+# --- reCAPTCHA ---------------------------------------------------------------------------------
+# The site key is rendered into the page to mint a token; the secret key never leaves this process.
+
+RECAPTCHA_SITE_KEY = get_env('RECAPTCHA_SITE_KEY', '')
+RECAPTCHA_SECRET_KEY = get_env('RECAPTCHA_SECRET_KEY', '')
 
 
 # --- Routing -----------------------------------------------------------------------------------

@@ -10,6 +10,8 @@ A freight booking and tracking platform. Customers price and place cargo orders 
 | Front end | Bootstrap 5.1.3, Font Awesome 5.15.4, Cropper.js 1.5.12, Leaflet 1.8.0 |
 | Maps | Leaflet 1.8.0 over OpenStreetMap tiles |
 | Geocoding and routing | OpenRouteService |
+| Social sign-in | Google OAuth 2.0, through django-allauth 0.50.0 |
+| Bot protection | reCAPTCHA v3 |
 | Invoices | ReportLab 3.6.9 |
 
 ---
@@ -69,6 +71,10 @@ Read from `.env` at startup. A missing required variable raises `ImproperlyConfi
 | `EMAIL_HOST_USER` | no | — | Mail account; empty prints messages to the console instead of sending them |
 | `EMAIL_HOST_PASSWORD` | no | — | Mail account password, or an app password where the provider requires one |
 | `OPENROUTESERVICE_API_KEY` | no | — | Free routing key; without it an order is placed without a route |
+| `GOOGLE_OAUTH_CLIENT_ID` | no | — | OAuth client for Google sign-in; without it the button is not offered |
+| `GOOGLE_OAUTH_CLIENT_SECRET` | no | — | Secret for that client, read on the server only |
+| `RECAPTCHA_SITE_KEY` | no | — | Rendered into the page so the browser can mint a token |
+| `RECAPTCHA_SECRET_KEY` | no | — | Scores a token on the server; empty accepts every submission unweighed |
 
 Generate a secret key with:
 
@@ -121,96 +127,99 @@ python manage.py collectstatic --clear --no-input   # empty staticfiles/ first, 
 
 ```text
 ctms/
-├── apps/                            Django applications
-│   ├── accounts/                    User accounts and authentication
-│   │   ├── migrations/              Empty package; migration files are generated, not committed
-│   │   ├── admin.py                 Admin registration and fieldset layout
-│   │   ├── apps.py                  Application configuration
-│   │   ├── backends.py              Authentication backend that ignores email letter case
-│   │   ├── emails.py                Verification, confirmation and change notices, sent off the request thread
-│   │   ├── forms.py                 Registration, sign-in, password and profile forms
-│   │   ├── images.py                Crops an upload to the square avatar stored on an account
-│   │   ├── models.py                Account model, its manager, and field length limits
-│   │   ├── tokens.py                One-time token generators behind the activation and confirmation links
-│   │   ├── urls.py                  Routes for the account flows
-│   │   └── views.py                 Registration, sign-in, sign-out, activation, passwords and profile
-│   ├── backoffice/                  Control panel for staff and administrators
-│   │   ├── apps.py                  Application configuration
-│   │   ├── forms.py                 Creating an account, editing one within rank, pricing an order, the company
-│   │   ├── urls.py                  Namespaced routes for the panel's pages and actions
-│   │   └── views.py                 Dashboard, the tables, the company and account pages, and their actions
-│   ├── billing/                     Payments taken against an order, and cards kept for the next
-│   │   ├── migrations/              Empty package; migration files are generated, not committed
-│   │   ├── admin.py                 Read-only admin listing of payments and kept cards
-│   │   ├── apps.py                  Application configuration
-│   │   ├── forms.py                 Checkout, which keeps no card number and no security code
-│   │   ├── invoices.py              Draws an invoice as a PDF, measured down the page
-│   │   ├── models.py                Payment and SavedCard, and how a receipt is numbered
-│   │   ├── responses.py             Hands a drawn invoice to the browser as a download
-│   │   ├── signals.py               Opens a payment against every order as it is placed
-│   │   ├── urls.py                  Routes for paying, the invoice and the kept cards
-│   │   └── views.py                 Settling an order, drawing its invoice, removing a kept card
-│   ├── common/                      Shared helpers, imported by the apps rather than owned by one
-│   │   ├── context_processors.py    The company, and which ways in a page may offer
-│   │   ├── forms.py                 Bootstrap control classes and label icons, applied to every form
-│   │   └── lists.py                 A table that can be searched, narrowed, reordered and paged
-│   ├── company/                     The organisation the site represents
-│   │   ├── migrations/              Empty package; migration files are generated, not committed
-│   │   ├── apps.py                  Application configuration
-│   │   └── models.py                The single record naming the company, its address and how to reach it
-│   ├── enquiries/                   Messages sent through the public contact page
-│   │   ├── migrations/              Empty package; migration files are generated, not committed
-│   │   ├── admin.py                 Read-only admin listing of what visitors sent
-│   │   ├── apps.py                  Application configuration
-│   │   ├── forms.py                 Contact form and its minimum message length
-│   │   ├── models.py                ContactEnquiry model and field length limits
-│   │   ├── urls.py                  Route for the contact page
-│   │   └── views.py                 View that records an enquiry and thanks the sender
-│   ├── pages/                       Landing, about, services and careers pages
-│   │   ├── apps.py                  Application configuration
-│   │   ├── content.py               Service and role copy, with the rates read from the transport app
-│   │   ├── urls.py                  Routes for the four pages
-│   │   └── views.py                 Renders each page with the copy and figures it quotes
-│   └── transport/                   Transport orders
-│       ├── migrations/              Empty package; migration files are generated, not committed
-│       ├── admin.py                 Admin registration and fieldset layout
-│       ├── apps.py                  Application configuration
-│       ├── forms.py                 Order form, its weight bounds and its route check
-│       ├── models.py                Order model, the modes it ships by, how it is priced and where it stands
-│       ├── services.py              Geocoding, road routing and great-circle geometry
-│       ├── urls.py                  Routes for placing, listing, reading and cancelling an order
-│       └── views.py                 Order placement, the owner's own list and detail, and cancellation
-├── config/                          Project configuration
-│   ├── db.py                        Database backend adjustment the MongoDB connector needs
-│   ├── settings.py                  Every setting, all read from the environment
-│   ├── urls.py                      Root URL configuration
-│   └── wsgi.py                      WSGI entry point
-├── media/                           Uploaded files (MEDIA_ROOT)
-│   └── profile-images/default.png   Avatar every account starts with, so it is tracked
-├── static/                          Source assets (STATICFILES_DIRS)
-│   ├── css/styles.css               Design tokens, and every component the site draws itself with
-│   ├── images/                      Icons, backgrounds, avatars and partner logos
-│   ├── js/                          Browser behaviour, loaded as written with no build step
-│   │   ├── map.js                   Address suggestions and the route map, on the two order pages
-│   │   └── script.js                Scroll-to-top, messages, password reveal, cropping, confirmations, card entry and column widths
-│   ├── lib/                         Bootstrap, Font Awesome, Cropper.js and Leaflet
-│   └── videos/hero.webm             Landing page hero video
-├── templates/                       HTML templates
-│   ├── accounts/                    Account and profile pages, and the plain-text emails they send
-│   ├── backoffice/                  Control panel dashboard, tables, company page, account page and form
-│   ├── billing/                     Checkout, the invoice and the kept cards
-│   ├── enquiries/                   Contact page
-│   ├── includes/                    Navigation, footer, messages, form fields, detail rows, status pills, the confirm dialogue
-│   ├── pages/                       Landing, about, services and careers pages
-│   ├── transport/                   Order form, order list and order detail
-│   └── base.html                    Document shell that every page extends
-├── .env.example                     Environment variable template, copied to .env
-├── .gitattributes                   Line endings, binary handling and vendored paths
-├── .gitignore                       Paths kept out of version control
-├── LICENSE                          Apache License 2.0
-├── manage.py                        Django command-line entry point
-├── README.md                        This file
-└── requirements.txt                 Pinned dependencies
+├── apps/                             Django applications
+│   ├── accounts/                     User accounts and authentication
+│   │   ├── migrations/               Empty package; migration files are generated, not committed
+│   │   ├── adapters.py               Which account a Google sign-in belongs to, and how a new one is named
+│   │   ├── admin.py                  Admin registration and fieldset layout
+│   │   ├── apps.py                   Application configuration
+│   │   ├── backends.py               Authentication backend that ignores email letter case
+│   │   ├── emails.py                 Verification, confirmation and change notices, sent off the request thread
+│   │   ├── forms.py                  Registration, sign-in, password and profile forms
+│   │   ├── images.py                 Crops an upload to the square avatar stored on an account
+│   │   ├── models.py                 Account model, its manager, and field length limits
+│   │   ├── tokens.py                 One-time token generators behind the activation and confirmation links
+│   │   ├── urls.py                   Routes for the account flows
+│   │   └── views.py                  Registration, sign-in, sign-out, activation, passwords and profile
+│   ├── backoffice/                   Control panel for staff and administrators
+│   │   ├── apps.py                   Application configuration
+│   │   ├── forms.py                  Creating an account, editing one within rank, pricing an order, the company
+│   │   ├── urls.py                   Namespaced routes for the panel's pages and actions
+│   │   └── views.py                  Dashboard, the tables, the company and account pages, and their actions
+│   ├── billing/                      Payments taken against an order, and cards kept for the next
+│   │   ├── migrations/               Empty package; migration files are generated, not committed
+│   │   ├── admin.py                  Read-only admin listing of payments and kept cards
+│   │   ├── apps.py                   Application configuration
+│   │   ├── forms.py                  Checkout, which keeps no card number and no security code
+│   │   ├── invoices.py               Draws an invoice as a PDF, measured down the page
+│   │   ├── models.py                 Payment and SavedCard, and how a receipt is numbered
+│   │   ├── responses.py              Hands a drawn invoice to the browser as a download
+│   │   ├── signals.py                Opens a payment against every order as it is placed
+│   │   ├── urls.py                   Routes for paying, the invoice and the kept cards
+│   │   └── views.py                  Settling an order, drawing its invoice, removing a kept card
+│   ├── common/                       Shared helpers, imported by the apps rather than owned by one
+│   │   ├── context_processors.py     The company, and which ways in a page may offer
+│   │   ├── forms.py                  Bootstrap control classes and label icons, applied to every form
+│   │   ├── lists.py                  A table that can be searched, narrowed, reordered and paged
+│   │   └── recaptcha.py              Scores a submission, and the form mixin that acts on the verdict
+│   ├── company/                      The organisation the site represents
+│   │   ├── migrations/               Empty package; migration files are generated, not committed
+│   │   ├── apps.py                   Application configuration
+│   │   └── models.py                 The single record naming the company, its address and how to reach it
+│   ├── enquiries/                    Messages sent through the public contact page
+│   │   ├── migrations/               Empty package; migration files are generated, not committed
+│   │   ├── admin.py                  Read-only admin listing of what visitors sent
+│   │   ├── apps.py                   Application configuration
+│   │   ├── forms.py                  Contact form and its minimum message length
+│   │   ├── models.py                 ContactEnquiry model and field length limits
+│   │   ├── urls.py                   Route for the contact page
+│   │   └── views.py                  View that records an enquiry and thanks the sender
+│   ├── pages/                        Landing, about, services and careers pages
+│   │   ├── apps.py                   Application configuration
+│   │   ├── content.py                Service and role copy, with the rates read from the transport app
+│   │   ├── urls.py                   Routes for the four pages
+│   │   └── views.py                  Renders each page with the copy and figures it quotes
+│   └── transport/                    Transport orders
+│       ├── migrations/               Empty package; migration files are generated, not committed
+│       ├── admin.py                  Admin registration and fieldset layout
+│       ├── apps.py                   Application configuration
+│       ├── forms.py                  Order form, its weight bounds and its route check
+│       ├── models.py                 Order model, the modes it ships by, how it is priced and where it stands
+│       ├── services.py               Geocoding, road routing and great-circle geometry
+│       ├── urls.py                   Routes for placing, listing, reading and cancelling an order
+│       └── views.py                  Order placement, the owner's own list and detail, and cancellation
+├── config/                           Project configuration
+│   ├── db.py                         Database backend adjustment the MongoDB connector needs
+│   ├── settings.py                   Every setting, all read from the environment
+│   ├── urls.py                       Root URL configuration
+│   └── wsgi.py                       WSGI entry point
+├── media/                            Uploaded files (MEDIA_ROOT)
+│   └── profile-images/default.png    Avatar every account starts with, so it is tracked
+├── static/                           Source assets (STATICFILES_DIRS)
+│   ├── css/styles.css                Design tokens, and every component the site draws itself with
+│   ├── images/                       Icons, backgrounds, avatars and partner logos
+│   ├── js/                           Browser behaviour, loaded as written with no build step
+│   │   ├── map.js                    Address suggestions and the route map, on the two order pages
+│   │   └── script.js                 Scroll-to-top, messages, password reveal, cropping, confirmations, reCAPTCHA, card entry and column widths
+│   ├── lib/                          Bootstrap, Font Awesome, Cropper.js and Leaflet
+│   └── videos/hero.webm              Landing page hero video
+├── templates/                        HTML templates
+│   ├── accounts/                     Account and profile pages, and the plain-text emails they send
+│   ├── backoffice/                   Control panel dashboard, tables, company page, account page and form
+│   ├── billing/                      Checkout, the invoice and the kept cards
+│   ├── enquiries/                    Contact page
+│   ├── includes/                     Navigation, footer, messages, form fields, detail rows, status pills, the confirm dialogue
+│   ├── pages/                        Landing, about, services and careers pages
+│   ├── socialaccount/                Provider confirmation, cancellation and failure pages
+│   ├── transport/                    Order form, order list and order detail
+│   └── base.html                     Document shell that every page extends
+├── .env.example                      Environment variable template, copied to .env
+├── .gitattributes                    Line endings, binary handling and vendored paths
+├── .gitignore                        Paths kept out of version control
+├── LICENSE                           Apache License 2.0
+├── manage.py                         Django command-line entry point
+├── README.md                         This file
+└── requirements.txt                  Pinned dependencies
 ```
 
 Each package also carries an `__init__.py`.
@@ -222,6 +231,12 @@ Each package also carries an `__init__.py`.
 **Accounts.** `Account` replaces Django's user model and authenticates on **email address**, case-insensitively. It must exist before the first `migrate`: `AUTH_USER_MODEL` is recorded in the migration graph, and changing it later means recreating the database.
 
 **Authentication.** Registration emails a one-time link that verifies the address; sign-in is refused until it is opened, and a refused attempt sends a fresh link. Sign-out is POST-only, so a prefetched link cannot end a session.
+
+**Signing in with Google.** The button posts rather than links and the exchange happens on the server, so no other site can start the handshake and the browser never holds the client secret. Google reports only addresses it has checked, so such an account is verified outright and an address already registered is linked to it rather than duplicated.
+
+The link is held by the provider's identifier, not the address, so either side may change its address freely. A provider can be disconnected from the profile editor, but only once a password exists — unlinking the only way in would lock the holder out.
+
+**reCAPTCHA.** Registration, sign-in, password reset and the contact form are scored by reCAPTCHA v3; below `RECAPTCHA_MINIMUM_SCORE` the submission is refused on the form. A token is minted at the moment of submitting because it expires two minutes later, and with no secret key set the check is skipped rather than failing closed.
 
 **Link lifetime.** Verification, reset and confirmation links share `ACCOUNT_LINK_LIFETIME_MINUTES` (five), which `PASSWORD_RESET_TIMEOUT` and the pending-address window derive from. A link also dies once used, once the account signs in, or once its password changes — each is folded into the signature.
 
@@ -255,6 +270,8 @@ Each package also carries an `__init__.py`.
 
 **Freight is not handed over before it is paid for.** An order cannot reach Ready for Pickup or any stage beyond until its payment is settled; `TransportOrder.may_reach` answers that, and both the dropdown and the route acting on it read it, so withholding the option is presentation and the refusal is the guard. Ending an order early is never blocked.
 
+**Cancelling** is the owner's only while an order is still Pending. From the moment the freight desk confirms it, cancelling is the desk's, at any point.
+
 **Who may do what.** An account is a **member**, **staff**, an **administrator** or a **superuser**: a member books their own orders, staff run the freight desk, an administrator also deletes records and manages accounts, and a superuser appoints administrators. The rule lives on the account as `can_open_backoffice` and `can_administer_backoffice`, so the guards, the navigation and the menus all read one definition.
 
 **Acting on an account.** `Account.manageable_flags_for` answers which flags one account may set on another: a superuser sets `is_admin`, `is_staff`, `is_verified` and `is_active`; an administrator sets the last three, and only on members and staff. Nobody edits their own privileges, and a flag the actor may not set is removed from the form rather than merely hidden — `construct_instance` copies only fields that reach `cleaned_data`.
@@ -270,6 +287,10 @@ Two flags decide whether an account works at all rather than what it may do: `is
 **Reading a table.** A row lights up under the pointer, and a heading can be dragged wider by the grip at its trailing edge, with the widths kept against the table's own name and a **Reset columns** control to put them back. Only while the rows are real table rows: narrower than a laptop a row is stacked and names its own cells.
 
 Orders and payments are acted on from the record itself rather than through an action column, and accounts open in a tab of their own. Every search, narrowing and ordering is matched against what the page declares before it reaches the database.
+
+**The dashboard** breaks each kind of record down rather than counting it: accounts as one divided bar, orders as bars filling along their course, enquiries as a card per status. Shares are worked out by largest remainder, so the slices come to exactly 100%, and staff see only the breakdowns they act on.
+
+**The account page** shows one account in full and is where its permission flags and every profile detail are settled. The email address, username and password are absent by design: each has its own flow that confirms the change with the account holder.
 
 **Routing.** An address box offers places to pick from, and when both ends are known the journey is worked out as the order is placed and stored with it, so the order page draws its map without asking the service again. Road and rail route over the road network; air and sea, and any land journey the service declines, follow the great circle. Both calls are made from the server, so the key never reaches a browser, and an address typed by hand still places an order — simply without a map.
 

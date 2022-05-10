@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------------------------
 CTMS site behaviour: scroll-to-top, flash messages, password reveal, picture cropping, action confirmation,
-card entry and table column widths.
+reCAPTCHA tokens, card entry and table column widths.
 ---------------------------------------------------------------------------------------------- */
 
 (function () {
@@ -41,6 +41,9 @@ card entry and table column widths.
     const RESIZING_CLASS = 'is-resizing';
     const WIDE_LAYOUT_QUERY = '(min-width: 992px)';
     const MINIMUM_COLUMN_WIDTH = 72;
+
+    const RECAPTCHA_NOTICE_SELECTOR = '.recaptcha-notice';
+    const RECAPTCHA_TOKEN_NAME = 'recaptcha_token';
 
     const PASSWORD_TARGET_ATTRIBUTE = 'data-password-target';
     const PASSWORD_HIDDEN_ICON = 'fa-eye';
@@ -314,6 +317,45 @@ card entry and table column widths.
     /* A reCAPTCHA token is single-use and expires two minutes after it is minted, so one is asked for
     at the moment the form is submitted rather than when the page loads. Submitting again after a
     refused password, or after filling the form slowly, therefore carries a token that is still good. */
+    function initRecaptchaTokens() {
+        const notice = document.querySelector(RECAPTCHA_NOTICE_SELECTOR);
+        if (!notice || typeof grecaptcha === 'undefined') {
+            return;
+        }
+
+        const form = notice.closest('form');
+        const field = form && form.querySelector('input[name="' + RECAPTCHA_TOKEN_NAME + '"]');
+        if (!field) {
+            return;
+        }
+
+        let minting = false;
+
+        form.addEventListener('submit', function (event) {
+            if (minting) {
+                return;
+            }
+            event.preventDefault();
+
+            grecaptcha.ready(function () {
+                function send() {
+                    minting = true;
+                    form.submit();
+                }
+
+                grecaptcha
+                    .execute(notice.dataset.recaptchaKey, { action: notice.dataset.recaptchaAction })
+                    .then(function (token) {
+                        field.value = token;
+                        send();
+                    })
+                    .catch(send);
+            });
+        });
+    }
+
+    /* Choosing a card already on file leaves the fields for a new one with nothing to say, so they are
+    hidden and switched off rather than left to be filled in and then quietly ignored. */
     function initCardChoice() {
         const choice = document.getElementById(SAVED_CARD_SELECT_ID);
         const blocks = document.querySelectorAll('[' + NEW_CARD_ATTRIBUTE + ']');
@@ -512,6 +554,7 @@ card entry and table column widths.
         initPasswordToggles();
         initPictureCropper();
         initActionConfirmation();
+        initRecaptchaTokens();
         initCardChoice();
         initCardExpiry();
         initResizableColumns();

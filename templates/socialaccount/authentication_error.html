@@ -1,0 +1,18 @@
+{# Shown when the provider answers with something other than a sign-in that can be completed. #}
+{% extends 'accounts/auth-base.html' %}
+
+{% block title %}Sign-in failed &mdash; CTMS{% endblock %}
+{% block auth_visual_class %}auth-visual-social-signin{% endblock %}
+
+{% block auth_icon %}<span class="auth-icon auth-icon-warning"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></span>{% endblock %}
+{% block auth_title %}That sign-in did not complete{% endblock %}
+{% block auth_subtitle %}Google did not return a sign-in we could act on. Nothing has changed on your account.{% endblock %}
+
+{% block auth_body %}
+    <p class="auth-note">Try again, or sign in with the email address and password you registered.</p>
+{% endblock %}
+
+{% block auth_links %}
+    <a href="{% url 'signin' %}">Back to sign in</a>
+    <a href="{% url 'signup' %}">Create an account</a>
+{% endblock %}

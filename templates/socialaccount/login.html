@@ -1,0 +1,23 @@
+{# Shown when the provider's sign-in address is opened directly rather than posted to. #}
+{% extends 'accounts/auth-base.html' %}
+{% load static %}
+
+{% block title %}Continue with {{ provider.name }} &mdash; CTMS{% endblock %}
+{% block auth_visual_class %}auth-visual-google-signin{% endblock %}
+
+{% block auth_title %}Continue with {{ provider.name }}{% endblock %}
+{% block auth_subtitle %}You are about to sign in to CTMS using your {{ provider.name }} account.{% endblock %}
+
+{% block auth_body %}
+    <form class="auth-form" method="post">
+        {% csrf_token %}
+        <button class="btn btn-google" type="submit">
+            <img src="{% static 'images/google.svg' %}" alt="" width="18" height="18">
+            <span>Continue with {{ provider.name }}</span>
+        </button>
+    </form>
+{% endblock %}
+
+{% block auth_links %}
+    <a href="{% url 'signin' %}">Sign in with a password instead</a>
+{% endblock %}

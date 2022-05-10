@@ -1,0 +1,17 @@
+{# Shown when the visitor turns back at the provider rather than granting access. #}
+{% extends 'accounts/auth-base.html' %}
+
+{% block title %}Sign-in cancelled &mdash; CTMS{% endblock %}
+{% block auth_visual_class %}auth-visual-social-signin{% endblock %}
+
+{% block auth_icon %}<span class="auth-icon auth-icon-warning"><i class="fas fa-times-circle" aria-hidden="true"></i></span>{% endblock %}
+{% block auth_title %}You cancelled that sign-in{% endblock %}
+{% block auth_subtitle %}Nothing was shared with CTMS and no account was created.{% endblock %}
+
+{% block auth_body %}
+    <p class="auth-note">Sign in whenever you are ready, with Google or with your password.</p>
+{% endblock %}
+
+{% block auth_links %}
+    <a href="{% url 'signin' %}">Back to sign in</a>
+{% endblock %}

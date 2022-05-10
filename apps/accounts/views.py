@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.defaultfilters import pluralize
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -14,13 +14,13 @@ from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.http import require_POST
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import CreateView, FormView, UpdateView
 
 from apps.company.models import CompanyProfile
 
 from .emails import send_activation_email, send_email_change_requested_email, send_email_changed_email, send_password_changed_email, send_pending_email_confirmation
-from .forms import EmailChangeForm, ProfileForm, ProfileImageForm, RegistrationForm, SignInForm, UsernameChangeForm
+from .forms import EmailChangeForm, ProfileForm, ProfileImageForm, SignInForm, SignUpForm, UsernameChangeForm
 from .images import store_profile_image
 from .models import PENDING_EMAIL_FIELDS
 from .tokens import account_activation_token, email_change_token
@@ -56,6 +56,8 @@ EMAIL_CHANGE_SENT_MESSAGE = (
 )
 EMAIL_CHANGED_MESSAGE = 'Your email address is now {email}.'
 USERNAME_CHANGED_MESSAGE = 'Your username is now {username}.'
+SOCIAL_DISCONNECTED_MESSAGE = 'Your {provider} account has been disconnected. Sign in with your password from now on.'
+SOCIAL_LAST_WAY_IN_MESSAGE = 'Set a password before disconnecting {provider}, or you would have no way to sign in.'
 
 # Selects which sentence the confirmation failure page renders as its subtitle.
 EXPIRED_LINK_REASON = 'expired'
@@ -74,7 +76,7 @@ def account_from_uidb64(uidb64):
 class SignUpView(CreateView):
     """Registers an account and emails its owner the link that verifies their address."""
 
-    form_class = RegistrationForm
+    form_class = SignUpForm
     template_name = SIGN_UP_TEMPLATE
     success_url = reverse_lazy('signin')
 
@@ -305,3 +307,23 @@ def change_profile_image(request):
             messages.error(request, field_errors[0])
 
     return redirect('profile_edit')
+
+
+@method_decorator(require_POST, name='dispatch')
+class SocialDisconnectView(LoginRequiredMixin, View):
+    """Unlinks a provider from the signed-in account. POST only.
+
+    Looked up against the account, so one cannot unlink another's, and refused until a password exists.
+    """
+
+    def post(self, request, pk):
+        link = get_object_or_404(request.user.social_links, pk=pk)
+        provider = link.get_provider().name
+
+        if not request.user.may_disconnect_social:
+            messages.error(request, SOCIAL_LAST_WAY_IN_MESSAGE.format(provider=provider))
+            return redirect('profile_edit')
+
+        link.delete()
+        messages.success(request, SOCIAL_DISCONNECTED_MESSAGE.format(provider=provider))
+        return redirect('profile_edit')

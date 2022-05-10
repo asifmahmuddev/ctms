@@ -25,8 +25,8 @@ Pillow==9.1.0
 # Loads the .env file into the environment during local development.
 python-dotenv==0.20.0
 
-# --- Routing -----------------------------------------------------------------------------------
-# Calls the geocoding and directions services from the server, so the key never reaches a browser.
+# --- Routing and verification ------------------------------------------------------------------
+# Calls geocoding, directions and reCAPTCHA from the server, so no secret key reaches a browser.
 requests==2.27.1
 certifi==2021.10.8
 charset-normalizer==2.0.12
@@ -36,3 +36,16 @@ urllib3==1.26.9
 # --- Documents ---------------------------------------------------------------------------------
 # Draws an invoice as a PDF. Needs only Pillow, which is already here for the profile pictures.
 reportlab==3.6.9
+
+# --- Social sign-in ----------------------------------------------------------------------------
+# Runs the provider handshake: the redirect, the state it is checked against, and the code exchange.
+django-allauth==0.50.0
+# Declared by django-allauth for providers this project leaves off, so the set resolves cleanly.
+python3-openid==3.2.0
+defusedxml==0.7.1
+requests-oauthlib==1.3.1
+oauthlib==3.2.0
+PyJWT==2.3.0
+cryptography==37.0.1
+cffi==1.15.0
+pycparser==2.21

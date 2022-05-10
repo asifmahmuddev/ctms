@@ -3,6 +3,7 @@
 from django import forms
 
 from apps.common.forms import BootstrapFormMixin
+from apps.common.recaptcha import RecaptchaFormMixin
 
 from .models import ContactEnquiry
 
@@ -13,7 +14,7 @@ MINIMUM_MESSAGE_LENGTH = 10
 SHORT_MESSAGE = 'Please describe your enquiry in at least {length} characters.'
 
 
-class ContactEnquiryForm(BootstrapFormMixin, forms.ModelForm):
+class ContactEnquiryForm(RecaptchaFormMixin, BootstrapFormMixin, forms.ModelForm):
     """Collects a message from a visitor, who need not hold an account to send one."""
 
     class Meta:

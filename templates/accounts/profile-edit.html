@@ -90,6 +90,19 @@
                                 <a class="btn btn-ctms-outline btn-sm" href="{% url 'password_reset' %}">Set one</a>
                             {% endif %}
                         </li>
+
+                        {% for link in user.social_links %}
+                            <li class="credential-row">
+                                <span class="credential-label"><i class="fab fa-{{ link.provider }} fa-fw" aria-hidden="true"></i> {{ link.get_provider.name }}</span>
+                                <span class="credential-value">{{ link.extra_data.email|default:link.uid }}</span>
+                                {% if user.may_disconnect_social %}
+                                    {% url 'social_disconnect' link.pk as disconnect_url %}
+                                    {% include 'includes/panel-delete.html' with action_url=disconnect_url compact=True label='Disconnect' icon='fa-unlink' confirm=unlink %}
+                                {% else %}
+                                    <span class="credential-note">Set a password first, or you will not be able to sign in.</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
                     </ul>
                 </article>
             </div>

@@ -1,0 +1,14 @@
+{# Google sign-in, posted not linked, so another site cannot start the flow. #}
+{% load static %}
+{% if google_signin_available %}
+    <form class="social-signin" method="post" action="{% url 'google_login' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <button class="btn btn-google" type="submit">
+            <img src="{% static 'images/google.svg' %}" alt="" width="18" height="18">
+            <span>{{ label }}</span>
+        </button>
+    </form>
+
+    <p class="auth-divider"><span>or</span></p>
+{% endif %}

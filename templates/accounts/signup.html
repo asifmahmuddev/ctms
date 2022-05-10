@@ -9,10 +9,13 @@
 {% block auth_subtitle %}One account covers quoting, booking and tracking across air, sea, road and rail.{% endblock %}
 
 {% block auth_body %}
+    {% include 'includes/google-signin.html' with label='Sign up with Google' %}
+
     <form class="auth-form" method="post" novalidate>
         {% csrf_token %}
         {% include 'includes/form-fields.html' %}
         <button class="btn btn-ctms auth-submit" type="submit">Create account</button>
+        {% include 'includes/recaptcha.html' with action='signup' %}
     </form>
 {% endblock %}
 

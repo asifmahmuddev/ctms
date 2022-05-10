@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.utils.formats import date_format
 
 from apps.common.forms import BootstrapFormMixin
+from apps.common.recaptcha import RecaptchaFormMixin
 
 from .models import MAX_LENGTH_EMAIL, MAX_LENGTH_URL, MAX_LENGTH_USERNAME
 
@@ -116,7 +117,11 @@ class RegistrationForm(BootstrapFormMixin, UserCreationForm):
         return self.cleaned_data['email'].lower()
 
 
-class SignInForm(BootstrapFormMixin, AuthenticationForm):
+class SignUpForm(RecaptchaFormMixin, RegistrationForm):
+    """Registration as the public page offers it, weighed by reCAPTCHA before an account is made."""
+
+
+class SignInForm(RecaptchaFormMixin, BootstrapFormMixin, AuthenticationForm):
     """Authenticates on email address and refuses accounts whose address is still unverified."""
 
     username = UsernameField(widget=forms.EmailInput(attrs={'autofocus': True, 'autocomplete': 'email'}))
@@ -135,7 +140,7 @@ class SignInForm(BootstrapFormMixin, AuthenticationForm):
             raise ValidationError(self.error_messages['unverified'], code='unverified')
 
 
-class PasswordResetRequestForm(BootstrapFormMixin, PasswordResetForm):
+class PasswordResetRequestForm(RecaptchaFormMixin, BootstrapFormMixin, PasswordResetForm):
     """Names an unknown address rather than reporting success for one that can never receive a link."""
 
     def clean_email(self):

@@ -9,11 +9,14 @@
 {% block auth_subtitle %}Sign in to plan routes, place orders and follow every shipment.{% endblock %}
 
 {% block auth_body %}
+    {% include 'includes/google-signin.html' with label='Sign in with Google' %}
+
     <form class="auth-form" method="post" novalidate>
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ next }}">
         {% include 'includes/form-fields.html' %}
         <button class="btn btn-ctms auth-submit" type="submit">Sign in</button>
+        {% include 'includes/recaptcha.html' with action='signin' %}
     </form>
 {% endblock %}
 
