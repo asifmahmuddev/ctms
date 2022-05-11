@@ -13,6 +13,7 @@ A freight booking and tracking platform. Customers price and place cargo orders 
 | Social sign-in | Google OAuth 2.0, through django-allauth 0.50.0 |
 | Bot protection | reCAPTCHA v3 |
 | Invoices | ReportLab 3.6.9 |
+| Serving | Gunicorn 20.1.0, WhiteNoise 6.0.0 |
 
 ---
 
@@ -75,6 +76,8 @@ Read from `.env` at startup. A missing required variable raises `ImproperlyConfi
 | `GOOGLE_OAUTH_CLIENT_SECRET` | no | — | Secret for that client, read on the server only |
 | `RECAPTCHA_SITE_KEY` | no | — | Rendered into the page so the browser can mint a token |
 | `RECAPTCHA_SECRET_KEY` | no | — | Scores a token on the server; empty accepts every submission unweighed |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | no | — | Origins outside `DJANGO_ALLOWED_HOSTS` that may submit a form, scheme included |
+| `DJANGO_HSTS_SECONDS` | no | `3600` | Seconds a browser refuses plain HTTP for the site once HTTPS is live |
 
 Generate a secret key with:
 
@@ -120,6 +123,36 @@ python manage.py collectstatic --clear --no-input   # empty staticfiles/ first, 
 ```
 
 `--no-input` takes the default answer to every prompt. `--clear` empties `staticfiles/` first, which is how a renamed or deleted source file loses its stale copy — `collectstatic` otherwise only adds and overwrites.
+
+---
+
+## Deployment
+
+Host-agnostic: any Linux box, VM or container that runs a WSGI server behind a reverse proxy.
+
+| | Local | Production |
+| --- | --- | --- |
+| `DJANGO_DEBUG` | `True` | `False` |
+| Server | `manage.py runserver` | Gunicorn behind a reverse proxy |
+| Static files | served by `runserver` | collected, then served by WhiteNoise |
+| Uploaded files | served by `runserver` | persistent disk, served by the proxy |
+| HTTPS | none | terminated by the proxy, which passes `X-Forwarded-Proto` |
+| Email | printed to the console | real SMTP credentials |
+
+```bash
+python -m pip install -r requirements.txt
+python manage.py makemigrations && python manage.py migrate
+python manage.py collectstatic --no-input --clear
+gunicorn config.wsgi:application --bind 127.0.0.1:8000 --workers 3
+```
+
+With `DEBUG` off the HTTPS redirect, secure cookies, HSTS and hashed static file names all come on. `DJANGO_SECRET_KEY` must be fresh and `DJANGO_ALLOWED_HOSTS` must name the real hosts, because Django refuses a host it was not given.
+
+- **`SECURE_PROXY_SSL_HEADER` trusts `X-Forwarded-Proto`**, so set it only behind a proxy that really adds it: without the header the redirect loops and every form submission fails its origin check.
+- **HSTS is not easily withdrawn.** A browser that has seen it refuses plain HTTP for the full duration whatever the server later says, so start at an hour and raise it once HTTPS is stable.
+- **Uploads need a persistent disk.** `config/urls.py` serves `media/` only while `DEBUG` is on, so the proxy must serve `/media/` from a directory a redeploy does not discard.
+- Add `https://<host>/accounts/google/login/callback/` to the OAuth client, and the production domain to the reCAPTCHA key pair.
+- `python manage.py check --deploy` is silent once this is in place.
 
 ---
 

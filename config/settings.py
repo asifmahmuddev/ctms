@@ -112,6 +112,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -284,3 +285,25 @@ LOGGING = {
     },
     'root': {'handlers': ['console'], 'level': LOG_LEVEL},
 }
+
+
+# --- Production --------------------------------------------------------------------------------
+# Applied with DEBUG off only, so development is never forced onto HTTPS nor needs a manifest.
+
+CSRF_TRUSTED_ORIGINS = get_env_list('DJANGO_CSRF_TRUSTED_ORIGINS')
+HSTS_SECONDS = int(get_env('DJANGO_HSTS_SECONDS', '3600'))
+
+if not DEBUG:
+    # Tells Django the proxy terminated TLS; without it the redirect loops and every form fails.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    SECURE_HSTS_SECONDS = HSTS_SECONDS
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+    # Serves each file under a content-derived name, resolved through collectstatic's manifest.
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
